@@ -1,0 +1,29 @@
+import type { Metadata } from "next";
+import { Navbar } from "../compents/layout/Navbar";
+import { Footer } from "../compents/layout/Footer";
+
+export const metadata: Metadata = {
+  title: "Modern E-commerce",
+  description: "Plataforma de e-commerce moderna, limpia y profesional.",
+};
+
+interface ShopLayoutProps {
+  children: React.ReactNode;
+}
+
+export default function ShopLayout({ children }: ShopLayoutProps) {
+  return (
+    <div className="flex min-h-screen flex-col bg-brand-light">
+      {/* cabecera global de la tienda */}
+      <Navbar />
+
+      {/* Contenedor principal con grid/márgenes uniformes en toda la app */}
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 animate-fadeIn">
+        {children}
+      </main>
+
+      {/* Pie de página global */}
+      <Footer />
+    </div>
+  );
+}
