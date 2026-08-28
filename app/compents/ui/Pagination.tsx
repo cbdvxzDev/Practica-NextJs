@@ -1,11 +1,14 @@
+"use client";
+
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "./Button";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export interface PaginationProps {
   currentPage: number;
   totalPages: number;
-  onPageChange: (page: number) => void;
+  onPageChange?: (page: number) => void;
   className?: string;
 }
 
@@ -15,6 +18,18 @@ export function Pagination({
   onPageChange,
   className,
 }: PaginationProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const changePage = (page: number) => {
+    if (onPageChange) {
+      onPageChange(page);
+      return;
+    }
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", String(page));
+    router.push(`${pathname}?${params.toString()}`);
+  };
   // Generar el rango de páginas a mostrar de manera limpia
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
@@ -31,7 +46,7 @@ export function Pagination({
       <Button
         variant="ghost"
         size="sm"
-        onClick={() => onPageChange(currentPage - 1)}
+        onClick={() => changePage(currentPage - 1)}
         disabled={currentPage === 1}
         className="h-8 px-2 text-brand-muted hover:text-brand-dark disabled:opacity-30"
         aria-label="Ir a la página anterior"
@@ -48,7 +63,7 @@ export function Pagination({
         return (
           <button
             key={page}
-            onClick={() => onPageChange(page)}
+            onClick={() => changePage(page)}
             aria-current={isActive ? "page" : undefined}
             className={cn(
               "h-8 min-w-[32px] px-2 text-xs font-medium rounded-button transition-colors focus:outline-none focus:ring-1 focus:ring-brand-dark",
@@ -66,7 +81,7 @@ export function Pagination({
       <Button
         variant="ghost"
         size="sm"
-        onClick={() => onPageChange(currentPage + 1)}
+        onClick={() => changePage(currentPage + 1)}
         disabled={currentPage === totalPages}
         className="h-8 px-2 text-brand-muted hover:text-brand-dark disabled:opacity-30"
         aria-label="Ir a la página siguiente"

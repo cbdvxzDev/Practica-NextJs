@@ -47,6 +47,15 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
       {/* Layout de Catálogo: Filtros + Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+        <details className="group rounded-card border border-border/60 bg-white p-4 lg:hidden">
+          <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-semibold">
+            Filtros y búsqueda
+            <span className="text-brand-muted transition-transform group-open:rotate-180">⌄</span>
+          </summary>
+          <div className="mt-5 space-y-6">
+            <ProductFilters categories={CATEGORIES.map((category) => ({ id: category.slug, label: category.name }))} />
+          </div>
+        </details>
         
         {/* BARRA LATERAL DE FILTROS (Visible en desktop) */}
         <aside className="hidden lg:flex flex-col space-y-8 sticky top-24 p-1">
@@ -59,7 +68,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           {/* Barra de utilidades superior (Conteo de productos y selector de orden) */}
           <div className="flex items-center justify-between text-sm text-brand-muted border-b border-border/40 pb-4">
             <p>{sortedProducts.length} productos encontrados</p>
-            <SortSelect currentSort={filters.sort || "featured"} onSortChange={() => undefined} />
+            <SortSelect currentSort={filters.sort || "featured"} />
           </div>
 
           {/* Grid de Productos Reutilizable */}
@@ -67,7 +76,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
           {/* Componente de Paginación UI */}
           <div className="pt-6 border-t border-border/60 flex justify-center">
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={() => undefined} />
+            <Pagination currentPage={currentPage} totalPages={totalPages} />
           </div>
         </div>
 

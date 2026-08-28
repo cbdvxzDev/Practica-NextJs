@@ -36,7 +36,7 @@ export function SidebarAdmin({ className }: SidebarAdminProps) {
   ];
 
   return (
-    <nav className={cn("w-16 shrink-0 border-r border-border bg-white p-2 md:w-60 md:p-4", className)}>
+    <nav className={cn("w-[4.25rem] shrink-0 border-r border-border bg-white p-2 sm:w-20 md:w-60 md:p-4", className)}>
       <div className="mb-6 hidden px-3 text-xs font-bold uppercase tracking-widest text-brand-dark md:block">
         Gestión
       </div>

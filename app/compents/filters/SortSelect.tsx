@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export interface SortOption {
   value: string;
@@ -9,7 +10,7 @@ export interface SortOption {
 }
 
 export interface SortSelectProps {
-  onSortChange: (value: string) => void;
+  onSortChange?: (value: string) => void;
   currentSort: string;
   options?: SortOption[];
   className?: string;
@@ -29,9 +30,20 @@ export function SortSelect({
   options = DEFAULT_OPTIONS,
   className,
 }: SortSelectProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onSortChange(e.target.value);
+    const value = e.target.value;
+    if (onSortChange) {
+      onSortChange(value);
+      return;
+    }
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("sort", value);
+    params.delete("page");
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   return (
