@@ -18,11 +18,6 @@ export function SearchBar({
 }: SearchBarProps) {
   const [query, setQuery] = React.useState(initialValue);
 
-  // Efecto para sincronizar cambios si el valor inicial muta de forma externa
-  React.useEffect(() => {
-    setQuery(initialValue);
-  }, [initialValue]);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
@@ -35,7 +30,7 @@ export function SearchBar({
   };
 
   return (
-    <div className={cn("relative w-full max-w-md", className)}>
+    <div className={cn("relative w-full", className)}>
       {/* ÍCONO DE BÚSQUEDA SUTIL (IZQUIERDA) */}
       <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-brand-muted/70">
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -49,7 +44,7 @@ export function SearchBar({
         value={query}
         onChange={handleChange}
         placeholder={placeholder}
-        className="h-10 w-full pl-9 pr-9 text-xs border border-border/60 rounded-button bg-white focus:outline-none focus:ring-1 focus:ring-brand-dark text-brand-dark placeholder-brand-muted/50 tracking-wide transition-all"
+        className="h-12 w-full rounded-button border border-border/60 bg-white pl-10 pr-9 text-sm tracking-wide text-brand-dark transition-all placeholder:text-brand-muted/50 focus:outline-none focus:ring-1 focus:ring-brand-dark"
       />
 
       {/* BOTÓN DISCRETO PARA LIMPIAR (DERECHA - SOLO SI HAY TEXTO) */}
