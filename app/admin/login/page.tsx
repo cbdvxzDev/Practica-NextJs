@@ -1,5 +1,11 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { LoginForm } from "../../compents/forms/LoginForm";
+
+export const metadata: Metadata = {
+  title: "Acceso administrativo | NOVA",
+  description: "Acceso seguro al panel de administración de NOVA.",
+};
 
 export default function AdminLoginPage() {
   return (

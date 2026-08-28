@@ -1,17 +1,20 @@
-import type { Metadata } from "next";
+"use client";
+
+import { usePathname } from "next/navigation";
 import { SidebarAdmin } from "../compents/admin/SidebarAdmin";
 import { AdminGuard } from "../compents/admin/AdminGuard";
-
-export const metadata: Metadata = {
-  title: "Panel de Administración | E-commerce",
-  description: "Gestión de inventario, productos y órdenes.",
-};
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
+  const pathname = usePathname();
+
+  if (pathname === "/admin/login") {
+    return <AdminGuard>{children}</AdminGuard>;
+  }
+
   return (
     <AdminGuard>
     <div className="flex h-screen w-screen overflow-hidden bg-brand-light">
