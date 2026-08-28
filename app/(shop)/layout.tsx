@@ -3,8 +3,8 @@ import { Navbar } from "../compents/layout/Navbar";
 import { Footer } from "../compents/layout/Footer";
 
 export const metadata: Metadata = {
-  title: "Modern E-commerce",
-  description: "Plataforma de e-commerce moderna, limpia y profesional.",
+  title: "NOVA | Compra todo lo que buscas",
+  description: "Moda, belleza, accesorios y tecnología en un solo lugar.",
 };
 
 interface ShopLayoutProps {

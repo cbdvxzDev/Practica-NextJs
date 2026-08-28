@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 
 const FOOTER_SECTIONS = [
   {
@@ -49,10 +48,10 @@ export function Footer() {
               href="/" 
               className="text-base font-semibold tracking-wider uppercase text-brand-dark transition-opacity hover:opacity-80"
             >
-              Esencial
+              NOVA
             </Link>
             <p className="text-xs text-brand-muted max-w-xs leading-relaxed">
-              Diseño atemporal, minimalismo funcional y piezas confeccionadas de forma consciente y responsable.
+              Moda, belleza, accesorios y tecnología seleccionados para hacer tu día más fácil.
             </p>
           </div>
 
