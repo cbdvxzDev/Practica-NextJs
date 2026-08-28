@@ -63,7 +63,7 @@ export default async function AdminDashboardPage() {
 
         {/* Tabla Minimalista */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-sm">
+          <table className="min-w-[680px] w-full text-left border-collapse text-sm">
             <thead>
               <tr className="bg-neutral-50 border-b border-border/40 text-brand-muted text-xs font-medium uppercase tracking-wider">
                 <th className="py-3 px-6">ID Órden</th>

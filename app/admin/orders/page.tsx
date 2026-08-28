@@ -90,7 +90,7 @@ export default async function AdminOrdersPage() {
       {/* TABLA DE ÓRDENES MAESTRA */}
       <section className="bg-white border border-border/60 rounded-card shadow-subtle overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-sm">
+          <table className="min-w-[760px] w-full text-left border-collapse text-sm">
             <thead>
               <tr className="bg-neutral-50 border-b border-border/40 text-brand-muted text-xs font-medium uppercase tracking-wider">
                 <th className="py-3 px-6">ID Órden</th>
@@ -145,7 +145,7 @@ export default async function AdminOrdersPage() {
                     
                     {/* ACCIONES */}
                     <td className="py-4 px-6 text-right">
-                      <Link href={`/admin/orders/${order.id}`} passHref legacyBehavior>
+                      <Link href={`/admin/orders/${order.id}`} className="inline-flex">
                         <Button variant="ghost" className="h-8 px-3 text-xs text-brand-dark hover:underline">
                           Detalles →
                         </Button>
