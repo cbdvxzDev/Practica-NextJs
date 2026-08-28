@@ -3,6 +3,9 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/Button";
+import { AuthService } from "@/services/auth.service";
+import { useAuthStore } from "@/store/auth.store";
+import { useRouter } from "next/navigation";
 
 export interface RegisterFormData {
   name: string;
@@ -12,11 +15,13 @@ export interface RegisterFormData {
 }
 
 export interface RegisterFormProps {
-  onSubmit: (data: RegisterFormData) => void;
+  onSubmit?: (data: RegisterFormData) => void;
   className?: string;
 }
 
 export function RegisterForm({ onSubmit, className }: RegisterFormProps) {
+  const router = useRouter();
+  const setAuth = useAuthStore((state) => state.setAuth);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
 
@@ -26,6 +31,7 @@ export function RegisterForm({ onSubmit, className }: RegisterFormProps) {
     password: "",
     acceptTerms: false,
   });
+  const [error, setError] = React.useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -38,12 +44,15 @@ export function RegisterForm({ onSubmit, className }: RegisterFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
-    // Simulación de latencia de red premium para asegurar consistencia visual
-    setTimeout(() => {
-      onSubmit(formData);
-      setIsSubmitting(false);
-    }, 800);
+    setError("");
+    void AuthService.register(formData.name, formData.email, formData.password)
+      .then((response) => {
+        setAuth(response.user);
+        onSubmit?.(formData);
+        router.push("/profile");
+      })
+      .catch((reason: unknown) => setError(reason instanceof Error ? reason.message : "No pudimos crear tu cuenta."))
+      .finally(() => setIsSubmitting(false));
   };
 
   return (
@@ -151,6 +160,7 @@ export function RegisterForm({ onSubmit, className }: RegisterFormProps) {
           {isSubmitting ? "Creando cuenta..." : "Registrarme"}
         </Button>
       </div>
+      {error && <p role="alert" className="text-xs font-medium text-red-600">{error}</p>}
     </form>
   );
 }

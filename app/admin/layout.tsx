@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SidebarAdmin } from "../compents/admin/SidebarAdmin";
+import { AdminGuard } from "../compents/admin/AdminGuard";
 
 export const metadata: Metadata = {
   title: "Panel de Administración | E-commerce",
@@ -12,6 +13,7 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   return (
+    <AdminGuard>
     <div className="flex h-screen w-screen overflow-hidden bg-brand-light">
       {/* 1. BARRA LATERAL ADMINISTRATIVA (Ancho fijo en desktop, fija a la izquierda) */}
       <SidebarAdmin />
@@ -37,5 +39,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </main>
       </div>
     </div>
+    </AdminGuard>
   );
 }

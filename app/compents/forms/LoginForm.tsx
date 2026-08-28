@@ -3,28 +3,40 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/Button";
+import { AuthService } from "@/services/auth.service";
+import { useAuthStore } from "@/store/auth.store";
+import { useRouter } from "next/navigation";
 
 export interface LoginFormProps {
-  onSubmit: (email: string, pass: string) => void;
+  onSubmit?: (email: string, pass: string) => void;
+  adminOnly?: boolean;
   className?: string;
 }
 
-export function LoginForm({ onSubmit, className }: LoginFormProps) {
+export function LoginForm({ onSubmit, className, adminOnly = false }: LoginFormProps) {
+  const router = useRouter();
+  const setAuth = useAuthStore((state) => state.setAuth);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [error, setError] = React.useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulación de latencia de red premium para asegurar la experiencia de carga sutil
-    setTimeout(() => {
-      onSubmit(email, password);
-      setIsSubmitting(false);
-    }, 800);
+    setError("");
+    void AuthService.login(email, password)
+      .then((response) => {
+        if (adminOnly && response.user.role !== "admin") throw new Error("Esta cuenta no tiene permisos de administrador.");
+        setAuth(response.user);
+        onSubmit?.(email, password);
+        router.push(response.user.role === "admin" ? "/admin/dashboard" : "/profile");
+      })
+      .catch((reason: unknown) => setError(reason instanceof Error ? reason.message : "No pudimos iniciar sesión."))
+      .finally(() => setIsSubmitting(false));
   };
 
   return (
@@ -107,6 +119,7 @@ export function LoginForm({ onSubmit, className }: LoginFormProps) {
           {isSubmitting ? "Autenticando..." : "Iniciar Sesión"}
         </Button>
       </div>
+      {error && <p role="alert" className="text-xs font-medium text-red-600">{error}</p>}
     </form>
   );
 }
