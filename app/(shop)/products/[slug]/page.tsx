@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { ProductGallery } from "../../../compents/product/ProductGallery";
 import { ProductBuyBox } from "../../../compents/product/ProductBuyBox";
 import { ProductPrice } from "../../../compents/product/ProductPrice";
+import { PRODUCTS } from "../../../data/catalog";
 
 interface ProductPageProps {
   params: Promise<{
@@ -9,52 +10,9 @@ interface ProductPageProps {
   }>;
 }
 
-interface ProductDetail {
-  id: string;
-  slug: string;
-  title: string;
-  description: string;
-  price: number;
-  compareAtPrice?: number;
-  images: string[];
-  category: { id: string; name: string; slug: string };
-  stock: number;
-  isActive: boolean;
-}
-
-const MOCK_PRODUCTS_DB: Record<string, ProductDetail> = {
-  "chaqueta-minimalista-lana": {
-    id: "1",
-    slug: "chaqueta-minimalista-lana",
-    title: "Chaqueta Minimalista en Lana",
-    description: "Confeccionada con lana de origen responsable, esta chaqueta presenta un corte estructurado contemporáneo, cierre frontal oculto y bolsillos laterales discretos. Una pieza de transición ideal diseñada para durar temporadas completas.",
-    price: 189000,
-    images: [
-      "/images/products/chaqueta-1.jpg",
-      "/images/products/chaqueta-1-back.jpg",
-      "/images/products/chaqueta-1-detail.jpg"
-    ],
-    category: { id: "cat-1", name: "Prendas de Abrigo", slug: "abrigo" },
-    stock: 5,
-    isActive: true,
-  },
-  "camiseta-algodon-organico": {
-    id: "2",
-    slug: "camiseta-algodon-organico",
-    title: "Camiseta Esencial Algodón Orgánico",
-    description: "Una base versátil confeccionada en algodón orgánico suave y resistente. Su silueta relajada y acabados limpios la convierten en una pieza esencial para combinar todos los días.",
-    price: 45000,
-    compareAtPrice: 60000,
-    images: ["/images/products/camiseta-1.jpg"],
-    category: { id: "cat-2", name: "Básicos", slug: "basicos" },
-    stock: 12,
-    isActive: true,
-  },
-};
-
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = MOCK_PRODUCTS_DB[slug];
+  const product = PRODUCTS.find((item) => item.slug === slug);
 
   if (!product || !product.isActive) {
     notFound();
