@@ -33,7 +33,7 @@ export default async function WishlistPage() {
             Guarda los artículos que te encantan para revisarlos más tarde o compartirlos con tus amigos.
           </p>
         </div>
-        <Link href="/products" className="inline-flex">
+        <Link href="/products">
           <Button variant="outline" className="h-11 px-6">
             Explorar productos
           </Button>

@@ -23,7 +23,7 @@ export function ProductTable({ products, onEdit, onDelete, className }: ProductT
   return (
     <div className={cn("w-full border border-border/40 rounded-card overflow-hidden bg-white", className)}>
       <div className="overflow-x-auto">
-        <table className="min-w-[680px] w-full text-left text-xs">
+        <table className="min-w-[760px] w-full table-fixed text-left text-xs">
           <thead className="bg-neutral-50/50 text-brand-muted uppercase border-b border-border/30">
             <tr>
               <th className="px-6 py-4 font-semibold tracking-wider">Producto</th>

@@ -80,7 +80,7 @@ export default async function AdminUsersPage() {
       {/* TABLA DE USUARIOS MAESTRA */}
       <section className="bg-white border border-border/60 rounded-card shadow-subtle overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-[720px] w-full text-left border-collapse text-sm">
+          <table className="min-w-[760px] w-full table-fixed border-collapse text-left text-sm">
             <thead>
               <tr className="bg-neutral-50 border-b border-border/40 text-brand-muted text-xs font-medium uppercase tracking-wider">
                 <th className="py-3 px-6">Usuario</th>
