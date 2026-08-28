@@ -1,5 +1,5 @@
-import { PageTitle } from "@/components/common/PageTitle";
-import { Button } from "@/components/ui/Button";
+import { PageTitle } from "@/compents/common/PageTitle";
+import { Button } from "@/compents/ui/Button";
 
 // Estructura de datos mockeada para la gestión de usuarios (Alineado con data/users.json)
 const MOCK_ADMIN_USERS = [
@@ -54,7 +54,7 @@ export default async function AdminUsersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-5">
         <PageTitle 
           title="Usuarios" 
-          subtitle="Administra las cuentas registradas en la plataforma, audita roles y gestiona accesos." 
+          description="Administra las cuentas registradas en la plataforma, audita roles y gestiona accesos." 
         />
         <div className="flex items-center space-x-3">
           <Button variant="secondary" className="h-9 text-xs">

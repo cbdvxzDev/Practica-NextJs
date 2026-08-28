@@ -1,6 +1,6 @@
-import { PageTitle } from "../../compents/common/PageTitle";
-import { StatsCard } from "../../compents/admin/StatsCard";
-import { Button } from "../../compents/ui/Button";
+import { PageTitle } from "@/compents/common/PageTitle";
+import { StatsCard } from "@/compents/admin/StatsCard";
+import { Button } from "@/compents/ui/Button";
 import Link from "next/link";
 
 // Datos analíticos simulados
@@ -25,7 +25,7 @@ export default async function AdminDashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-5">
         <PageTitle 
           title="Panel de Control" 
-          subtitle="Vista general del rendimiento comercial e inventario de la tienda." 
+          description="Vista general del rendimiento comercial e inventario de la tienda." 
         />
         <div className="flex items-center space-x-3">
           <Button variant="secondary" className="h-9 text-xs">
@@ -39,10 +39,10 @@ export default async function AdminDashboardPage() {
         {MOCK_STATS.map((stat) => (
           <StatsCard
             key={stat.id}
-            title={stat.title}
-            value={stat.value}
-            change={stat.change}
-            isPositive={stat.isPositive}
+            label={stat.title}
+            amount={stat.value}
+            percentage={stat.change}
+            isGrowth={stat.isPositive}
           />
         ))}
       </section>

@@ -8,6 +8,7 @@ export interface CartItem {
   price: number;
   quantity: number;
   image?: string;
+  slug?: string;
   stock?: number;
 }
 
@@ -30,7 +31,7 @@ export const useCartStore = create<CartState>()(
           if (existing) {
             return {
               items: state.items.map((item) =>
-                item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item
+                item.id === product.id ? { ...item, quantity: Math.min(item.stock ?? Infinity, item.quantity + quantity) } : item
               ),
             };
           }
@@ -43,7 +44,7 @@ export const useCartStore = create<CartState>()(
       updateQuantity: (id, quantity) => 
         set((state) => ({
           items: state.items.map((item) =>
-            item.id === id ? { ...item, quantity: Math.max(0, quantity) } : item
+            item.id === id ? { ...item, quantity: Math.min(item.stock ?? Infinity, Math.max(0, quantity)) } : item
           ),
         })),
 

@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { PageTitle } from "@/components/common/PageTitle";
-import { ProductForm } from "@/components/forms/ProductForm";
+import { PageTitle } from "@/compents/common/PageTitle";
+import { ProductForm } from "@/compents/forms/ProductForm";
 
 export default function AdminCreateProductPage() {
   return (
@@ -15,7 +15,7 @@ export default function AdminCreateProductPage() {
         </Link>
         <PageTitle 
           title="Nuevo Producto" 
-          subtitle="Registra una nueva pieza en el catálogo global de la plataforma." 
+          description="Registra una nueva pieza en el catálogo global de la plataforma." 
         />
       </div>
 

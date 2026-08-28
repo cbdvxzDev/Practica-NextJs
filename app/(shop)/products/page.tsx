@@ -31,7 +31,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     return matchesQuery && matchesCategory && matchesMin && matchesMax;
   });
   const sortedProducts = [...filteredProducts].sort((a, b) =>
-    filters.sort === "price_asc" ? a.price - b.price : filters.sort === "price_desc" ? b.price - a.price : 0
+    filters.sort === "price-asc" ? a.price - b.price : filters.sort === "price-desc" ? b.price - a.price : 0
   );
   const totalPages = Math.max(1, Math.ceil(sortedProducts.length / 12));
 
@@ -59,7 +59,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           {/* Barra de utilidades superior (Conteo de productos y selector de orden) */}
           <div className="flex items-center justify-between text-sm text-brand-muted border-b border-border/40 pb-4">
             <p>{sortedProducts.length} productos encontrados</p>
-            <SortSelect />
+            <SortSelect currentSort={filters.sort || "featured"} onSortChange={() => undefined} />
           </div>
 
           {/* Grid de Productos Reutilizable */}
@@ -67,7 +67,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
           {/* Componente de Paginación UI */}
           <div className="pt-6 border-t border-border/60 flex justify-center">
-            <Pagination currentPage={currentPage} totalPages={totalPages} />
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={() => undefined} />
           </div>
         </div>
 

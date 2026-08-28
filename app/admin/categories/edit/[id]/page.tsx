@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PageTitle } from "@/components/common/PageTitle";
-import { CategoryForm } from "@/components/forms/CategoryForm";
+import { PageTitle } from "@/compents/common/PageTitle";
+import { CategoryForm } from "@/compents/forms/CategoryForm";
 
 interface EditCategoryPageProps {
   params: Promise<{
@@ -10,7 +10,15 @@ interface EditCategoryPageProps {
 }
 
 // Base de datos simulada para la resolución en el servidor
-const MOCK_CATEGORIES_DB: Record<string, any> = {
+interface AdminCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  image: string;
+}
+
+const MOCK_CATEGORIES_DB: Record<string, AdminCategory> = {
   "cat-1": {
     id: "cat-1",
     name: "Prendas de Abrigo",
@@ -41,7 +49,7 @@ export default async function AdminEditCategoryPage({ params }: EditCategoryPage
         </Link>
         <PageTitle 
           title="Editar Categoría" 
-          subtitle={`Modificando los metadatos y la descripción de la colección: ${category.name}`} 
+          description={`Modificando los metadatos y la descripción de la colección: ${category.name}`} 
         />
       </div>
 

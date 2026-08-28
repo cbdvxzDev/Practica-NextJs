@@ -11,6 +11,7 @@ interface Product {
 
 interface ProductGridProps {
   products: Product[];
+  isWishlistView?: boolean;
 }
 
 export function ProductGrid({ products }: ProductGridProps) {

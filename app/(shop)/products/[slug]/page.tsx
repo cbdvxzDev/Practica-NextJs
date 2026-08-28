@@ -44,6 +44,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <div className="pt-2">
           <ProductBuyBox
             id={product.id}
+            slug={product.slug}
             name={product.title}
             price={product.price}
             image={product.images[0]}

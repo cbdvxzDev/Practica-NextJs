@@ -18,8 +18,9 @@ export interface ProductFormData {
 
 export interface ProductFormProps {
   initialData?: Partial<ProductFormData>;
-  categories: { id: string; label: string }[];
-  onSubmit: (data: ProductFormData) => void;
+  categories?: { id: string; label: string }[];
+  onSubmit?: (data: ProductFormData) => void;
+  isEdit?: boolean;
   className?: string;
 }
 
@@ -27,8 +28,8 @@ const AVAILABLE_SIZES = ["XS", "S", "M", "L", "XL"];
 
 export function ProductForm({
   initialData,
-  categories,
-  onSubmit,
+  categories = [],
+  onSubmit = () => undefined,
   className,
 }: ProductFormProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false);

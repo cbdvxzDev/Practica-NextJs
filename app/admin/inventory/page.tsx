@@ -1,43 +1,43 @@
-import { PageTitle } from "@/components/common/PageTitle";
-import { InventoryTable } from "@/components/admin/InventoryTable";
-import { Button } from "@/components/ui/Button";
+"use client";
+
+import * as React from "react";
+import { PageTitle } from "@/compents/common/PageTitle";
+import { InventoryTable } from "@/compents/admin/InventoryTable";
+import { Button } from "@/compents/ui/Button";
 
 // Datos mockeados enfocados puramente en control de stock (Alineado con tu data/products.json)
 const MOCK_INVENTORY_DATA = [
   {
     id: "1",
-    title: "Chaqueta Minimalista en Lana",
-    slug: "chaqueta-minimalista-lana",
+    name: "Chaqueta Minimalista en Lana",
     sku: "JKT-LAN-001",
-    category: "Prendas de Abrigo",
-    price: 189000,
-    stock: 5, // Bajo stock
-    status: "low_stock"
+    minStockThreshold: 5,
+    stock: 5,
+    lastUpdated: "Hoy, 09:30",
   },
   {
     id: "2",
-    title: "Camiseta Esencial Algodón Orgánico",
-    slug: "camiseta-algodon-organico",
+    name: "Camiseta Esencial Algodón Orgánico",
     sku: "TSH-ORG-002",
-    category: "Básicos",
-    price: 45000,
-    stock: 12, // Stock saludable
-    status: "in_stock"
+    minStockThreshold: 5,
+    stock: 12,
+    lastUpdated: "Ayer, 16:20",
   },
   {
     id: "3",
-    title: "Pantalón Sastrero Moderno",
-    slug: "pantalon-sastrero-moderno",
+    name: "Pantalón Sastrero Moderno",
     sku: "PNT-SAS-003",
-    category: "Pantalones",
-    price: 160000,
-    stock: 0, // Agotado
-    status: "out_of_stock"
+    minStockThreshold: 5,
+    stock: 0,
+    lastUpdated: "27 Jun, 2026",
   }
 ];
 
-export default async function AdminInventoryPage() {
-  // En el futuro consumirás esto directamente de tu capa de datos o servicios.
+export default function AdminInventoryPage() {
+  const [inventory, setInventory] = React.useState(MOCK_INVENTORY_DATA);
+  const updateStock = (id: string, newStock: number) => {
+    setInventory((items) => items.map((item) => item.id === id ? { ...item, stock: newStock, lastUpdated: "Ahora" } : item));
+  };
 
   return (
     <div className="space-y-8">
@@ -45,7 +45,7 @@ export default async function AdminInventoryPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-5">
         <PageTitle 
           title="Control de Inventario" 
-          subtitle="Monitoreo físico de existencias, códigos SKU y alertas de reabastecimiento crítico." 
+          description="Monitoreo físico de existencias, códigos SKU y alertas de reabastecimiento crítico." 
         />
         <div className="flex items-center space-x-3">
           <Button variant="secondary" className="h-9 text-xs">
@@ -58,22 +58,25 @@ export default async function AdminInventoryPage() {
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="bg-white border border-border/60 rounded-card p-4 flex items-center justify-between shadow-subtle">
           <span className="text-xs font-medium text-brand-muted uppercase">Total Ítems Únicos</span>
-          <span className="text-xl font-semibold text-brand-dark">{MOCK_INVENTORY_DATA.length}</span>
+          <span className="text-xl font-semibold text-brand-dark">{inventory.length}</span>
         </div>
         <div className="bg-white border border-border/60 rounded-card p-4 flex items-center justify-between shadow-subtle">
           <span className="text-xs font-medium text-brand-muted uppercase">Bajo Stock (&lt; 6)</span>
-          <span className="text-xl font-semibold text-neutral-700">1</span>
+          <span className="text-xl font-semibold text-neutral-700">{inventory.filter((item) => item.stock > 0 && item.stock <= item.minStockThreshold).length}</span>
         </div>
         <div className="bg-white border border-border/60 rounded-card p-4 flex items-center justify-between shadow-subtle">
           <span className="text-xs font-medium text-brand-muted uppercase">Agotados</span>
-          <span className="text-xl font-semibold text-brand-dark">1</span>
+          <span className="text-xl font-semibold text-brand-dark">{inventory.filter((item) => item.stock === 0).length}</span>
         </div>
       </section>
 
       {/* CONTENEDOR DE LA TABLA OPERATIVA */}
       <section className="bg-white border border-border/60 rounded-card shadow-subtle overflow-hidden">
         {/* Delegamos el renderizado interactivo a tu componente atómico InventoryTable */}
-        <InventoryTable products={MOCK_INVENTORY_DATA} />
+        <InventoryTable
+          items={inventory}
+          onUpdateStock={updateStock}
+        />
       </section>
     </div>
   );

@@ -49,7 +49,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
         </p>
         <div className="flex items-center space-x-4">
           <span className="text-xs text-brand-muted">Ordenar por</span>
-          <SortSelect />
+          <SortSelect currentSort={sort || "featured"} onSortChange={() => undefined} />
         </div>
       </div>
 

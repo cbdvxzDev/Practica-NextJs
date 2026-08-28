@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { PageTitle } from "@/components/common/PageTitle";
-import { Button } from "@/components/ui/Button";
+import { PageTitle } from "@/compents/common/PageTitle";
+import { Button } from "@/compents/ui/Button";
 
 // Estructura de datos mockeada para el control de órdenes (Alineado con order.service)
 const MOCK_ADMIN_ORDERS = [
@@ -61,7 +61,7 @@ export default async function AdminOrdersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-5">
         <PageTitle 
           title="Órdenes de Compra" 
-          subtitle="Monitorea transacciones, controla estados de pago y gestiona la logística de envíos." 
+          description="Monitorea transacciones, controla estados de pago y gestiona la logística de envíos." 
         />
         <div className="flex items-center space-x-3">
           <Button variant="secondary" className="h-9 text-xs">

@@ -1,8 +1,8 @@
-import { ProductGrid } from "../../compents/product/ProductGrid";
-import { ProductFilters } from "../../compents/filters/ProductFilters";
-import { ProductSort } from "../../compents/filters/ProductSort";
-import { ProductPagination } from "../../compents/filters/ProductPagination";
-import { PageTitle } from "../../compents/common/PageTitle";
+import { ProductGrid } from "@/compents/product/ProductGrid";
+import { ProductFilters } from "@/compents/filters/ProductFilters";
+import { ProductSort } from "@/compents/filters/ProductSort";
+import { ProductPagination } from "@/compents/filters/ProductPagination";
+import { PageTitle } from "@/compents/common/PageTitle";
 
 const CATEGORIES = [
   { id: "abrigo", label: "Prendas de Abrigo" },
@@ -59,7 +59,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       <div className="border-b border-border pb-5">
         <PageTitle
           title="Catálogo Completo"
-          subtitle="Explora nuestra colección de piezas atemporales y esenciales."
+          description="Explora nuestra colección de piezas atemporales y esenciales."
         />
       </div>
 

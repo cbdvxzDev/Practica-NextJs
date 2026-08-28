@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { PageTitle } from "@/components/common/PageTitle";
-import { CategoryForm } from "@/components/forms/CategoryForm";
+import { PageTitle } from "@/compents/common/PageTitle";
+import { CategoryForm } from "@/compents/forms/CategoryForm";
 
 export default function AdminCreateCategoryPage() {
   return (
@@ -15,7 +15,7 @@ export default function AdminCreateCategoryPage() {
         </Link>
         <PageTitle 
           title="Nueva Categoría" 
-          subtitle="Define una nueva colección comercial, su identificador único y su identidad visual." 
+          description="Define una nueva colección comercial, su identificador único y su identidad visual." 
         />
       </div>
 

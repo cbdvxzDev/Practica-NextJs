@@ -15,8 +15,11 @@ export default function CartPage() {
   const removeItem = useCartStore((state) => state.removeItem);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
 
-  const [isMounted, setIsMounted] = React.useState(false);
-  React.useEffect(() => setIsMounted(true), []);
+  const isMounted = React.useSyncExternalStore(
+    () => () => undefined,
+    () => true,
+    () => false
+  );
 
   if (!isMounted) return null;
 
@@ -53,6 +56,7 @@ export default function CartPage() {
               name={item.name}
               price={item.price}
               image={item.image || "/images/placeholder.jpg"}
+              slug={item.slug}
               quantity={item.quantity}
               stock={item.stock ?? 99}
               onQuantityChange={(id, newQuantity) => updateQuantity(id, newQuantity)}

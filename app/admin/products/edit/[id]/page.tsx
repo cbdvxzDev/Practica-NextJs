@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PageTitle } from "@/components/common/PageTitle";
-import { ProductForm } from "@/components/forms/ProductForm";
+import { PageTitle } from "@/compents/common/PageTitle";
+import { ProductForm } from "@/compents/forms/ProductForm";
 
 interface EditProductPageProps {
   params: Promise<{
@@ -10,7 +10,18 @@ interface EditProductPageProps {
 }
 
 // Datos mockeados para simular la consulta en el servidor (reemplazar por llamadas a tu service)
-const MOCK_PRODUCTS_DB: Record<string, any> = {
+interface AdminProduct {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  price: number;
+  category: string;
+  stock: number;
+  isActive: boolean;
+}
+
+const MOCK_PRODUCTS_DB: Record<string, AdminProduct> = {
   "1": {
     id: "1",
     slug: "chaqueta-minimalista-lana",
@@ -44,7 +55,7 @@ export default async function AdminEditProductPage({ params }: EditProductPagePr
         </Link>
         <PageTitle 
           title="Editar Producto" 
-          subtitle={`Modificando la información técnica y comercial de: ${product.title}`} 
+          description={`Modificando la información técnica y comercial de: ${product.title}`} 
         />
       </div>
 

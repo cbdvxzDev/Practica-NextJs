@@ -6,6 +6,8 @@ import { cn } from "../../lib/utils";
 export interface PageTitleProps {
   title: string;
   description?: string;
+  /** Backwards-compatible alias used by existing storefront pages. */
+  subtitle?: string;
   actions?: React.ReactNode;
   className?: string;
 }
@@ -13,6 +15,7 @@ export interface PageTitleProps {
 export function PageTitle({
   title,
   description,
+  subtitle,
   actions,
   className,
 }: PageTitleProps) {
@@ -22,9 +25,9 @@ export function PageTitle({
         <h1 className="text-lg font-bold text-brand-dark tracking-tight">
           {title}
         </h1>
-        {description && (
+        {(description || subtitle) && (
           <p className="text-xs text-brand-muted">
-            {description}
+            {description || subtitle}
           </p>
         )}
       </div>
