@@ -17,12 +17,30 @@ export interface ProductBuyBoxProps {
 export function ProductBuyBox({ id, slug, name, price, image, stock }: ProductBuyBoxProps) {
   const [quantity, setQuantity] = React.useState(1);
   const [justAdded, setJustAdded] = React.useState(false);
+  const timeoutRef = React.useRef<number | null>(null);
   const addItem = useCartStore((state) => state.addItem);
 
+  React.useEffect(() => {
+    return () => {
+      if (timeoutRef.current !== null) {
+        window.clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
   const handleAddToCart = () => {
-    addItem({ id, slug, name, price, image, stock }, quantity);
+    const normalizedQuantity = Math.max(1, Number(quantity) || 1);
+
+    addItem({ id, slug, name, price, image, stock }, normalizedQuantity);
     setJustAdded(true);
-    setTimeout(() => setJustAdded(false), 1500);
+
+    if (timeoutRef.current !== null) {
+      window.clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = window.setTimeout(() => {
+      setJustAdded(false);
+    }, 1500);
   };
 
   return (
