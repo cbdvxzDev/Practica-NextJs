@@ -17,10 +17,10 @@ export default function LoginPage() {
             Bienvenido de nuevo
           </h1>
           <p className="text-sm text-brand-muted">
-            Ingresa tus credenciales para acceder a tu cuenta personal.
+            Ingresa tus credenciales. Te llevaremos automáticamente a tu espacio de cliente o administración.
           </p>
         </div>
-        <p className="text-center text-[11px] text-brand-muted">Demo cliente: cliente@nova.com · Cliente123!</p>
+        <p className="text-center text-[11px] text-brand-muted">Cliente: cliente@nova.com · Admin: admin@nova.com</p>
 
         {/* Componente de Formulario Cliente Reutilizable */}
         <LoginForm />

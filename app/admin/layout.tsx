@@ -1,6 +1,3 @@
-"use client";
-
-import { usePathname } from "next/navigation";
 import { SidebarAdmin } from "../compents/admin/SidebarAdmin";
 import { AdminGuard } from "../compents/admin/AdminGuard";
 
@@ -9,12 +6,6 @@ interface AdminLayoutProps {
 }
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
-  const pathname = usePathname();
-
-  if (pathname === "/admin/login") {
-    return <AdminGuard>{children}</AdminGuard>;
-  }
-
   return (
     <AdminGuard>
     <div className="flex h-screen w-screen overflow-hidden bg-brand-light">
