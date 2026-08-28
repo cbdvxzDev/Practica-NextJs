@@ -2,6 +2,7 @@ import { ProductCard } from "./ProductCard";
 
 interface Product {
   id: string;
+  slug?: string;
   title: string;
   price: number;
   images: string[];
@@ -19,6 +20,7 @@ export function ProductGrid({ products }: ProductGridProps) {
         <ProductCard
           key={item.id}
           id={item.id}
+          slug={item.slug}
           name={item.title}
           price={item.price}
           image={item.images[0]}
