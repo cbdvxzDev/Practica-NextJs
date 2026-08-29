@@ -28,11 +28,19 @@ export function SidebarAdmin({ className }: SidebarAdminProps) {
         </svg>
       ),
     },
-    // Puedes añadir más elementos aquí
+    { label: "Inventario", href: "/admin/inventory", icon: <span aria-hidden="true">▦</span> },
+    { label: "Productos", href: "/admin/products", icon: <span aria-hidden="true">◇</span> },
+    { label: "Categorías", href: "/admin/categories", icon: <span aria-hidden="true">◫</span> },
+    { label: "Órdenes", href: "/admin/orders", icon: <span aria-hidden="true">↗</span> },
+    { label: "Usuarios", href: "/admin/users", icon: <span aria-hidden="true">◎</span> },
   ];
 
   return (
-    <nav className={cn("flex flex-col gap-1", className)}>
+    <nav className={cn("hidden shrink-0 border-r border-border bg-white p-2 sm:w-20 md:flex md:w-60 md:flex-col md:p-4", className)}>
+      <div className="mb-6 hidden px-3 text-xs font-bold uppercase tracking-widest text-brand-dark md:block">
+        Gestión
+      </div>
+      <div className="flex flex-col gap-1">
       {adminNavigation.map((item) => {
         const isActive = pathname === item.href;
         return (
@@ -40,17 +48,18 @@ export function SidebarAdmin({ className }: SidebarAdminProps) {
             key={item.href}
             href={item.href}
             className={cn(
-              "flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors rounded-lg",
+              "flex items-center justify-center gap-3 rounded-lg px-2 py-3 text-sm font-medium transition-colors md:justify-start md:px-4",
               isActive 
                 ? "bg-blue-50 text-blue-700" 
                 : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"
             )}
           >
-            {item.icon}
-            {item.label}
+            <span className="text-base leading-none">{item.icon}</span>
+            <span className="hidden md:inline">{item.label}</span>
           </Link>
         );
       })}
+      </div>
     </nav>
   );
 }

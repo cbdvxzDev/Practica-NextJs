@@ -1,33 +1,6 @@
 import Link from "next/link";
 import { PageTitle } from "../../compents/common/PageTitle";
-
-// Estructura de datos simulada alineada con tu directorio data/categories.json
-const MOCK_CATEGORIES = [
-  {
-    id: "cat-1",
-    name: "Prendas de Abrigo",
-    slug: "abrigo",
-    description: "Chaquetas, abrigos y camisas pesadas confeccionadas para durar.",
-    image: "/images/categories/abrigo.jpg",
-    count: 14,
-  },
-  {
-    id: "cat-2",
-    name: "Básicos Esenciales",
-    slug: "basicos",
-    description: "Camisetas, sudaderas y prendas interiores de algodón orgánico superior.",
-    image: "/images/categories/basicos.jpg",
-    count: 22,
-  },
-  {
-    id: "cat-3",
-    name: "Accesorios",
-    slug: "accesorios",
-    description: "Complementos minimalistas diseñados bajo una estética funcional.",
-    image: "/images/categories/accesorios.jpg",
-    count: 9,
-  },
-];
+import { CATEGORIES, PRODUCTS } from "../../data/catalog";
 
 export default async function CategoriesPage() {
   // En el futuro: const categories = await categoryService.getAll();
@@ -44,7 +17,7 @@ export default async function CategoriesPage() {
 
       {/* Grid Uniforme de Categorías */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {MOCK_CATEGORIES.map((category) => (
+        {CATEGORIES.map((category) => (
           <Link 
             key={category.id} 
             href={`/categories/${category.slug}`}
@@ -70,7 +43,7 @@ export default async function CategoriesPage() {
                   {category.name}
                 </h3>
                 <span className="text-xs font-medium text-brand-muted bg-brand-light px-2 py-1 rounded">
-                  {category.count} piezas
+                  {PRODUCTS.filter((product) => product.category.slug === category.slug).length} productos
                 </span>
               </div>
               <p className="text-sm text-brand-muted line-clamp-2 leading-relaxed">

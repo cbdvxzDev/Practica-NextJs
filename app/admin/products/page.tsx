@@ -1,86 +1,86 @@
-import { ProductGrid } from "../../compents/product/ProductGrid";
-import { ProductFilters } from "../../compents/filters/ProductFilters";
-import { ProductSort } from "../../compents/filters/ProductSort";
-import { ProductPagination } from "../../compents/filters/ProductPagination";
-import { PageTitle } from "../../compents/common/PageTitle";
+"use client";
 
-const CATEGORIES = [
-  { id: "abrigo", label: "Prendas de Abrigo" },
-  { id: "basicos", label: "Básicos" },
-];
+import * as React from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Button } from "@/compents/ui/Button";
+import { PageTitle } from "@/compents/common/PageTitle";
+import { ProductTable, type Product } from "@/compents/admin/ProductTable";
+import { useCatalogStore } from "@/store/catalog.store";
 
-interface ProductsPageProps {
-  searchParams: Promise<{
-    category?: string;
-    sort?: string;
-    minPrice?: string;
-    maxPrice?: string;
-    page?: string;
-    q?: string;
-  }>;
-}
+export default function AdminProductsPage() {
+  const router = useRouter();
+  const products = useCatalogStore((state) => state.products);
+  const categories = useCatalogStore((state) => state.categories);
+  const deleteProduct = useCatalogStore((state) => state.deleteProduct);
+  const [hydrated, setHydrated] = React.useState(false);
+  const [categoryFilter, setCategoryFilter] = React.useState("");
 
-const MOCK_PRODUCTS = [
-  {
-    id: "1",
-    slug: "chaqueta-minimalista-lana",
-    title: "Chaqueta Minimalista en Lana",
-    price: 189000,
-    images: ["/images/products/chaqueta-1.jpg"],
-    category: { id: "cat-1", name: "Prendas de Abrigo", slug: "abrigo" },
-    stock: 5,
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "2",
-    slug: "camiseta-algodon-organico",
-    title: "Camiseta Esencial Algodón Orgánico",
-    price: 45000,
-    compareAtPrice: 60000,
-    images: ["/images/products/camiseta-1.jpg"],
-    category: { id: "cat-2", name: "Básicos", slug: "basicos" },
-    stock: 12,
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
+  React.useEffect(() => setHydrated(true), []);
 
-export default async function ProductsPage({ searchParams }: ProductsPageProps) {
-  const filters = await searchParams;
+  const filteredProducts = categoryFilter
+    ? products.filter((product) => product.category.slug === categoryFilter)
+    : products;
 
-  const currentPage = Number(filters.page) || 1;
-  const totalPages = 5;
+  const tableRows: Product[] = filteredProducts.map((product) => ({
+    id: product.id,
+    name: product.title,
+    category: product.category.name,
+    price: product.price,
+    stock: product.stock,
+    status: product.stock > 0 && product.isActive ? "activo" : "agotado",
+  }));
+
+  const handleDelete = (id: string) => {
+    const product = products.find((item) => item.id === id);
+    if (!product) return;
+    if (window.confirm(`¿Eliminar "${product.title}" del catálogo? Esta acción no se puede deshacer.`)) {
+      deleteProduct(id);
+    }
+  };
 
   return (
     <div className="space-y-8">
-      <div className="border-b border-border pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-5">
         <PageTitle
-          title="Catálogo Completo"
-          subtitle="Explora nuestra colección de piezas atemporales y esenciales."
+          title="Catálogo de Productos"
+          description="Administra las piezas activas del catálogo, precios y disponibilidad."
         />
+        <Link href="/admin/products/create">
+          <Button variant="primary" className="h-10 text-sm">+ Nuevo producto</Button>
+        </Link>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-        <aside className="hidden lg:flex flex-col space-y-8 sticky top-24 p-1">
-          <ProductFilters categories={CATEGORIES} />
-        </aside>
-
-        <div className="lg:col-span-3 space-y-10">
-          <div className="flex items-center justify-between text-sm text-brand-muted border-b border-border/40 pb-4">
-            <p>Mostrando {MOCK_PRODUCTS.length} productos</p>
-            <ProductSort />
-          </div>
-
-          <ProductGrid products={MOCK_PRODUCTS} />
-
-          <div className="pt-6 border-t border-border/60 flex justify-center">
-            <ProductPagination currentPage={currentPage} totalPages={totalPages} />
-          </div>
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-white border border-border/60 rounded-card p-4 shadow-subtle">
+        <div className="flex items-center space-x-2 text-sm">
+          <span className="text-brand-muted">Filtrar por categoría:</span>
+          <select
+            value={categoryFilter}
+            onChange={(event) => setCategoryFilter(event.target.value)}
+            className="h-8 px-2 text-xs rounded-button border border-border bg-white text-brand-dark focus:outline-none"
+          >
+            <option value="">Todas las categorías</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.slug}>{category.name}</option>
+            ))}
+          </select>
+        </div>
+        <div className="text-xs text-brand-muted">
+          Mostrando <span className="font-medium text-brand-dark">{hydrated ? tableRows.length : 0}</span> productos
         </div>
       </div>
+
+      {!hydrated ? (
+        <div className="p-10 text-center text-sm text-brand-muted bg-white border border-border/60 rounded-card">
+          Cargando…
+        </div>
+      ) : (
+        <ProductTable
+          products={tableRows}
+          onEdit={(id) => router.push(`/admin/products/edit/${id}`)}
+          onDelete={handleDelete}
+        />
+      )}
     </div>
   );
 }

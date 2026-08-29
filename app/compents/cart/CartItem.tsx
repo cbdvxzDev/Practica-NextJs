@@ -9,6 +9,7 @@ export interface CartItemProps {
   name: string;
   price: number;
   image: string;
+  slug?: string;
   size?: string;
   color?: string;
   quantity: number;
@@ -23,6 +24,7 @@ export function CartItem({
   name,
   price,
   image,
+  slug,
   size,
   color,
   quantity,
@@ -68,7 +70,7 @@ export function CartItem({
           <div className="flex justify-between gap-2">
             {/* TÍTULO CON ENLACE */}
             <h3 className="text-xs font-medium text-brand-dark tracking-tight line-clamp-1">
-              <Link href={`/product/${id}`} className="hover:opacity-80 transition-opacity">
+              <Link href={`/products/${slug ?? id}`} className="hover:opacity-80 transition-opacity">
                 {name}
               </Link>
             </h3>

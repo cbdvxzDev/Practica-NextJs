@@ -20,16 +20,16 @@ export interface InventoryTableProps {
 
 export function InventoryTable({ items, onUpdateStock, className }: InventoryTableProps) {
   return (
-    <div className={cn("w-full border border-border/40 rounded-card overflow-hidden bg-white", className)}>
+    <div className={cn("w-full rounded-card border border-border/40 bg-white", className)}>
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs">
+        <table className="min-w-[680px] w-full table-fixed text-left text-xs">
           <thead className="bg-neutral-50/50 text-brand-muted uppercase border-b border-border/30">
             <tr>
-              <th className="px-6 py-4 font-semibold tracking-wider">Producto / SKU</th>
-              <th className="px-6 py-4 font-semibold tracking-wider text-center">Nivel Actual</th>
-              <th className="px-6 py-4 font-semibold tracking-wider text-center">Estado de Alerta</th>
-              <th className="px-6 py-4 font-semibold tracking-wider">Última Actualización</th>
-              <th className="px-6 py-4 font-semibold tracking-wider text-right">Acción</th>
+              <th className="w-[34%] px-4 py-4 font-semibold tracking-wider sm:px-6">Producto / SKU</th>
+              <th className="w-[15%] px-4 py-4 font-semibold tracking-wider text-center sm:px-6">Nivel actual</th>
+              <th className="w-[18%] px-4 py-4 font-semibold tracking-wider text-center sm:px-6">Alerta</th>
+              <th className="w-[20%] px-4 py-4 font-semibold tracking-wider sm:px-6">Actualización</th>
+              <th className="w-[13%] px-4 py-4 font-semibold tracking-wider text-right sm:px-6">Acción</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/30">

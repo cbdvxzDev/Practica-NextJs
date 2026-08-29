@@ -10,16 +10,17 @@ export default function LoginPage() {
         {/* Encabezado e Identidad Visual de la pantalla */}
         <div className="text-center space-y-2">
           {/* Espacio reservado para tu logo minimalista */}
-          <div className="mx-auto h-8 w-auto flex items-center justify-center font-semibold tracking-wider text-xl uppercase">
-            Plataforma
+           <div className="mx-auto flex h-8 w-auto items-center justify-center text-xl font-semibold uppercase tracking-wider">
+            NOVA
           </div>
           <h1 className="text-2xl font-medium tracking-tight text-brand-dark">
             Bienvenido de nuevo
           </h1>
           <p className="text-sm text-brand-muted">
-            Ingresa tus credenciales para acceder a tu cuenta personal.
+            Ingresa tus credenciales. Te llevaremos automáticamente a tu espacio de cliente o administración.
           </p>
         </div>
+        <p className="text-center text-[11px] text-brand-muted">Cliente: cliente@nova.com · Admin: admin@nova.com</p>
 
         {/* Componente de Formulario Cliente Reutilizable */}
         <LoginForm />

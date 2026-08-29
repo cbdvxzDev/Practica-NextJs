@@ -3,6 +3,7 @@ import { cn } from "../../lib/utils";
 
 export interface ProductCardProps {
   id: string;
+  slug?: string;
   name: string;
   price: number;
   image: string;
@@ -10,7 +11,9 @@ export interface ProductCardProps {
   className?: string;
 }
 
-export function ProductCard({ id, name, price, image, category, className }: ProductCardProps) {
+export function ProductCard({ id, slug, name, price, image, category, className }: ProductCardProps) {
+  const productPath = `/products/${slug ?? id}`;
+
   return (
     <article className={cn("group relative flex flex-col overflow-hidden bg-white", className)}>
       <div className="aspect-[3/4] w-full overflow-hidden rounded-lg bg-neutral-100 border border-border/30">
@@ -26,7 +29,7 @@ export function ProductCard({ id, name, price, image, category, className }: Pro
           {category}
         </span>
         <h3 className="text-sm font-medium text-brand-dark tracking-tight">
-          <Link href={`/product/${id}`}>
+          <Link href={productPath}>
             <span className="absolute inset-0 z-10" />
             {name}
           </Link>

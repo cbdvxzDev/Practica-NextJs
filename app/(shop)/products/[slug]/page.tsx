@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { ProductGallery } from "../../../compents/product/ProductGallery";
 import { ProductBuyBox } from "../../../compents/product/ProductBuyBox";
 import { ProductPrice } from "../../../compents/product/ProductPrice";
+import { PRODUCTS } from "../../../data/catalog";
 
 interface ProductPageProps {
   params: Promise<{
@@ -9,27 +10,9 @@ interface ProductPageProps {
   }>;
 }
 
-const MOCK_PRODUCTS_DB: Record<string, any> = {
-  "chaqueta-minimalista-lana": {
-    id: "1",
-    slug: "chaqueta-minimalista-lana",
-    title: "Chaqueta Minimalista en Lana",
-    description: "Confeccionada con lana de origen responsable, esta chaqueta presenta un corte estructurado contemporáneo, cierre frontal oculto y bolsillos laterales discretos. Una pieza de transición ideal diseñada para durar temporadas completas.",
-    price: 189000,
-    images: [
-      "/images/products/chaqueta-1.jpg",
-      "/images/products/chaqueta-1-back.jpg",
-      "/images/products/chaqueta-1-detail.jpg"
-    ],
-    category: { id: "cat-1", name: "Prendas de Abrigo", slug: "abrigo" },
-    stock: 5,
-    isActive: true,
-  },
-};
-
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = MOCK_PRODUCTS_DB[slug];
+  const product = PRODUCTS.find((item) => item.slug === slug);
 
   if (!product || !product.isActive) {
     notFound();
@@ -61,6 +44,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <div className="pt-2">
           <ProductBuyBox
             id={product.id}
+            slug={product.slug}
             name={product.title}
             price={product.price}
             image={product.images[0]}

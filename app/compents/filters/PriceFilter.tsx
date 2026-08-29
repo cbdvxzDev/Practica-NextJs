@@ -53,13 +53,13 @@ export function PriceFilter({
   };
 
   return (
-    <div className={cn("w-full max-w-xs space-y-4 bg-white p-4 border border-border/40 rounded-card", className)}>
+    <div className={cn("w-full space-y-5 rounded-card border border-border/40 bg-white p-5 sm:p-4", className)}>
       <h3 className="text-xs font-semibold uppercase tracking-wider text-brand-dark">
         Filtrar por Precio
       </h3>
 
       {/* 1. BOTONES DE RANGOS PREESTABLECIDOS RAPIDOS */}
-      <div className="flex flex-wrap gap-1.5">
+      <div className="grid grid-cols-2 gap-2">
         {PRESET_RANGES.map((preset) => {
           const isPresetActive = 
             (minPrice === "" && preset.min === 0 || minPrice === preset.min.toString()) &&
@@ -71,7 +71,7 @@ export function PriceFilter({
               type="button"
               onClick={() => handlePresetClick(preset.min, preset.max)}
               className={cn(
-                "px-2.5 py-1 text-[11px] font-medium rounded-button border transition-all whitespace-nowrap",
+                "min-h-9 px-2 text-[11px] font-medium rounded-button border transition-all whitespace-nowrap",
                 isPresetActive
                   ? "border-brand-dark bg-brand-dark text-white font-semibold"
                   : "border-border/50 text-brand-muted hover:text-brand-dark hover:bg-brand-light"
@@ -84,8 +84,8 @@ export function PriceFilter({
       </div>
 
       {/* 2. CAMPOS DE RANGO MANUALES */}
-      <form onSubmit={handleApply} className="space-y-3 pt-2 border-t border-border/20">
-        <div className="grid grid-cols-2 gap-2 items-center">
+      <form onSubmit={handleApply} className="space-y-4 border-t border-border/20 pt-4">
+        <div className="grid grid-cols-1 items-center gap-3 sm:grid-cols-2">
           <div className="space-y-1">
             <label htmlFor="min-price" className="text-[10px] uppercase font-semibold text-brand-muted">Mínimo</label>
             <div className="relative flex items-center">
@@ -97,7 +97,7 @@ export function PriceFilter({
                 placeholder="0"
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
-                className="h-8 w-full pl-6 pr-2 text-xs border border-border/60 rounded-button bg-white focus:outline-none focus:ring-1 focus:ring-brand-dark text-brand-dark"
+                className="h-10 w-full rounded-button border border-border/60 bg-white pl-6 pr-2 text-sm text-brand-dark focus:outline-none focus:ring-1 focus:ring-brand-dark"
               />
             </div>
           </div>
@@ -113,7 +113,7 @@ export function PriceFilter({
                 placeholder="Max"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
-                className="h-8 w-full pl-6 pr-2 text-xs border border-border/60 rounded-button bg-white focus:outline-none focus:ring-1 focus:ring-brand-dark text-brand-dark"
+                className="h-10 w-full rounded-button border border-border/60 bg-white pl-6 pr-2 text-sm text-brand-dark focus:outline-none focus:ring-1 focus:ring-brand-dark"
               />
             </div>
           </div>
@@ -121,7 +121,7 @@ export function PriceFilter({
 
         <button
           type="submit"
-          className="w-full h-8 bg-neutral-900 text-white rounded-button text-[11px] font-semibold uppercase tracking-wider hover:bg-neutral-800 transition-colors focus:outline-none shadow-subtle"
+          className="h-10 w-full rounded-button bg-neutral-900 text-[11px] font-semibold uppercase tracking-wider text-white shadow-subtle transition-colors hover:bg-neutral-800 focus:outline-none"
         >
           Aplicar rango
         </button>

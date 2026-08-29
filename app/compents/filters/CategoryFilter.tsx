@@ -33,7 +33,7 @@ export function CategoryFilters({
     <div 
       className={cn(
         // Contenedor con scroll horizontal fluido en móvil y fijo/alineado en escritorio
-        "w-full overflow-x-auto no-scrollbar flex items-center gap-2 pb-2 md:pb-0 scroll-smooth",
+        "flex w-full flex-wrap items-center gap-2 pb-1",
         className
       )}
     >
@@ -47,7 +47,7 @@ export function CategoryFilters({
             onClick={() => onSelectCategory(category.id)}
             className={cn(
               // Estilizado minimalista en alta/baja: botones compactos de altura reducida
-              "h-8 px-4 text-xs font-medium rounded-button transition-all duration-200 whitespace-nowrap focus:outline-none",
+              "h-10 flex-1 px-3 text-xs font-medium rounded-button transition-all duration-200 whitespace-nowrap focus:outline-none sm:flex-none sm:px-4",
               isActive
                 ? "bg-brand-dark text-white font-semibold shadow-subtle"
                 : "bg-neutral-50 text-brand-muted border border-border/40 hover:text-brand-dark hover:bg-brand-light"

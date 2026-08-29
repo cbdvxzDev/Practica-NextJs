@@ -1,32 +1,41 @@
+"use client";
+
+import * as React from "react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { PageTitle } from "@/components/common/PageTitle";
-import { CategoryForm } from "@/components/forms/CategoryForm";
+import { useRouter, useParams } from "next/navigation";
+import { PageTitle } from "@/compents/common/PageTitle";
+import { CategoryForm, type CategoryFormData } from "@/compents/forms/CategoryForm";
+import { useCatalogStore } from "@/store/catalog.store";
 
-interface EditCategoryPageProps {
-  params: Promise<{
-    id: string;
-  }>;
-}
+export default function AdminEditCategoryPage() {
+  const router = useRouter();
+  const params = useParams<{ id: string }>();
+  const categories = useCatalogStore((state) => state.categories);
+  const updateCategory = useCatalogStore((state) => state.updateCategory);
+  const [hydrated, setHydrated] = React.useState(false);
 
-// Base de datos simulada para la resolución en el servidor
-const MOCK_CATEGORIES_DB: Record<string, any> = {
-  "cat-1": {
-    id: "cat-1",
-    name: "Prendas de Abrigo",
-    slug: "abrigo",
-    description: "Chaquetas, abrigos y camisas pesadas diseñadas para el aislamiento térmico.",
-    image: "/images/categories/abrigo.jpg"
-  },
-};
+  React.useEffect(() => setHydrated(true), []);
 
-export default async function AdminEditCategoryPage({ params }: EditCategoryPageProps) {
-  const { id } = await params;
-  const category = MOCK_CATEGORIES_DB[id];
+  const category = categories.find((item) => item.id === params.id);
 
-  // Si el ID solicitado no existe, disparamos el 404 nativo de Next.js
+  const handleSubmit = (data: CategoryFormData) => {
+    updateCategory(params.id, data);
+    router.push("/admin/categories");
+  };
+
+  if (!hydrated) {
+    return <div className="py-24 text-center text-sm text-brand-muted">Cargando…</div>;
+  }
+
   if (!category) {
-    notFound();
+    return (
+      <div className="space-y-6 max-w-3xl mx-auto text-center py-16">
+        <PageTitle title="Categoría no encontrada" description="La categoría que intentas editar no existe o fue eliminada." />
+        <Link href="/admin/categories" className="text-xs font-medium text-brand-dark underline underline-offset-4">
+          ← Volver a categorías
+        </Link>
+      </div>
+    );
   }
 
   return (
@@ -41,14 +50,14 @@ export default async function AdminEditCategoryPage({ params }: EditCategoryPage
         </Link>
         <PageTitle 
           title="Editar Categoría" 
-          subtitle={`Modificando los metadatos y la descripción de la colección: ${category.name}`} 
+          description={`Modificando los metadatos y la descripción de la colección: ${category.name}`} 
         />
       </div>
 
       {/* CONTENEDOR DEL FORMULARIO CON DATOS INICIALES */}
       <section className="pt-2">
         {/* Reutilizamos el formulario pasándole los datos existentes */}
-        <CategoryForm initialData={category} isEdit={true} />
+        <CategoryForm initialData={category} isEdit onSubmit={handleSubmit} />
       </section>
     </div>
   );

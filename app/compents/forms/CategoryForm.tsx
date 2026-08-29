@@ -12,13 +12,14 @@ export interface CategoryFormData {
 
 export interface CategoryFormProps {
   initialData?: Partial<CategoryFormData>;
-  onSubmit: (data: CategoryFormData) => void;
+  onSubmit?: (data: CategoryFormData) => void;
+  isEdit?: boolean;
   className?: string;
 }
 
 export function CategoryForm({
   initialData,
-  onSubmit,
+  onSubmit = () => undefined,
   className,
 }: CategoryFormProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false);

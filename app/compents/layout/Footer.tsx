@@ -2,15 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 
 const FOOTER_SECTIONS = [
   {
     title: "Colecciones",
     links: [
       { href: "/shop", label: "Ver todo el catálogo" },
-      { href: "/categories/abrigo", label: "Prendas de Abrigo" },
-      { href: "/categories/basicos", label: "Básicos Esenciales" },
+      { href: "/categories/moda", label: "Moda" },
+      { href: "/categories/tecnologia", label: "Tecnología" },
     ],
   },
   {
@@ -18,6 +17,7 @@ const FOOTER_SECTIONS = [
     links: [
       { href: "/faq", label: "Preguntas frecuentes" },
       { href: "/shipping", label: "Envíos y devoluciones" },
+      { href: "/track-order", label: "Rastrear mi pedido" },
       { href: "/contact", label: "Contacto" },
     ],
   },
@@ -49,10 +49,10 @@ export function Footer() {
               href="/" 
               className="text-base font-semibold tracking-wider uppercase text-brand-dark transition-opacity hover:opacity-80"
             >
-              Esencial
+              NOVA
             </Link>
             <p className="text-xs text-brand-muted max-w-xs leading-relaxed">
-              Diseño atemporal, minimalismo funcional y piezas confeccionadas de forma consciente y responsable.
+              Moda, belleza, accesorios y tecnología seleccionados para hacer tu día más fácil.
             </p>
           </div>
 

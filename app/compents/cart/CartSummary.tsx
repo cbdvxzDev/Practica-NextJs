@@ -14,7 +14,7 @@ export interface CartSummaryProps {
 
 export function CartSummary({
   subtotal,
-  shippingCost = 0,
+  shippingCost = 12000,
   freeShippingThreshold = 200000, // Envío gratis a partir de $200.000 COP
   onCheckout,
   className,
@@ -28,7 +28,7 @@ export function CartSummary({
 
   // Cálculo para la barra de progreso de envío gratis
   const progressToFreeShipping = Math.min((subtotal / freeShippingThreshold) * 100, 100);
-  const amountNeededForFreeShipping = freeShippingThreshold - subtotal;
+  const amountNeededForFreeShipping = Math.max(0, freeShippingThreshold - subtotal);
 
   const handleCheckout = () => {
     if (!onCheckout) return;
