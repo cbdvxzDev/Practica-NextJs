@@ -7,6 +7,11 @@ export interface AuthUser {
   role: "admin" | "customer";
 }
 
+export interface AdminAuthUser extends AuthUser {
+  createdAt: string;
+  suspended: boolean;
+}
+
 export interface AuthResponse {
     user: AuthUser;
     token: string;
@@ -14,12 +19,14 @@ export interface AuthResponse {
 
 interface StoredUser extends AuthUser {
   password: string;
+  createdAt?: string;
+  suspended?: boolean;
 }
 
 const USERS_KEY = "nova-users";
 const defaultUsers: StoredUser[] = [
-  { id: "admin-1", name: "Administrador NOVA", email: "admin@nova.com", password: "Admin123!", role: "admin" },
-  { id: "customer-1", name: "Cliente NOVA", email: "cliente@nova.com", password: "Cliente123!", role: "customer" },
+  { id: "admin-1", name: "Administrador NOVA", email: "admin@nova.com", password: "Admin123!", role: "admin", createdAt: new Date().toISOString(), suspended: false },
+  { id: "customer-1", name: "Cliente NOVA", email: "cliente@nova.com", password: "Cliente123!", role: "customer", createdAt: new Date().toISOString(), suspended: false },
 ];
 
 const toAuthUser = (user: StoredUser): AuthUser => ({
@@ -27,6 +34,12 @@ const toAuthUser = (user: StoredUser): AuthUser => ({
   email: user.email,
   name: user.name,
   role: user.role,
+});
+
+const toAdminAuthUser = (user: StoredUser): AdminAuthUser => ({
+  ...toAuthUser(user),
+  createdAt: user.createdAt ?? new Date().toISOString(),
+  suspended: user.suspended ?? false,
 });
   
   export const AuthService = {
@@ -37,6 +50,7 @@ const toAuthUser = (user: StoredUser): AuthUser => ({
       const users = this.getUsers();
       const user = users.find((item) => item.email.toLowerCase() === email.trim().toLowerCase() && item.password === password);
       if (!user) throw new Error("Correo o contraseña incorrectos.");
+      if (user.suspended) throw new Error("Esta cuenta ha sido suspendida. Contacta a soporte.");
       const data = { user: toAuthUser(user), token: `nova-session-${user.id}-${Date.now()}` };
       this.setToken(data.token);
       return data;
@@ -47,7 +61,7 @@ const toAuthUser = (user: StoredUser): AuthUser => ({
       if (users.some((item) => item.email.toLowerCase() === email.trim().toLowerCase())) {
         throw new Error("Ya existe una cuenta con este correo.");
       }
-      const user: StoredUser = { id: `customer-${Date.now()}`, name: name.trim(), email: email.trim().toLowerCase(), password, role: "customer" };
+      const user: StoredUser = { id: `customer-${Date.now()}`, name: name.trim(), email: email.trim().toLowerCase(), password, role: "customer", createdAt: new Date().toISOString(), suspended: false };
       this.saveUsers([...users, user]);
       const data = { user: toAuthUser(user), token: `nova-session-${user.id}` };
       this.setToken(data.token);
@@ -114,5 +128,44 @@ const toAuthUser = (user: StoredUser): AuthUser => ({
       if (!updatedUser) throw new Error("No se encontró la cuenta a actualizar.");
       this.saveUsers(nextUsers);
       return toAuthUser(updatedUser);
+    },
+
+    /**
+     * Devuelve todos los usuarios registrados con metadatos para el panel admin.
+     */
+    getAdminUsers(): AdminAuthUser[] {
+      return this.getUsers().map(toAdminAuthUser);
+    },
+
+    /**
+     * Alterna el estado de suspensión de una cuenta (bloquea/permite el login).
+     */
+    toggleSuspend(id: string): AdminAuthUser {
+      const users = this.getUsers();
+      let updatedUser: StoredUser | undefined;
+      const nextUsers = users.map((item) => {
+        if (item.id !== id) return item;
+        updatedUser = { ...item, suspended: !item.suspended };
+        return updatedUser;
+      });
+      if (!updatedUser) throw new Error("No se encontró la cuenta.");
+      this.saveUsers(nextUsers);
+      return toAdminAuthUser(updatedUser);
+    },
+
+    /**
+     * Cambia el rol de una cuenta entre administrador y cliente.
+     */
+    setRole(id: string, role: "admin" | "customer"): AdminAuthUser {
+      const users = this.getUsers();
+      let updatedUser: StoredUser | undefined;
+      const nextUsers = users.map((item) => {
+        if (item.id !== id) return item;
+        updatedUser = { ...item, role };
+        return updatedUser;
+      });
+      if (!updatedUser) throw new Error("No se encontró la cuenta.");
+      this.saveUsers(nextUsers);
+      return toAdminAuthUser(updatedUser);
     },
   };

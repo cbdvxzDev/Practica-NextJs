@@ -14,6 +14,7 @@ export interface ProductFormData {
   description: string;
   images: string[];
   sizes: string[];
+  imageUrl: string;
 }
 
 export interface ProductFormProps {
@@ -44,6 +45,7 @@ export function ProductForm({
     description: initialData?.description || "",
     images: initialData?.images || [],
     sizes: initialData?.sizes || [],
+    imageUrl: initialData?.imageUrl || initialData?.images?.[0] || "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -111,6 +113,26 @@ export function ProductForm({
             placeholder="Describe la confección, el corte y los materiales..."
             className="p-3 text-xs border border-border/60 rounded-button bg-white focus:outline-none focus:ring-1 focus:ring-brand-dark text-brand-dark resize-none leading-relaxed"
           />
+        </div>
+
+        {/* IMAGEN PRINCIPAL */}
+        <div className="flex flex-col space-y-1.5">
+          <label htmlFor="imageUrl" className="text-xs font-medium text-brand-dark">URL de imagen principal</label>
+          <input
+            id="imageUrl"
+            name="imageUrl"
+            type="url"
+            value={formData.imageUrl}
+            onChange={handleChange}
+            placeholder="https://images.unsplash.com/..."
+            className="h-10 px-3 text-xs border border-border/60 rounded-button bg-white focus:outline-none focus:ring-1 focus:ring-brand-dark text-brand-dark"
+          />
+          {formData.imageUrl && (
+            <div className="mt-1 h-32 w-24 overflow-hidden rounded-button border border-border/40 bg-neutral-50">
+              {/* Vista previa rápida de la imagen ingresada */}
+              <img src={formData.imageUrl} alt="Vista previa" className="h-full w-full object-cover" />
+            </div>
+          )}
         </div>
       </div>
 
