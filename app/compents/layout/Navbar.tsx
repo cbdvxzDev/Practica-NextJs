@@ -2,9 +2,11 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { cn } from "../../lib/utils";
 import { useCartTotalItems } from "../../store/cart.store";
+import { useAuthStore } from "../../store/auth.store";
 
 const NAV_LINKS = [
   { href: "/products", label: "Ofertas" },
@@ -15,9 +17,15 @@ const NAV_LINKS = [
 
 export function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isScrolled, setIsScrolled] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isAccountMenuOpen, setIsAccountMenuOpen] = React.useState(false);
   const totalItems = useCartTotalItems();
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const logout = useAuthStore((state) => state.logout);
+  const accountMenuRef = React.useRef<HTMLDivElement>(null);
 
   const isMounted = React.useSyncExternalStore(
     () => () => undefined,
@@ -32,6 +40,23 @@ export function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Cierra el menú de cuenta al hacer clic fuera de él.
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (accountMenuRef.current && !accountMenuRef.current.contains(event.target as Node)) {
+        setIsAccountMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+    setIsAccountMenuOpen(false);
+    router.push("/login");
+  };
 
   if (pathname?.startsWith("/admin")) return null;
 
@@ -72,12 +97,66 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center space-x-3">
-          <Link href="/track-order" className="hidden text-sm text-brand-muted transition-colors hover:text-brand-dark sm:inline-flex">
-            Rastrear pedido
-          </Link>
-          <Link href="/login" className="hidden text-sm text-brand-muted transition-colors hover:text-brand-dark sm:inline-flex">
-            Ingresar
-          </Link>
+          {isMounted && isAuthenticated && user ? (
+            <div className="relative hidden sm:block" ref={accountMenuRef}>
+              <button
+                type="button"
+                onClick={() => setIsAccountMenuOpen((open) => !open)}
+                aria-expanded={isAccountMenuOpen}
+                className="flex items-center gap-2 text-sm text-brand-muted transition-colors hover:text-brand-dark"
+              >
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-dark text-xs font-semibold text-white">
+                  {user.name.charAt(0).toUpperCase()}
+                </span>
+                <span className="max-w-[120px] truncate">{user.name.split(" ")[0]}</span>
+                <svg className={cn("h-3.5 w-3.5 transition-transform", isAccountMenuOpen && "rotate-180")} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {isAccountMenuOpen && (
+                <div className="absolute right-0 top-full mt-2 w-56 rounded-card border border-border/60 bg-white py-2 shadow-lg">
+                  <div className="border-b border-border/40 px-4 py-2">
+                    <p className="truncate text-sm font-medium text-brand-dark">{user.name}</p>
+                    <p className="truncate text-xs text-brand-muted">{user.email}</p>
+                  </div>
+                  <Link
+                    href="/profile"
+                    onClick={() => setIsAccountMenuOpen(false)}
+                    className="block px-4 py-2 text-sm text-brand-muted transition-colors hover:bg-brand-light hover:text-brand-dark"
+                  >
+                    Mi cuenta
+                  </Link>
+                  {user.role === "admin" && (
+                    <Link
+                      href="/admin/dashboard"
+                      onClick={() => setIsAccountMenuOpen(false)}
+                      className="block px-4 py-2 text-sm text-brand-muted transition-colors hover:bg-brand-light hover:text-brand-dark"
+                    >
+                      Panel de administración
+                    </Link>
+                  )}
+                  <Link
+                    href="/track-order"
+                    onClick={() => setIsAccountMenuOpen(false)}
+                    className="block px-4 py-2 text-sm text-brand-muted transition-colors hover:bg-brand-light hover:text-brand-dark"
+                  >
+                    Mis pedidos
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="block w-full border-t border-border/40 px-4 py-2 text-left text-sm text-red-600 transition-colors hover:bg-red-50"
+                  >
+                    Cerrar sesión
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link href="/login" className="hidden text-sm text-brand-muted transition-colors hover:text-brand-dark sm:inline-flex">
+              Ingresar
+            </Link>
+          )}
 
           <Link href="/cart" className="relative p-2 text-brand-dark transition-colors hover:text-brand-muted" aria-label="Ver carrito">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -111,9 +190,28 @@ export function Navbar() {
             <Link href="/track-order" className="border-t border-border/40 pt-4 text-brand-muted">
               Rastrear pedido
             </Link>
-            <Link href="/login" className="text-brand-muted">
-              Mi cuenta
-            </Link>
+            {isMounted && isAuthenticated && user ? (
+              <>
+                <div className="text-xs text-brand-muted">
+                  Hola, <span className="font-medium text-brand-dark">{user.name}</span>
+                </div>
+                <Link href="/profile" className="text-brand-muted">
+                  Mi cuenta
+                </Link>
+                {user.role === "admin" && (
+                  <Link href="/admin/dashboard" className="text-brand-muted">
+                    Panel de administración
+                  </Link>
+                )}
+                <button type="button" onClick={handleLogout} className="text-left text-red-600">
+                  Cerrar sesión
+                </button>
+              </>
+            ) : (
+              <Link href="/login" className="text-brand-muted">
+                Ingresar / Crear cuenta
+              </Link>
+            )}
           </div>
         </nav>
       )}

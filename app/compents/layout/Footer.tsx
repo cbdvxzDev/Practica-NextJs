@@ -8,8 +8,8 @@ const FOOTER_SECTIONS = [
     title: "Colecciones",
     links: [
       { href: "/shop", label: "Ver todo el catálogo" },
-      { href: "/categories/abrigo", label: "Prendas de Abrigo" },
-      { href: "/categories/basicos", label: "Básicos Esenciales" },
+      { href: "/categories/moda", label: "Moda" },
+      { href: "/categories/tecnologia", label: "Tecnología" },
     ],
   },
   {
@@ -17,6 +17,7 @@ const FOOTER_SECTIONS = [
     links: [
       { href: "/faq", label: "Preguntas frecuentes" },
       { href: "/shipping", label: "Envíos y devoluciones" },
+      { href: "/track-order", label: "Rastrear mi pedido" },
       { href: "/contact", label: "Contacto" },
     ],
   },
