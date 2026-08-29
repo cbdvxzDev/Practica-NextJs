@@ -37,6 +37,7 @@ interface OrdersState {
   addOrder: (order: NewOrderInput) => Order;
   updateStatus: (id: string, status: OrderStatus) => void;
   getOrdersByEmail: (email: string) => Order[];
+  getOrderByIdAndEmail: (id: string, email: string) => Order | undefined;
 }
 
 let orderSequence = 0;
@@ -76,6 +77,13 @@ export const useOrdersStore = create<OrdersState>()(
       getOrdersByEmail: (email) =>
         get().orders.filter(
           (order) => order.customerEmail.toLowerCase() === email.trim().toLowerCase()
+        ),
+
+      getOrderByIdAndEmail: (id, email) =>
+        get().orders.find(
+          (order) =>
+            order.id.trim().toLowerCase() === id.trim().toLowerCase() &&
+            order.customerEmail.toLowerCase() === email.trim().toLowerCase()
         ),
     }),
     {

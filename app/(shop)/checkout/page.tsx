@@ -124,9 +124,16 @@ export default function CheckoutPage() {
           enviaremos la confirmación y el seguimiento a tu correo.
         </p>
         <div className="flex flex-col gap-3 sm:flex-row">
-          <Link href="/profile"><Button variant="secondary">Ver mis pedidos</Button></Link>
+          <Link href={user ? "/profile" : "/track-order"}>
+            <Button variant="secondary">{user ? "Ver mis pedidos" : "Rastrear mi pedido"}</Button>
+          </Link>
           <Link href="/products"><Button>Seguir comprando</Button></Link>
         </div>
+        {!user && (
+          <p className="text-xs text-brand-muted">
+            Guarda tu número de pedido <span className="font-semibold text-brand-dark">{confirmedOrderId}</span> para rastrearlo cuando quieras.
+          </p>
+        )}
       </div>
     );
   }

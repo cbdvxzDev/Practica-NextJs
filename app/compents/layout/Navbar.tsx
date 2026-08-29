@@ -72,6 +72,9 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center space-x-3">
+          <Link href="/track-order" className="hidden text-sm text-brand-muted transition-colors hover:text-brand-dark sm:inline-flex">
+            Rastrear pedido
+          </Link>
           <Link href="/login" className="hidden text-sm text-brand-muted transition-colors hover:text-brand-dark sm:inline-flex">
             Ingresar
           </Link>
@@ -105,7 +108,10 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <Link href="/login" className="border-t border-border/40 pt-4 text-brand-muted">
+            <Link href="/track-order" className="border-t border-border/40 pt-4 text-brand-muted">
+              Rastrear pedido
+            </Link>
+            <Link href="/login" className="text-brand-muted">
               Mi cuenta
             </Link>
           </div>
