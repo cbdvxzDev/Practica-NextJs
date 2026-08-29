@@ -141,11 +141,48 @@ export default function CheckoutPage() {
   }
 
   const handleDeliveryChange = (field: keyof DeliveryFormValues) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDelivery((prev) => ({ ...prev, [field]: event.target.value }));
+    const rawValue = event.target.value;
+    let formattedValue = rawValue;
+
+    if (field === "phone") {
+      // Solo permite dígitos y separadores típicos de teléfono (+, espacios, guiones, paréntesis).
+      formattedValue = rawValue.replace(/[^\d\s+()-]/g, "").slice(0, 20);
+    } else if (field === "postalCode") {
+      // El código postal es solo numérico.
+      formattedValue = rawValue.replace(/\D/g, "").slice(0, 10);
+    }
+
+    setDelivery((prev) => ({ ...prev, [field]: formattedValue }));
   };
 
   const handlePaymentChange = (field: keyof PaymentFormValues) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPayment((prev) => ({ ...prev, [field]: event.target.value }));
+    const rawValue = event.target.value;
+    let formattedValue = rawValue;
+
+    if (field === "cardNumber") {
+      // Agrupa el número de tarjeta en bloques de 4 dígitos (máx. 19 dígitos).
+      formattedValue = rawValue
+        .replace(/\D/g, "")
+        .slice(0, 19)
+        .replace(/(.{4})/g, "$1 ")
+        .trim();
+    } else if (field === "expiry") {
+      // Inserta automáticamente la barra "/" después del mes (MM/AA) y corrige meses inválidos (>12) al vuelo.
+      let digits = rawValue.replace(/\D/g, "").slice(0, 4);
+      if (digits.length >= 2) {
+        const month = Number(digits.slice(0, 2));
+        if (month > 12) {
+          digits = `12${digits.slice(2)}`;
+        } else if (month === 0) {
+          digits = `01${digits.slice(2)}`;
+        }
+      }
+      formattedValue = digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
+    } else if (field === "cvv") {
+      formattedValue = rawValue.replace(/\D/g, "").slice(0, 4);
+    }
+
+    setPayment((prev) => ({ ...prev, [field]: formattedValue }));
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -313,6 +350,7 @@ export default function CheckoutPage() {
                     value={payment.cardNumber}
                     onChange={handlePaymentChange("cardNumber")}
                     aria-invalid={Boolean(paymentErrors.cardNumber)}
+                    maxLength={23}
                     className="mt-2 h-11 w-full rounded-button border border-border px-3 text-sm focus:outline-none focus:ring-1 focus:ring-brand-dark"
                   />
                   {paymentErrors.cardNumber && <span className="mt-1 block text-xs text-red-600">{paymentErrors.cardNumber}</span>}
@@ -321,10 +359,12 @@ export default function CheckoutPage() {
                   <label className="text-xs font-medium">
                     Vencimiento
                     <input
+                      inputMode="numeric"
                       placeholder="MM/AA"
                       value={payment.expiry}
                       onChange={handlePaymentChange("expiry")}
                       aria-invalid={Boolean(paymentErrors.expiry)}
+                      maxLength={5}
                       className="mt-2 h-11 w-full rounded-button border border-border px-3 text-sm focus:outline-none focus:ring-1 focus:ring-brand-dark"
                     />
                     {paymentErrors.expiry && <span className="mt-1 block text-xs text-red-600">{paymentErrors.expiry}</span>}
@@ -337,6 +377,7 @@ export default function CheckoutPage() {
                       value={payment.cvv}
                       onChange={handlePaymentChange("cvv")}
                       aria-invalid={Boolean(paymentErrors.cvv)}
+                      maxLength={4}
                       className="mt-2 h-11 w-full rounded-button border border-border px-3 text-sm focus:outline-none focus:ring-1 focus:ring-brand-dark"
                     />
                     {paymentErrors.cvv && <span className="mt-1 block text-xs text-red-600">{paymentErrors.cvv}</span>}
