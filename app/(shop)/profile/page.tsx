@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { PageTitle } from "../../compents/common/PageTitle";
 import { Button } from "../../compents/ui/Button";
+import { Modal } from "../../compents/ui/Modal";
 import { useAuthStore } from "../../store/auth.store";
-import { useOrdersStore, type OrderStatus } from "../../store/orders.store";
+import { useOrdersStore, type OrderStatus, type Order } from "../../store/orders.store";
+import { AuthService } from "../../services/auth.service";
 
 // Función auxiliar para formatear los estados de las órdenes de manera sobria
 const getStatusStyles = (status: OrderStatus) => {
@@ -24,13 +26,27 @@ const getStatusStyles = (status: OrderStatus) => {
   }
 };
 
+const STATUS_STEPS: OrderStatus[] = ["pendiente", "procesando", "enviado", "entregado"];
+
 export default function ProfilePage() {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const logout = useAuthStore((state) => state.logout);
+  const setAuth = useAuthStore((state) => state.setAuth);
   const getOrdersByEmail = useOrdersStore((state) => state.getOrdersByEmail);
   const [hydrated, setHydrated] = React.useState(false);
+
+  // Estado del modal de edición de datos personales
+  const [isEditOpen, setIsEditOpen] = React.useState(false);
+  const [editName, setEditName] = React.useState("");
+  const [editEmail, setEditEmail] = React.useState("");
+  const [editError, setEditError] = React.useState("");
+  const [isSaving, setIsSaving] = React.useState(false);
+  const [savedMessage, setSavedMessage] = React.useState("");
+
+  // Estado del modal de detalles del pedido
+  const [selectedOrder, setSelectedOrder] = React.useState<Order | null>(null);
 
   React.useEffect(() => setHydrated(true), []);
 
@@ -46,6 +62,39 @@ export default function ProfilePage() {
 
   const orders = getOrdersByEmail(user.email);
 
+  const openEditModal = () => {
+    setEditName(user.name);
+    setEditEmail(user.email);
+    setEditError("");
+    setIsEditOpen(true);
+  };
+
+  const handleSaveProfile = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setEditError("");
+
+    if (!editName.trim() || !editEmail.trim()) {
+      setEditError("Completa tu nombre y correo electrónico.");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const updatedUser = await AuthService.updateUser(user.id, { name: editName, email: editEmail });
+      setAuth(updatedUser);
+      setIsEditOpen(false);
+      setSavedMessage("Tus datos se actualizaron correctamente.");
+      setTimeout(() => setSavedMessage(""), 4000);
+    } catch (reason) {
+      setEditError(reason instanceof Error ? reason.message : "No pudimos guardar los cambios.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const currentStepIndex = selectedOrder ? STATUS_STEPS.indexOf(selectedOrder.status) : -1;
+  const isSelectedCancelled = selectedOrder?.status === "cancelado";
+
   return (
     <div className="space-y-12">
       {/* Encabezado Principal */}
@@ -58,6 +107,12 @@ export default function ProfilePage() {
           Cerrar sesión
         </Button>
       </div>
+
+      {savedMessage && (
+        <div className="rounded-card border border-green-200 bg-green-50 px-6 py-3 text-sm text-green-700">
+          {savedMessage}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
 
@@ -85,7 +140,7 @@ export default function ProfilePage() {
           </div>
 
           <div className="pt-4 border-t border-border/40">
-            <Button variant="secondary" className="w-full h-9 text-xs">
+            <Button variant="secondary" className="w-full h-9 text-xs" onClick={openEditModal}>
               Editar información
             </Button>
           </div>
@@ -137,7 +192,11 @@ export default function ProfilePage() {
                       <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${statusInfo.className}`}>
                         {statusInfo.label}
                       </span>
-                      <Button variant="ghost" className="h-8 px-3 text-xs text-brand-dark hover:underline">
+                      <Button
+                        variant="ghost"
+                        className="h-8 px-3 text-xs text-brand-dark hover:underline"
+                        onClick={() => setSelectedOrder(order)}
+                      >
                         Ver detalles
                       </Button>
                     </div>
@@ -149,6 +208,113 @@ export default function ProfilePage() {
         </section>
 
       </div>
+
+      {/* MODAL: Editar información personal */}
+      <Modal
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        title="Editar información personal"
+        description="Actualiza tu nombre o correo electrónico."
+      >
+        <form onSubmit={handleSaveProfile} className="space-y-4">
+          <label className="block text-xs font-medium text-brand-dark">
+            Nombre completo
+            <input
+              value={editName}
+              onChange={(event) => setEditName(event.target.value)}
+              className="mt-1.5 h-10 w-full rounded-button border border-border px-3 text-sm focus:outline-none focus:ring-1 focus:ring-brand-dark"
+            />
+          </label>
+          <label className="block text-xs font-medium text-brand-dark">
+            Correo electrónico
+            <input
+              type="email"
+              value={editEmail}
+              onChange={(event) => setEditEmail(event.target.value)}
+              className="mt-1.5 h-10 w-full rounded-button border border-border px-3 text-sm focus:outline-none focus:ring-1 focus:ring-brand-dark"
+            />
+          </label>
+          {editError && <p role="alert" className="text-xs font-medium text-red-600">{editError}</p>}
+          <div className="flex justify-end gap-3 pt-2">
+            <Button type="button" variant="secondary" className="h-9 text-xs" onClick={() => setIsEditOpen(false)}>
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={isSaving} className="h-9 text-xs">
+              {isSaving ? "Guardando..." : "Guardar cambios"}
+            </Button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* MODAL: Detalles del pedido */}
+      <Modal
+        isOpen={Boolean(selectedOrder)}
+        onClose={() => setSelectedOrder(null)}
+        title={selectedOrder ? selectedOrder.id : ""}
+        description={selectedOrder ? `Realizado el ${new Date(selectedOrder.createdAt).toLocaleDateString("es-CO", { day: "2-digit", month: "long", year: "numeric" })}` : undefined}
+        className="max-w-lg"
+      >
+        {selectedOrder && (
+          <div className="space-y-6">
+            <span className={`w-fit inline-block text-xs font-medium px-2.5 py-1 rounded-full ${getStatusStyles(selectedOrder.status).className}`}>
+              {getStatusStyles(selectedOrder.status).label}
+            </span>
+
+            {/* Barra de progreso del pedido */}
+            {!isSelectedCancelled && (
+              <div className="flex items-center justify-between">
+                {STATUS_STEPS.map((step, index) => (
+                  <React.Fragment key={step}>
+                    <div className="flex flex-col items-center gap-1.5 text-center">
+                      <div
+                        className={`flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-semibold ${
+                          index <= currentStepIndex ? "bg-brand-dark text-white" : "bg-neutral-100 text-brand-muted"
+                        }`}
+                      >
+                        {index < currentStepIndex ? "✓" : index + 1}
+                      </div>
+                      <span className="text-[10px] capitalize text-brand-muted">{getStatusStyles(step).label}</span>
+                    </div>
+                    {index < STATUS_STEPS.length - 1 && (
+                      <span className={`mx-1.5 h-px flex-1 ${index < currentStepIndex ? "bg-brand-dark" : "bg-border"}`} />
+                    )}
+                  </React.Fragment>
+                ))}
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 gap-4 border-t border-border/40 pt-5 sm:grid-cols-2">
+              <div className="space-y-1 text-sm">
+                <span className="block text-xs text-brand-muted">Enviado a</span>
+                <p className="font-medium text-brand-dark">{selectedOrder.customerName}</p>
+                <p className="text-brand-muted">{selectedOrder.address}, {selectedOrder.city}</p>
+                <p className="text-brand-muted">{selectedOrder.phone}</p>
+              </div>
+              <div className="space-y-1 text-sm sm:text-right">
+                <span className="block text-xs text-brand-muted">Total del pedido</span>
+                <p className="text-lg font-medium text-brand-dark">${selectedOrder.total.toLocaleString("es-CO")}</p>
+                <p className="text-xs text-brand-muted">Pago: {selectedOrder.paymentStatus === "pagado" ? "Confirmado" : "Pendiente"}</p>
+              </div>
+            </div>
+
+            <div className="space-y-3 border-t border-border/40 pt-5">
+              <h3 className="text-sm font-medium text-brand-dark">Productos</h3>
+              {selectedOrder.items.map((item) => (
+                <div key={item.id} className="flex items-center justify-between text-sm">
+                  <span className="text-brand-muted">{item.name} × {item.quantity}</span>
+                  <span className="font-medium text-brand-dark">${(item.price * item.quantity).toLocaleString("es-CO")}</span>
+                </div>
+              ))}
+              <div className="flex items-center justify-between border-t border-border/40 pt-3 text-sm">
+                <span className="text-brand-muted">Envío</span>
+                <span className="font-medium text-brand-dark">
+                  {selectedOrder.shipping === 0 ? "Gratis" : `$${selectedOrder.shipping.toLocaleString("es-CO")}`}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

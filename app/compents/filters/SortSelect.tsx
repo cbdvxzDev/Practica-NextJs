@@ -20,6 +20,7 @@ export interface SortSelectProps {
 const DEFAULT_OPTIONS: SortOption[] = [
   { value: "featured", label: "Destacados" },
   { value: "newest", label: "Novedades" },
+  { value: "popular", label: "Más vendidos" },
   { value: "price-asc", label: "Precio: Menor a Mayor" },
   { value: "price-desc", label: "Precio: Mayor a Menor" },
 ];

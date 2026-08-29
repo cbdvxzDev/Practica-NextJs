@@ -94,5 +94,25 @@ const toAuthUser = (user: StoredUser): AuthUser => ({
 
     saveUsers(users: StoredUser[]): void {
       localStorage.setItem(USERS_KEY, JSON.stringify(users));
-    }
+    },
+
+    /**
+     * Actualiza los datos personales (nombre/correo) de un usuario existente.
+     */
+    async updateUser(id: string, updates: { name?: string; email?: string }): Promise<AuthUser> {
+      const users = this.getUsers();
+      const trimmedEmail = updates.email?.trim().toLowerCase();
+      if (trimmedEmail && users.some((item) => item.id !== id && item.email.toLowerCase() === trimmedEmail)) {
+        throw new Error("Ya existe otra cuenta con este correo.");
+      }
+      let updatedUser: StoredUser | undefined;
+      const nextUsers = users.map((item) => {
+        if (item.id !== id) return item;
+        updatedUser = { ...item, ...(updates.name ? { name: updates.name.trim() } : {}), ...(trimmedEmail ? { email: trimmedEmail } : {}) };
+        return updatedUser;
+      });
+      if (!updatedUser) throw new Error("No se encontró la cuenta a actualizar.");
+      this.saveUsers(nextUsers);
+      return toAuthUser(updatedUser);
+    },
   };

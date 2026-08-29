@@ -1,9 +1,15 @@
 import { ProductGrid } from "../compents/product/ProductGrid";
 import { Button } from "../compents/ui/Button";
+import { NewsletterForm } from "../compents/common/NewsletterForm";
 import Link from "next/link";
-import { CATEGORIES, FEATURED_PRODUCTS } from "../data/catalog";
+import { CATEGORIES, FEATURED_PRODUCTS, PRODUCTS } from "../data/catalog";
 
 export default async function HomePage() {
+  // Más vendidos: ordenados por número de reseñas (mayor volumen de compra histórico).
+  const bestSellers = [...PRODUCTS].sort((a, b) => b.reviews - a.reviews).slice(0, 8);
+  // Recién llegados: los últimos productos agregados al catálogo (mayor id).
+  const newArrivals = [...PRODUCTS].sort((a, b) => Number(b.id) - Number(a.id)).slice(0, 8);
+
   return (
     <div className="space-y-16 md:space-y-24">
       {/* Hero Section */}
@@ -63,6 +69,44 @@ export default async function HomePage() {
         </div>
         {/* Asegúrate de pasar la prop 'products' correctamente */}
         <ProductGrid products={FEATURED_PRODUCTS} />
+      </section>
+
+      {/* Más vendidos */}
+      <section className="space-y-8">
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand-muted">Lo más popular</p>
+            <h2 className="text-2xl font-medium tracking-tight">Más vendidos</h2>
+          </div>
+          <Link href="/products?sort=popular" className="text-xs font-semibold uppercase tracking-wider underline underline-offset-4">
+            Ver todos
+          </Link>
+        </div>
+        <ProductGrid products={bestSellers} />
+      </section>
+
+      {/* Recién llegados */}
+      <section className="space-y-8">
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand-muted">Novedades</p>
+            <h2 className="text-2xl font-medium tracking-tight">Recién llegados</h2>
+          </div>
+          <Link href="/products?sort=newest" className="text-xs font-semibold uppercase tracking-wider underline underline-offset-4">
+            Ver todos
+          </Link>
+        </div>
+        <ProductGrid products={newArrivals} />
+      </section>
+
+      {/* Newsletter */}
+      <section className="rounded-card border border-border/60 bg-neutral-50 px-6 py-12 text-center sm:px-10">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand-muted">Mantente al día</p>
+        <h2 className="text-2xl font-medium tracking-tight">Suscríbete y recibe ofertas exclusivas</h2>
+        <p className="mx-auto mt-3 max-w-md text-sm text-brand-muted">
+          Sé el primero en enterarte de nuevos lanzamientos, descuentos especiales y contenido solo para suscriptores.
+        </p>
+        <NewsletterForm />
       </section>
     </div>
   );

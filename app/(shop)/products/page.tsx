@@ -30,9 +30,13 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     const matchesMax = !filters.maxPrice || product.price <= Number(filters.maxPrice);
     return matchesQuery && matchesCategory && matchesMin && matchesMax;
   });
-  const sortedProducts = [...filteredProducts].sort((a, b) =>
-    filters.sort === "price-asc" ? a.price - b.price : filters.sort === "price-desc" ? b.price - a.price : 0
-  );
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    if (filters.sort === "price-asc") return a.price - b.price;
+    if (filters.sort === "price-desc") return b.price - a.price;
+    if (filters.sort === "popular") return b.reviews - a.reviews;
+    if (filters.sort === "newest") return Number(b.id) - Number(a.id);
+    return 0;
+  });
   const totalPages = Math.max(1, Math.ceil(sortedProducts.length / 12));
 
   return (
