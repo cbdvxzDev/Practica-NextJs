@@ -2,15 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 
 const FOOTER_SECTIONS = [
   {
     title: "Colecciones",
     links: [
-      { href: "/shop", label: "Ver todo el catálogo" },
+      { href: "/products", label: "Ver todo el catálogo" },
       { href: "/categories/abrigo", label: "Prendas de Abrigo" },
       { href: "/categories/basicos", label: "Básicos Esenciales" },
+      { href: "/categories/camisas", label: "Camisas" },
+      { href: "/categories/pantalones", label: "Pantalones" },
     ],
   },
   {

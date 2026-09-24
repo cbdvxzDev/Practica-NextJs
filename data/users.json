@@ -1,0 +1,52 @@
+[
+  {
+    "id": "usr-1",
+    "email": "admin@giborsec.com",
+    "name": "Administrador Plataforma",
+    "role": "admin",
+    "isActive": true,
+    "avatarUrl": "",
+    "createdAt": "2025-01-01T09:00:00.000Z",
+    "passwordHash": "scrypt$ba7b458fd7368ff3fcceb75f3c9aaa33$48395d37e9a084ebdf344612ad32c294929dc904e82e17f711f36a12341aceae86f0afab1c8d3b6dce7422a02f3b92325ede0cffaeeeb0cd8160980805786810"
+  },
+  {
+    "id": "usr-2",
+    "email": "carolina@example.com",
+    "name": "Carolina Gómez",
+    "role": "admin",
+    "isActive": true,
+    "avatarUrl": "",
+    "createdAt": "2026-01-15T09:00:00.000Z",
+    "passwordHash": "scrypt$d40f743a06ac83be19c88394e88cc045$7615f4f7542d6710cb8fb0ffd8c00dd79ac86dcd77ee1e8abb6bfd90d49c82c41efe9a859e8b5ee881b89b6b77fa398c08bf6504ec550330de349b5714b1b9b1"
+  },
+  {
+    "id": "usr-3",
+    "email": "carlos@example.com",
+    "name": "Carlos Mendoza",
+    "role": "customer",
+    "isActive": true,
+    "avatarUrl": "",
+    "createdAt": "2026-06-24T09:00:00.000Z",
+    "passwordHash": "scrypt$2fbbc8e8222af9d7441d007ebbf3e821$42365d93fc99b15c06221a167079f53fcaf56665775686052a4c8f1047ae39f5635a8a1b21a7cc37c97adaefd2a2e3ca71329b3d77423769812ee7b587fa32b7"
+  },
+  {
+    "id": "usr-4",
+    "email": "sofia@example.com",
+    "name": "Sofía Restrepo",
+    "role": "customer",
+    "isActive": true,
+    "avatarUrl": "",
+    "createdAt": "2026-05-10T09:00:00.000Z",
+    "passwordHash": "scrypt$825862536aa77773edd2e644ec768b36$b159fbd8d7cd1bd58fcc4501f717f38265e6cfd4868c99be5afeca4a14409868e5703ff2163de8f558d6c10785da96d19cac085ed030d6161a17da1960637475"
+  },
+  {
+    "id": "usr-5",
+    "email": "soporte@giborsec.com",
+    "name": "Equipo de Soporte",
+    "role": "support",
+    "isActive": true,
+    "avatarUrl": "",
+    "createdAt": "2025-03-05T09:00:00.000Z",
+    "passwordHash": "scrypt$b2de4bfe22d1522bedf2839b7399c717$e9d25a5505c977fa202c802f974f3f939b54076e86f2af9378b61d592e3be8c6d97c2821ea6240ad7546bc89a0589adec03abbaf41a975a2f51416cde9359bdf"
+  }
+]

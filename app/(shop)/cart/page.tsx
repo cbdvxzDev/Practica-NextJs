@@ -50,9 +50,10 @@ export default function CartPage() {
             <CartItem
               key={item.id}
               id={item.id}
+              slug={item.slug}
               name={item.name}
               price={item.price}
-              image={item.image || "/images/placeholder.jpg"}
+              image={item.image || "https://placehold.co/300x400/e8e4df/6B7280?text=Producto"}
               quantity={item.quantity}
               stock={item.stock ?? 99}
               onQuantityChange={(id, newQuantity) => updateQuantity(id, newQuantity)}

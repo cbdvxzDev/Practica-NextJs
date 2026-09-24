@@ -1,0 +1,70 @@
+[
+  {
+    "id": "ORD-2026-001",
+    "customer": "Carlos Mendoza",
+    "email": "carlos@example.com",
+    "date": "27 Jun, 2026",
+    "total": 189000,
+    "status": "processing",
+    "paymentStatus": "paid",
+    "items": [{ "name": "Chaqueta Minimalista en Lana", "quantity": 1, "price": 189000 }],
+    "shippingAddress": "Calle 10 #20-30, Cartagena, Bolívar",
+    "createdAt": "2026-06-27T09:00:00.000Z",
+    "updatedAt": "2026-06-27T09:00:00.000Z"
+  },
+  {
+    "id": "ORD-2026-002",
+    "customer": "Sofía Restrepo",
+    "email": "sofia@example.com",
+    "date": "26 Jun, 2026",
+    "total": 45000,
+    "status": "shipped",
+    "paymentStatus": "paid",
+    "items": [{ "name": "Camiseta Esencial Algodón Orgánico", "quantity": 1, "price": 45000 }],
+    "shippingAddress": "Carrera 5 #12-40, Bogotá, Cundinamarca",
+    "createdAt": "2026-06-26T09:00:00.000Z",
+    "updatedAt": "2026-06-26T09:00:00.000Z"
+  },
+  {
+    "id": "ORD-2026-003",
+    "customer": "Carlos Mendoza",
+    "email": "carlos@example.com",
+    "date": "25 Jun, 2026",
+    "total": 234000,
+    "status": "delivered",
+    "paymentStatus": "paid",
+    "items": [
+      { "name": "Chaqueta Minimalista en Lana", "quantity": 1, "price": 189000 },
+      { "name": "Camiseta Esencial Algodón Orgánico", "quantity": 1, "price": 45000 }
+    ],
+    "shippingAddress": "Carrera 20 #33-12, Medellín, Antioquia",
+    "createdAt": "2026-06-25T09:00:00.000Z",
+    "updatedAt": "2026-06-25T09:00:00.000Z"
+  },
+  {
+    "id": "ORD-2026-004",
+    "customer": "Mariana Vélez",
+    "email": "mariana@example.com",
+    "date": "24 Jun, 2026",
+    "total": 120000,
+    "status": "pending",
+    "paymentStatus": "pending",
+    "items": [{ "name": "Pantalón Sastrero Moderno", "quantity": 1, "price": 120000 }],
+    "shippingAddress": "Calle 80 #15-20, Cali, Valle del Cauca",
+    "createdAt": "2026-06-24T09:00:00.000Z",
+    "updatedAt": "2026-06-24T09:00:00.000Z"
+  },
+  {
+    "id": "ORD-2026-005",
+    "customer": "Sofía Restrepo",
+    "email": "sofia@example.com",
+    "date": "22 Jun, 2026",
+    "total": 128000,
+    "status": "delivered",
+    "paymentStatus": "paid",
+    "items": [{ "name": "Camisa de Lino Premium", "quantity": 1, "price": 128000 }],
+    "shippingAddress": "Carrera 5 #12-40, Bogotá, Cundinamarca",
+    "createdAt": "2026-06-22T09:00:00.000Z",
+    "updatedAt": "2026-06-22T09:00:00.000Z"
+  }
+]

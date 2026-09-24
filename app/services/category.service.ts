@@ -1,46 +1,66 @@
 // app/services/category.service.ts
+// Cliente para los endpoints de categorías de la mini API (/api/categories).
+
+import { fetcher } from "@/lib/fetcher";
 
 export interface Category {
-    id: string;
-    label: string;
-    count: number;
-  }
-  
-  export const CategoryService = {
-    /**
-     * Obtiene la lista completa de categorías desde el backend
-     */
-    async getAll(): Promise<Category[]> {
-      try {
-        const response = await fetch("/api/categories", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            // Aquí podrías añadir Authorization: `Bearer ${token}` si fuera necesario
-          },
-        });
-  
-        if (!response.ok) {
-          throw new Error("Error al obtener las categorías.");
-        }
-  
-        return await response.json();
-      } catch (error) {
-        console.error("CategoryService.getAll Error:", error);
-        throw error;
-      }
-    },
-  
-    /**
-     * Obtiene una categoría específica por ID
-     */
-    async getById(id: string): Promise<Category> {
-      const response = await fetch(`/api/categories/${id}`);
-      
-      if (!response.ok) {
-        throw new Error(`Categoría con ID ${id} no encontrada.`);
-      }
-  
-      return await response.json();
-    }
-  };
+  id: string;
+  slug: string;
+  name: string;
+  description?: string;
+  imageUrl?: string;
+}
+
+interface ListResponse {
+  data: Category[];
+  meta?: { total: number };
+}
+
+export const CategoryService = {
+  /**
+   * Obtiene la lista completa de categorías desde la mini API.
+   */
+  async getAll(): Promise<Category[]> {
+    const res = await fetcher<ListResponse>("/api/categories");
+    return res.data;
+  },
+
+  /**
+   * Obtiene una categoría por su id.
+   */
+  async getById(id: string): Promise<Category> {
+    const res = await fetcher<{ data: Category }>(`/api/categories/${id}`);
+    return res.data;
+  },
+
+  /**
+   * Crea una categoría (solo admin).
+   */
+  async create(input: Pick<Category, "name"> & Partial<Category>): Promise<Category> {
+    const res = await fetcher<{ data: Category }>("/api/categories", {
+      method: "POST",
+      body: JSON.stringify(input),
+    });
+    return res.data;
+  },
+
+  /**
+   * Actualiza una categoría (solo admin).
+   */
+  async update(id: string, input: Partial<Category>): Promise<Category> {
+    const res = await fetcher<{ data: Category }>(`/api/categories/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(input),
+    });
+    return res.data;
+  },
+
+  /**
+   * Elimina una categoría (solo admin).
+   */
+  async remove(id: string): Promise<void> {
+    await fetcher<{ success: boolean }>(`/api/categories/${id}`, {
+      method: "DELETE",
+    });
+  },
+};

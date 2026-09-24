@@ -1,50 +1,75 @@
 // app/services/order.service.ts
+// Cliente para los endpoints de órdenes de la mini API (/api/orders).
+
+import { fetcher } from "@/lib/fetcher";
+
+export type OrderStatus = "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+export type PaymentStatus = "paid" | "pending" | "failed";
+
+export interface OrderItem {
+  name: string;
+  quantity: number;
+  price: number;
+}
 
 export interface Order {
-    id: string;
-    customerName: string;
-    total: number;
-    status: 'pendiente' | 'procesando' | 'enviado' | 'entregado' | 'cancelado';
-    createdAt: string;
-  }
-  
-  export const OrderService = {
-    /**
-     * Obtiene todos los pedidos (para el panel administrativo)
-     */
-    async getAll(): Promise<Order[]> {
-      const response = await fetch("/api/orders", {
-        headers: { "Content-Type": "application/json" }
-      });
-      
-      if (!response.ok) throw new Error("Error al recuperar los pedidos.");
-      return response.json();
-    },
-  
-    /**
-     * Crea un nuevo pedido desde el carrito
-     */
-    async create(orderData: Omit<Order, 'id' | 'createdAt'>): Promise<Order> {
-      const response = await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderData),
-      });
-  
-      if (!response.ok) throw new Error("Error al procesar el pedido.");
-      return response.json();
-    },
-  
-    /**
-     * Actualiza el estado de un pedido (ej: marcado como 'enviado')
-     */
-    async updateStatus(id: string, status: Order['status']): Promise<void> {
-      const response = await fetch(`/api/orders/${id}/status`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
-      });
-  
-      if (!response.ok) throw new Error(`No se pudo actualizar el estado del pedido ${id}.`);
-    }
-  };
+  id: string;
+  customer: string;
+  email: string;
+  date: string;
+  total: number;
+  status: OrderStatus;
+  paymentStatus: PaymentStatus;
+  items: OrderItem[];
+  shippingAddress: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface ListResponse {
+  data: Order[];
+  meta?: { total: number };
+}
+
+export const OrderService = {
+  /**
+   * Obtiene las órdenes. Para clientes devuelve solo las propias.
+   */
+  async getAll(): Promise<Order[]> {
+    const res = await fetcher<ListResponse>("/api/orders");
+    return res.data;
+  },
+
+  /**
+   * Obtiene una orden por id.
+   */
+  async getById(id: string): Promise<Order> {
+    const res = await fetcher<{ data: Order }>(`/api/orders/${id}`);
+    return res.data;
+  },
+
+  /**
+   * Crea una orden desde el carrito. El precio total se calcula en el servidor.
+   */
+  async create(input: {
+    items: { productId: string; quantity: number }[];
+    shippingAddress: string;
+  }): Promise<Order> {
+    const res = await fetcher<{ data: Order }>("/api/orders", {
+      method: "POST",
+      body: JSON.stringify(input),
+    });
+    return res.data;
+  },
+
+  /**
+   * Actualiza el estado de una orden (solo admin).
+   */
+  async updateStatus(id: string, status: OrderStatus): Promise<Order> {
+    const res = await fetcher<{ data: Order }>(`/api/orders/${id}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
+    });
+    return res.data;
+  },
+};

@@ -1,0 +1,30 @@
+[
+  {
+    "id": "cat-1",
+    "slug": "abrigo",
+    "name": "Prendas de Abrigo",
+    "description": "Diseños estructurados y materiales térmicos de alta calidad para el día a día.",
+    "imageUrl": "https://placehold.co/600x400/e8e4df/6B7280?text=Abrigo"
+  },
+  {
+    "id": "cat-2",
+    "slug": "basicos",
+    "name": "Básicos Esenciales",
+    "description": "Prendas atemporales de algodón premium cortadas para un ajuste perfecto.",
+    "imageUrl": "https://placehold.co/600x400/e8e4df/6B7280?text=Basicos"
+  },
+  {
+    "id": "cat-3",
+    "slug": "camisas",
+    "name": "Camisas",
+    "description": "Camisas versátiles que combinan elegancia y comodidad para cualquier ocasión.",
+    "imageUrl": "https://placehold.co/600x400/e8e4df/6B7280?text=Camisas"
+  },
+  {
+    "id": "cat-4",
+    "slug": "pantalones",
+    "name": "Pantalones",
+    "description": "Cortes rectos y modernos con caída impecable para el día a día y la oficina.",
+    "imageUrl": "https://placehold.co/600x400/e8e4df/6B7280?text=Pantalones"
+  }
+]

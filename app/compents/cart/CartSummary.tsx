@@ -14,26 +14,23 @@ export interface CartSummaryProps {
 
 export function CartSummary({
   subtotal,
-  shippingCost = 0,
-  freeShippingThreshold = 200000, // Envío gratis a partir de $200.000 COP
+  shippingCost = 12000,
+  freeShippingThreshold = 200000,
   onCheckout,
   className,
 }: CartSummaryProps) {
   const [isProcessing, setIsProcessing] = React.useState(false);
 
-  // Determinar si aplica envío gratuito
   const isFreeShipping = subtotal >= freeShippingThreshold;
   const activeShippingCost = isFreeShipping ? 0 : shippingCost;
   const total = subtotal + activeShippingCost;
 
-  // Cálculo para la barra de progreso de envío gratis
   const progressToFreeShipping = Math.min((subtotal / freeShippingThreshold) * 100, 100);
   const amountNeededForFreeShipping = freeShippingThreshold - subtotal;
 
   const handleCheckout = () => {
     if (!onCheckout) return;
     setIsProcessing(true);
-    // Simulación de latencia de red premium para la transición a la pasarela
     setTimeout(() => {
       onCheckout();
       setIsProcessing(false);
@@ -41,47 +38,34 @@ export function CartSummary({
   };
 
   return (
-    <div 
-      className={cn(
-        "rounded-card border border-border/40 bg-neutral-50/50 p-6 space-y-6",
-        className
-      )}
-    >
+    <div className={cn("rounded-card border border-border/40 bg-neutral-50/50 p-6 space-y-6", className)}>
       <h2 className="text-sm font-semibold uppercase tracking-wider text-brand-dark">
         Resumen del pedido
       </h2>
 
-      {/* INDICADOR MINIMALISTA DE ENVÍO GRATIS */}
       {subtotal > 0 && (
         <div className="space-y-2">
           <p className="text-xs text-brand-muted leading-relaxed">
             {isFreeShipping ? (
               <span className="text-emerald-700 font-medium">¡Tu pedido califica para envío gratuito! ✨</span>
             ) : (
-              <>
-                Estás a <span className="font-semibold text-brand-dark">${amountNeededForFreeShipping.toLocaleString("es-CO")}</span> de obtener envío gratis.
-              </>
+              <>Estás a <span className="font-semibold text-brand-dark">${amountNeededForFreeShipping.toLocaleString("es-CO")}</span> de obtener envío gratis.</>
             )}
           </p>
           <div className="h-1 w-full bg-neutral-200 rounded-full overflow-hidden">
-            <div 
-              className={cn(
-                "h-full transition-all duration-500 ease-out",
-                isFreeShipping ? "bg-emerald-600" : "bg-brand-dark"
-              )}
+            <div
+              className={cn("h-full transition-all duration-500 ease-out", isFreeShipping ? "bg-emerald-600" : "bg-brand-dark")}
               style={{ width: `${progressToFreeShipping}%` }}
             />
           </div>
         </div>
       )}
 
-      {/* DESGLOSE DE COSTOS */}
       <div className="space-y-3 text-xs border-b border-border/30 pb-4">
         <div className="flex justify-between text-brand-muted">
           <span>Subtotal</span>
           <span className="font-medium text-brand-dark">${subtotal.toLocaleString("es-CO")}</span>
         </div>
-        
         <div className="flex justify-between text-brand-muted">
           <span>Envío estimado</span>
           <span className="font-medium text-brand-dark">
@@ -94,7 +78,6 @@ export function CartSummary({
         </div>
       </div>
 
-      {/* TOTAL DEFINTIVO */}
       <div className="flex items-baseline justify-between">
         <span className="text-xs font-semibold text-brand-dark uppercase tracking-wider">Total</span>
         <span className="text-lg font-bold text-brand-dark tracking-tight">
@@ -102,7 +85,6 @@ export function CartSummary({
         </span>
       </div>
 
-      {/* BOTÓN DE CHECKOUT */}
       <div className="pt-2">
         <Button
           onClick={handleCheckout}

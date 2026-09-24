@@ -1,4 +1,4 @@
-import { Skeleton } from "../compents/ui/Skeleton";
+
 
 export default function ShopLoading() {
   return (

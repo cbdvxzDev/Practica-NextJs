@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Fuentes de contenido para que Tailwind genere las utilidades usadas */
+@source "../app/**/*.{js,ts,jsx,tsx}";
+
 @theme {
   --color-brand-dark:    #111111;
   --color-brand-muted:   #6B7280;

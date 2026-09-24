@@ -1,54 +1,90 @@
+"use client";
+
+import * as React from "react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { PageTitle } from "@/components/common/PageTitle";
 import { CategoryForm } from "@/components/forms/CategoryForm";
+import { CategoryService } from "@/services/category.service";
 
-interface EditCategoryPageProps {
-  params: Promise<{
-    id: string;
-  }>;
-}
+export default function AdminEditCategoryPage() {
+  const params = useParams();
+  const router = useRouter();
+  const id = params.id as string;
 
-// Base de datos simulada para la resolución en el servidor
-const MOCK_CATEGORIES_DB: Record<string, any> = {
-  "cat-1": {
-    id: "cat-1",
-    name: "Prendas de Abrigo",
-    slug: "abrigo",
-    description: "Chaquetas, abrigos y camisas pesadas diseñadas para el aislamiento térmico.",
-    image: "/images/categories/abrigo.jpg"
-  },
-};
+  const [category, setCategory] = React.useState<{ name: string; slug: string; description: string } | null>(null);
+  const [error, setError] = React.useState("");
 
-export default async function AdminEditCategoryPage({ params }: EditCategoryPageProps) {
-  const { id } = await params;
-  const category = MOCK_CATEGORIES_DB[id];
+  React.useEffect(() => {
+    CategoryService.getById(id)
+      .then((c) =>
+        setCategory({
+          name: c.name,
+          slug: c.slug,
+          description: c.description ?? "",
+        })
+      )
+      .catch((err) => setError(err instanceof Error ? err.message : "No se pudo cargar la categoría."));
+  }, [id]);
 
-  // Si el ID solicitado no existe, disparamos el 404 nativo de Next.js
+  const handleSubmit = async (data: { name: string; slug: string; description: string }) => {
+    try {
+      await CategoryService.update(id, data);
+      router.push("/admin/categories");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo guardar la categoría.");
+    }
+  };
+
+  if (error && !category) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-4">
+        <p className="text-6xl font-black text-stone-200">404</p>
+        <p className="text-xl font-semibold text-stone-900">Categoría no encontrada</p>
+        <p className="text-xs text-stone-400 max-w-xs">{error}</p>
+        <Link
+          href="/admin/categories"
+          className="text-sm font-semibold text-stone-700 underline underline-offset-4"
+        >
+          ← Volver a categorías
+        </Link>
+      </div>
+    );
+  }
+
   if (!category) {
-    notFound();
+    return (
+      <div className="space-y-8 max-w-3xl mx-auto animate-pulse">
+        <div className="h-3 bg-neutral-100 rounded w-40" />
+        <div className="h-6 bg-neutral-100 rounded w-64" />
+        <div className="h-64 bg-neutral-100 rounded-card" />
+      </div>
+    );
   }
 
   return (
     <div className="space-y-8 max-w-3xl mx-auto">
-      {/* NAVEGACIÓN DE RETORNO Y ENCABEZADO */}
       <div className="border-b border-border pb-5 space-y-2">
-        <Link 
-          href="/admin/categories" 
+        <Link
+          href="/admin/categories"
           className="text-xs font-medium text-brand-muted hover:text-brand-dark transition-colors inline-flex items-center gap-1"
         >
           ← Volver a categorías
         </Link>
-        <PageTitle 
-          title="Editar Categoría" 
-          subtitle={`Modificando los metadatos y la descripción de la colección: ${category.name}`} 
+        <PageTitle
+          title="Editar Categoría"
+          description={`Modificando los metadatos y la descripción de la colección: ${category.name}`}
         />
       </div>
 
-      {/* CONTENEDOR DEL FORMULARIO CON DATOS INICIALES */}
+      {error && (
+        <p className="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-button px-3 py-2" role="alert">
+          {error}
+        </p>
+      )}
+
       <section className="pt-2">
-        {/* Reutilizamos el formulario pasándole los datos existentes */}
-        <CategoryForm initialData={category} isEdit={true} />
+        <CategoryForm initialData={category} onSubmit={handleSubmit} />
       </section>
     </div>
   );

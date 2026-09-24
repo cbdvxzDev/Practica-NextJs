@@ -1,5 +1,5 @@
 // app/types/cart.ts
-import { Product } from './product'; // Asumiendo que tienes tu tipo Product base
+
 
 /**
  * Representa un artículo dentro del carrito de compras.

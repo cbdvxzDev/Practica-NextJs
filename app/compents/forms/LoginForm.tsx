@@ -5,31 +5,34 @@ import { cn } from "@/lib/utils";
 import { Button } from "../ui/Button";
 
 export interface LoginFormProps {
-  onSubmit: (email: string, pass: string) => void;
+  onSubmit: (email: string, password: string) => Promise<void> | void;
   className?: string;
 }
 
 export function LoginForm({ onSubmit, className }: LoginFormProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
-  
+  const [error, setError] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     setIsSubmitting(true);
 
-    // Simulación de latencia de red premium para asegurar la experiencia de carga sutil
-    setTimeout(() => {
-      onSubmit(email, password);
+    try {
+      await onSubmit(email, password);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Ocurrió un error inesperado.");
+    } finally {
       setIsSubmitting(false);
-    }, 800);
+    }
   };
 
   return (
-    <form 
-      onSubmit={handleSubmit} 
+    <form
+      onSubmit={handleSubmit}
       className={cn("w-full max-w-sm bg-white p-6 border border-border/40 rounded-card space-y-5", className)}
     >
       <div className="space-y-1 text-center pb-2 border-b border-border/30">
@@ -65,7 +68,7 @@ export function LoginForm({ onSubmit, className }: LoginFormProps) {
           <label htmlFor="password" className="font-medium text-brand-dark">
             Contraseña
           </label>
-          <button 
+          <button
             type="button"
             className="text-brand-muted hover:text-brand-dark transition-colors underline underline-offset-4 text-[11px]"
           >
@@ -84,7 +87,7 @@ export function LoginForm({ onSubmit, className }: LoginFormProps) {
             placeholder="••••••••"
             className="h-10 w-full pl-3 pr-10 text-xs border border-border/60 rounded-button bg-white focus:outline-none focus:ring-1 focus:ring-brand-dark text-brand-dark tracking-wide"
           />
-          
+
           {/* BOTÓN DISCRETO PARA VISUALIZAR CONTRASEÑA */}
           <button
             type="button"
@@ -96,6 +99,13 @@ export function LoginForm({ onSubmit, className }: LoginFormProps) {
           </button>
         </div>
       </div>
+
+      {/* ERROR DE AUTENTICACIÓN */}
+      {error && (
+        <p className="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-button px-3 py-2" role="alert">
+          {error}
+        </p>
+      )}
 
       {/* ACCIÓN PRINCIPAL */}
       <div className="pt-2">

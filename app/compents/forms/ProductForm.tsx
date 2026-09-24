@@ -4,8 +4,8 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/Button";
 
-// Estructura de tipado estricta para el producto
 export interface ProductFormData {
+  sku: string;
   name: string;
   price: number;
   originalPrice?: number;
@@ -25,16 +25,12 @@ export interface ProductFormProps {
 
 const AVAILABLE_SIZES = ["XS", "S", "M", "L", "XL"];
 
-export function ProductForm({
-  initialData,
-  categories,
-  onSubmit,
-  className,
-}: ProductFormProps) {
+export function ProductForm({ initialData, categories, onSubmit, className }: ProductFormProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  
-  // Estado inicial unificado
+  const [skuError, setSkuError] = React.useState("");
+
   const [formData, setFormData] = React.useState<ProductFormData>({
+    sku: initialData?.sku || "",
     name: initialData?.name || "",
     price: initialData?.price || 0,
     originalPrice: initialData?.originalPrice || undefined,
@@ -51,22 +47,35 @@ export function ProductForm({
       ...prev,
       [name]: type === "number" ? (value === "" ? 0 : Number(value)) : value,
     }));
+    if (name === "sku") setSkuError("");
   };
 
   const handleSizeToggle = (size: string) => {
     setFormData((prev) => {
       const isSelected = prev.sizes.includes(size);
-      const nextSizes = isSelected 
-        ? prev.sizes.filter((s) => s !== size) 
-        : [...prev.sizes, size];
+      const nextSizes = isSelected ? prev.sizes.filter((s) => s !== size) : [...prev.sizes, size];
       return { ...prev, sizes: nextSizes };
     });
   };
 
+  const validateSku = (): boolean => {
+    const skuPattern = /^[A-Z0-9]+(-[A-Z0-9]+)*$/;
+    if (!formData.sku.trim()) {
+      setSkuError("El SKU es obligatorio.");
+      return false;
+    }
+    if (!skuPattern.test(formData.sku)) {
+      setSkuError("Formato inválido. Usa mayúsculas, números y guiones (ej. TSH-BLK-001).");
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateSku()) return;
+
     setIsSubmitting(true);
-    // Simular latencia de red premium antes del callback operativo
     setTimeout(() => {
       onSubmit(formData);
       setIsSubmitting(false);
@@ -75,14 +84,11 @@ export function ProductForm({
 
   return (
     <form onSubmit={handleSubmit} className={cn("grid grid-cols-1 md:grid-cols-3 gap-6", className)}>
-      
-      {/* COLUMNA PRINCIPAL (INFORMACIÓN DEL PRODUCTO) */}
       <div className="md:col-span-2 space-y-5 bg-white p-6 border border-border/40 rounded-card">
         <h3 className="text-xs font-semibold uppercase tracking-wider text-brand-dark border-b border-border/30 pb-3">
           Detalles de la pieza
         </h3>
 
-        {/* NOMBRE */}
         <div className="flex flex-col space-y-1.5">
           <label htmlFor="name" className="text-xs font-medium text-brand-dark">Nombre del producto</label>
           <input
@@ -97,7 +103,6 @@ export function ProductForm({
           />
         </div>
 
-        {/* DESCRIPCIÓN */}
         <div className="flex flex-col space-y-1.5">
           <label htmlFor="description" className="text-xs font-medium text-brand-dark">Descripción narrativa</label>
           <textarea
@@ -113,16 +118,32 @@ export function ProductForm({
         </div>
       </div>
 
-      {/* COLUMNA LATERAL (LOGÍSTICA, PRECIOS Y VARIANTES) */}
       <div className="space-y-6">
-        
-        {/* BLOQUE COMERCIAL */}
         <div className="bg-white p-6 border border-border/40 rounded-card space-y-4">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-brand-dark border-b border-border/30 pb-3">
-            Estructura comercial
+            Identificación y comercial
           </h3>
 
-          {/* CATEGORÍA */}
+          <div className="flex flex-col space-y-1.5">
+            <label htmlFor="sku" className="text-xs font-medium text-brand-dark">
+              SKU <span className="text-brand-muted font-normal normal-case">(código único de inventario)</span>
+            </label>
+            <input
+              id="sku"
+              name="sku"
+              type="text"
+              required
+              value={formData.sku}
+              onChange={handleChange}
+              placeholder="ej. TSH-BLK-001"
+              className={cn(
+                "h-10 px-3 text-xs font-mono uppercase border rounded-button bg-white focus:outline-none focus:ring-1 focus:ring-brand-dark text-brand-dark",
+                skuError ? "border-red-400 focus:ring-red-400" : "border-border/60"
+              )}
+            />
+            {skuError && <p className="text-[11px] text-red-600">{skuError}</p>}
+          </div>
+
           <div className="flex flex-col space-y-1.5">
             <label htmlFor="category" className="text-xs font-medium text-brand-dark">Categoría de colección</label>
             <select
@@ -138,7 +159,6 @@ export function ProductForm({
             </select>
           </div>
 
-          {/* PRECIO ACTUAL Y ORIGINAL */}
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col space-y-1.5">
               <label htmlFor="price" className="text-xs font-medium text-brand-dark">Precio venta</label>
@@ -168,7 +188,6 @@ export function ProductForm({
             </div>
           </div>
 
-          {/* INVENTARIO / STOCK */}
           <div className="flex flex-col space-y-1.5">
             <label htmlFor="stock" className="text-xs font-medium text-brand-dark">Unidades disponibles en bodega</label>
             <input
@@ -184,7 +203,6 @@ export function ProductForm({
           </div>
         </div>
 
-        {/* BLOQUE VARIANTES (TALLAS) */}
         <div className="bg-white p-6 border border-border/40 rounded-card space-y-3">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-brand-dark border-b border-border/30 pb-3">
             Tallas disponibles
@@ -199,9 +217,7 @@ export function ProductForm({
                   onClick={() => handleSizeToggle(size)}
                   className={cn(
                     "h-9 text-xs font-medium rounded-button border transition-all focus:outline-none",
-                    isSelected
-                      ? "border-brand-dark bg-brand-dark text-white font-semibold"
-                      : "border-border/60 text-brand-dark hover:bg-brand-light"
+                    isSelected ? "border-brand-dark bg-brand-dark text-white font-semibold" : "border-border/60 text-brand-dark hover:bg-brand-light"
                   )}
                 >
                   {size}
@@ -211,12 +227,7 @@ export function ProductForm({
           </div>
         </div>
 
-        {/* BOTÓN DE ACCIÓN ACCESIBLE */}
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full h-11 text-xs font-semibold uppercase tracking-wider shadow-subtle"
-        >
+        <Button type="submit" disabled={isSubmitting} className="w-full h-11 text-xs font-semibold uppercase tracking-wider shadow-subtle">
           {isSubmitting ? "Guardando cambios..." : "Guardar Producto"}
         </Button>
       </div>

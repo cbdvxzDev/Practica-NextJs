@@ -12,13 +12,14 @@ export interface RegisterFormData {
 }
 
 export interface RegisterFormProps {
-  onSubmit: (data: RegisterFormData) => void;
+  onSubmit: (data: RegisterFormData) => Promise<void> | void;
   className?: string;
 }
 
 export function RegisterForm({ onSubmit, className }: RegisterFormProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
+  const [error, setError] = React.useState("");
 
   const [formData, setFormData] = React.useState<RegisterFormData>({
     name: "",
@@ -35,15 +36,18 @@ export function RegisterForm({ onSubmit, className }: RegisterFormProps) {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     setIsSubmitting(true);
 
-    // Simulación de latencia de red premium para asegurar consistencia visual
-    setTimeout(() => {
-      onSubmit(formData);
+    try {
+      await onSubmit(formData);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Ocurrió un error inesperado.");
+    } finally {
       setIsSubmitting(false);
-    }, 800);
+    }
   };
 
   return (
@@ -114,7 +118,7 @@ export function RegisterForm({ onSubmit, className }: RegisterFormProps) {
             placeholder="Mínimo 8 caracteres"
             className="h-10 w-full pl-3 pr-10 text-xs border border-border/60 rounded-button bg-white focus:outline-none focus:ring-1 focus:ring-brand-dark text-brand-dark tracking-wide"
           />
-          
+
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
@@ -140,6 +144,13 @@ export function RegisterForm({ onSubmit, className }: RegisterFormProps) {
           Acepto los <button type="button" className="text-brand-dark underline underline-offset-2 font-medium">Términos de servicio</button> y la <button type="button" className="text-brand-dark underline underline-offset-2 font-medium">Política de privacidad</button>.
         </label>
       </div>
+
+      {/* ERROR DE REGISTRO */}
+      {error && (
+        <p className="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-button px-3 py-2" role="alert">
+          {error}
+        </p>
+      )}
 
       {/* ACCIÓN PRINCIPAL */}
       <div className="pt-2">

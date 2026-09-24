@@ -1,21 +1,18 @@
-// app/not-found.tsx
-import Link from 'next/link';
-import { ROUTES } from '../app/constants/routes';
+import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-6 text-center">
-      <h1 className="text-6xl font-extrabold text-blue-600 mb-4">404</h1>
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">
-        Página no encontrada
-      </h2>
-      <p className="text-gray-600 mb-8 max-w-sm">
-        Lo sentimos, no pudimos encontrar la página que buscas en nuestro sistema.
-      </p>
-      
-      <Link 
-        href={ROUTES.HOME}
-        className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+    <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center space-y-6">
+      <p className="text-8xl font-black text-stone-200">404</p>
+      <div className="space-y-2">
+        <h1 className="text-2xl font-bold text-stone-900">Página no encontrada</h1>
+        <p className="text-sm text-stone-500 max-w-sm mx-auto">
+          Lo sentimos, no pudimos encontrar la página que buscas.
+        </p>
+      </div>
+      <Link
+        href="/"
+        className="inline-flex h-11 items-center rounded-full bg-stone-900 px-8 text-sm font-semibold text-white hover:bg-stone-700 transition-colors"
       >
         Volver al inicio
       </Link>
