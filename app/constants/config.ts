@@ -16,11 +16,19 @@ export const CONFIG = {
       defaultLimit: 12,
     },
     auth: {
-      tokenKey: 'auth_token',
-      sessionExpiryMinutes: 60,
+      // Clave con la que Zustand persiste la sesión en localStorage.
+      // Debe coincidir con `persist({ name })` de app/store/auth.store.ts.
+      storageKey: 'auth-storage',
+      // Duración real del token firmado en app/lib/auth.ts (24 h).
+      sessionHours: 24,
     },
     site: {
       contactEmail: 'soporte@esencial.store',
       currency: 'COP',
+    },
+    images: {
+      // Se usa cuando un producto todavía no tiene fotografía asociada.
+      // El catálogo se sirve desde /public/images (ver scripts/catalog-images.mjs).
+      placeholder: '/images/placeholder.svg',
     },
   } as const;

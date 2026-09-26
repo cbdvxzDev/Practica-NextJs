@@ -2,24 +2,52 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Sidebar } from "../compents/layout/Sidebar";
-import { Breadcrumbs } from "../compents/admin/Breadcrumbs";
-import { AdminDataProvider } from "../compents/providers/AdminDataProvider";
+import { Sidebar } from "../components/layout/Sidebar";
+import { Breadcrumbs } from "../components/admin/Breadcrumbs";
+import { AdminDataProvider } from "../components/providers/AdminDataProvider";
 import { useAuthStore } from "../store/auth.store";
+import { useIsMounted } from "../hooks/useIsMounted";
+import { ROLES } from "../constants/roles";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
+/** Roles con acceso al panel. Un cliente no debe ver ni la maquetación. */
+const ADMIN_ROLES: readonly string[] = [ROLES.ADMIN, ROLES.SUPPORT];
+
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter();
-  const { user, logout } = useAuthStore();
+  const { user, isAuthenticated, logout } = useAuthStore();
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+  // El store está persistido en localStorage: hasta que no hidrata no sabemos
+  // quién es el usuario, y el store arranca con `user: null`.
+  const isMounted = useIsMounted();
+
+  const hasAccess = isMounted && isAuthenticated && !!user && ADMIN_ROLES.includes(user.role);
+
+  React.useEffect(() => {
+    if (!isMounted) return;
+    if (!hasAccess) {
+      // La sesión persistida caducó o el rol no da acceso al panel.
+      if (isAuthenticated && user && !ADMIN_ROLES.includes(user.role)) logout();
+      router.replace("/login");
+    }
+  }, [isMounted, hasAccess, isAuthenticated, user, logout, router]);
 
   const handleLogout = () => {
     logout();
     router.push("/login");
   };
+
+  if (!hasAccess) {
+    // Placeholder con la misma altura para que no salte el layout al redirigir.
+    return (
+      <div className="flex min-h-screen w-full items-center justify-center bg-brand-light">
+        <p className="text-sm text-brand-muted">Verificando permisos…</p>
+      </div>
+    );
+  }
 
   return (
     <AdminDataProvider>
@@ -64,7 +92,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </div>
           </header>
 
-          <main className="flex-1 overflow-y-auto bg-neutral-50/50 p-8 md:p-12 animate-fadeIn">
+          <main className="flex-1 overflow-y-auto bg-neutral-50/50 p-4 sm:p-8 lg:p-12 animate-fadeIn">
             <div className="max-w-6xl mx-auto w-full">{children}</div>
           </main>
         </div>

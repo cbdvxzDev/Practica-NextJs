@@ -1,6 +1,6 @@
-import { Navbar } from "../compents/layout/Navbar";
-import { Footer } from "../compents/layout/Footer";
-import { ShopDataProvider } from "../compents/providers/ShopDataProvider";
+import { Navbar } from "../components/layout/Navbar";
+import { Footer } from "../components/layout/Footer";
+import { ShopDataProvider } from "../components/providers/ShopDataProvider";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

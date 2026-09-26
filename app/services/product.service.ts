@@ -13,6 +13,7 @@ export interface Product {
   compareAtPrice?: number;
   images: string[];
   category: { id: string; name: string; slug: string };
+  sizes: string[];
   stock: number;
   isActive: boolean;
   createdAt: string;
@@ -27,6 +28,7 @@ export interface ProductInput {
   compareAtPrice?: number;
   images?: string[];
   category: { id: string; name: string; slug: string };
+  sizes?: string[];
   stock: number;
   isActive?: boolean;
 }

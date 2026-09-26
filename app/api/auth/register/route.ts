@@ -1,13 +1,9 @@
 // app/api/auth/register/route.ts
 import { NextResponse } from "next/server";
 import { insertRecord, readCollection, generateId } from "@/lib/db";
-import { createSessionToken, hashPassword } from "@/lib/auth";
-import type { DbUser, PublicUser } from "@/types/db";
+import { createSessionToken, hashPassword, toPublicUser } from "@/lib/auth";
+import type { DbUser } from "@/types/db";
 
-function publicUser(user: DbUser): PublicUser {
-  const { passwordHash: _ignored, ...rest } = user;
-  return rest;
-}
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => ({}));
@@ -55,7 +51,7 @@ export async function POST(request: Request) {
   return NextResponse.json(
     {
       token,
-      user: publicUser(user),
+      user: toPublicUser(user),
     },
     { status: 201 }
   );

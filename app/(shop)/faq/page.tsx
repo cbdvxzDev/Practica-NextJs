@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CONFIG } from "../../constants/config";
+import { CONFIG } from "@/constants/config";
 
 export const metadata: Metadata = {
   title: "Preguntas frecuentes",
@@ -24,8 +24,7 @@ const FAQ_ITEMS = [
   },
   {
     question: "¿Puedo cancelar o modificar una orden?",
-    answer:
-      "Sí, siempre que el pedido no haya sido despachado. Escríbenos a ${CONFIG.site.contactEmail} con tu número de orden y lo gestionamos.",
+    answer: `Sí, siempre que el pedido no haya sido despachado. Escríbenos a ${CONFIG.site.contactEmail} con tu número de orden y lo gestionamos.`,
   },
   {
     question: "¿Qué hago si recibo un producto incorrecto o defectuoso?",

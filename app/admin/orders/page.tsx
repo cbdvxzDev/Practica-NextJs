@@ -6,6 +6,7 @@ import { Receipt, Search } from "lucide-react";
 import { PageTitle } from "@/components/common/PageTitle";
 import { Button } from "@/components/ui/Button";
 import { useOrderStore, Order, OrderStatus } from "@/store/order.store";
+import { downloadCSV, todayStamp } from "@/lib/csv";
 
 const getOrderStatusStyles = (status: string) => {
   switch (status) {
@@ -19,31 +20,19 @@ const getOrderStatusStyles = (status: string) => {
 
 // Convierte el array de órdenes visibles a un archivo CSV real y lo descarga
 function exportOrdersToCSV(orders: Order[]) {
-  const headers = ["ID Orden", "Cliente", "Email", "Fecha", "Total", "Estado Pago", "Estado Envío"];
-  const rows = orders.map((o) => [
-    o.id,
-    o.customer,
-    o.email,
-    o.date,
-    o.total.toString(),
-    o.paymentStatus,
-    o.status,
-  ]);
-
-  const csvContent = [headers, ...rows]
-    .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
-    .join("\n");
-
-  // BOM para que Excel reconozca acentos/UTF-8 correctamente
-  const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `ordenes-${new Date().toISOString().split("T")[0]}.csv`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+  downloadCSV(
+    `ordenes-${todayStamp()}`,
+    ["ID Orden", "Cliente", "Email", "Fecha", "Total", "Estado Pago", "Estado Envío"],
+    orders.map((o) => [
+      o.id,
+      o.customer,
+      o.email,
+      o.date,
+      o.total,
+      o.paymentStatus,
+      o.status,
+    ])
+  );
 }
 
 export default function AdminOrdersPage() {

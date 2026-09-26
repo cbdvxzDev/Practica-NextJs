@@ -34,6 +34,7 @@ export interface DbProduct {
   compareAtPrice?: number;
   images: string[];
   category: { id: string; name: string; slug: string };
+  sizes: string[];
   stock: number;
   isActive: boolean;
   createdAt: string;
@@ -47,6 +48,11 @@ export interface DbOrderItem {
   name: string;
   quantity: number;
   price: number;
+  /** Fotografía del producto al momento de la compra (puede faltar en pedidos antiguos). */
+  image?: string;
+  slug?: string;
+  /** Talla seleccionada (puede faltar en pedidos antiguos o en productos sin tallas). */
+  size?: string;
 }
 
 export interface DbOrder {

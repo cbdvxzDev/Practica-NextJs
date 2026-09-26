@@ -24,14 +24,36 @@
 
 @layer base {
   *, *::before, *::after { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
   body {
     @apply antialiased bg-white text-brand-dark;
     font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
   ::selection { background-color: #111111; color: #ffffff; }
   *:focus-visible { @apply outline-none ring-2 ring-brand-dark ring-offset-2; }
   img { @apply block max-w-full; }
+
+  /* Evita el zoom automático de iOS/Safari al enfocar inputs en móvil */
+  input, select, textarea {
+    font-size: 16px;
+  }
+  input[type="checkbox"], input[type="radio"], input[type="range"] {
+    font-size: inherit;
+  }
+
+  /* Consistencia de scrollbars en Edge/Chrome y overflow en Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #c5c2bd transparent;
+  }
 }
 
 @keyframes fadeIn {

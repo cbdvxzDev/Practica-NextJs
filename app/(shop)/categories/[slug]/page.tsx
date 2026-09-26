@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
-import { ProductGrid } from "../../../compents/product/ProductGrid";
-import { ProductSort } from "../../../compents/filters/ProductSort";
-import { PageTitle } from "../../../compents/common/PageTitle";
+import { ProductGrid } from "../../../components/product/ProductGrid";
+import { ProductSort } from "../../../components/filters/ProductSort";
+import { PageTitle } from "../../../components/common/PageTitle";
 import { readCollection } from "@/lib/db";
 import type { DbCategory, DbProduct } from "@/types/db";
 
@@ -31,7 +31,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
   if (sort === "price-asc") products = [...products].sort((a, b) => a.price - b.price);
   if (sort === "price-desc") products = [...products].sort((a, b) => b.price - a.price);
-  if (sort === "newest") products = [...products].sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1));
+  if (sort === "newest") products = [...products].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
   return (
     <div className="space-y-10">

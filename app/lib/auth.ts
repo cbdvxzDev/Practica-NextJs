@@ -4,7 +4,7 @@
 import crypto from "crypto";
 import type { NextRequest } from "next/server";
 import { findById } from "./db";
-import type { DbUser } from "@/types/db";
+import type { DbUser, PublicUser } from "@/types/db";
 
 const SECRET = process.env.AUTH_SECRET || "giborsec-dev-secret-2026";
 const TOKEN_TTL_SECONDS = 60 * 60 * 24; // 24 horas
@@ -99,6 +99,15 @@ export class ForbiddenError extends Error {
     super(message);
     this.name = "ForbiddenError";
   }
+}
+
+/**
+ * Elimina el hash de contraseña antes de devolver un usuario al cliente.
+ */
+export function toPublicUser(user: DbUser): PublicUser {
+  const { passwordHash, ...rest } = user;
+  void passwordHash;
+  return rest;
 }
 
 export function hashPassword(password: string): string {

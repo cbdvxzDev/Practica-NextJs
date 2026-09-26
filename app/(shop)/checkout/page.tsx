@@ -1,15 +1,17 @@
 "use client";
 
+import { useIsMounted } from "@/hooks/useIsMounted";
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { PageTitle } from "../../compents/common/PageTitle";
-import { Button } from "../../compents/ui/Button";
-import { Input } from "../../compents/ui/Input";
+import { PageTitle } from "../../components/common/PageTitle";
+import { Button } from "../../components/ui/Button";
+import { Input } from "../../components/ui/Input";
 import { useCartStore } from "../../store/cart.store";
 import { useAuthStore } from "../../store/auth.store";
 import { useOrderStore } from "../../store/order.store";
 
 export default function CheckoutPage() {
+  const isMounted = useIsMounted();
   const router = useRouter();
   const items = useCartStore((state) => state.items);
   const clearCart = useCartStore((state) => state.clearCart);
@@ -20,9 +22,6 @@ export default function CheckoutPage() {
   const [address, setAddress] = React.useState("");
   const [isProcessing, setIsProcessing] = React.useState(false);
   const [error, setError] = React.useState("");
-  const [isMounted, setIsMounted] = React.useState(false);
-
-  React.useEffect(() => setIsMounted(true), []);
 
   if (isMounted && !isAuthenticated) {
     return (
@@ -63,7 +62,7 @@ export default function CheckoutPage() {
     try {
       // La mini API valida stock, calcula el total y descuenta inventario.
       const order = await createOrder({
-        items: items.map((i) => ({ productId: i.id, quantity: i.quantity })),
+        items: items.map((i) => ({ productId: i.id, quantity: i.quantity, size: i.size })),
         shippingAddress: address.trim(),
       });
 
@@ -104,8 +103,11 @@ export default function CheckoutPage() {
               Productos
             </h3>
             {items.map((item) => (
-              <div key={item.id} className="flex justify-between text-xs text-brand-muted">
-                <span>{item.name} × {item.quantity}</span>
+              <div key={item.lineId} className="flex justify-between text-xs text-brand-muted">
+                <span>
+                  {item.name}
+                  {item.size && <span className="text-brand-dark font-medium uppercase"> ({item.size})</span>} × {item.quantity}
+                </span>
                 <span className="font-medium text-brand-dark">
                   ${(item.price * item.quantity).toLocaleString("es-CO")}
                 </span>

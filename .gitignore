@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# cache del pipeline de imagenes del catalogo (scripts/catalog-images.mjs).
+# Es reproducible con `npm run images:harvest`; no tiene que ir al repo.
+/cache

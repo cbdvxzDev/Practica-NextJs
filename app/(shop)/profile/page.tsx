@@ -2,12 +2,13 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { PageTitle } from "../../compents/common/PageTitle";
-import { Button } from "../../compents/ui/Button";
-import { Modal } from "../../compents/ui/Modal";
-import { Input } from "../../compents/ui/Input";
+import { PageTitle } from "../../components/common/PageTitle";
+import { Button } from "../../components/ui/Button";
+import { Modal } from "../../components/ui/Modal";
+import { Input } from "../../components/ui/Input";
 import { useAuthStore } from "../../store/auth.store";
 import { useOrderStore } from "../../store/order.store";
+import { useIsMounted } from "../../hooks/useIsMounted";
 
 const getStatusStyles = (status: string) => {
   switch (status) {
@@ -25,7 +26,9 @@ const getStatusStyles = (status: string) => {
 export default function ProfilePage() {
   const user = useAuthStore((state) => state.user);
   const updateUser = useAuthStore((state) => state.updateUser);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const allOrders = useOrderStore((state) => state.orders);
+  const isMounted = useIsMounted();
 
   const [isEditOpen, setIsEditOpen] = React.useState(false);
   const [isSaving, setIsSaving] = React.useState(false);
@@ -33,10 +36,14 @@ export default function ProfilePage() {
   const [name, setName] = React.useState(user?.name ?? "");
   const [email, setEmail] = React.useState(user?.email ?? "");
 
-  React.useEffect(() => {
+  // Refleja el usuario del store en el formulario. Se ajusta durante el render
+  // en lugar de un efecto para no disparar un render en cascada.
+  const [syncedUser, setSyncedUser] = React.useState({ name: user?.name, email: user?.email });
+  if (syncedUser.name !== user?.name || syncedUser.email !== user?.email) {
+    setSyncedUser({ name: user?.name, email: user?.email });
     setName(user?.name ?? "");
     setEmail(user?.email ?? "");
-  }, [user]);
+  }
 
   const myOrders = allOrders.filter((o) => o.email.toLowerCase() === user?.email.toLowerCase());
 
@@ -54,6 +61,27 @@ export default function ProfilePage() {
       setIsSaving(false);
     }
   };
+
+  /* /profile está en PROTECTED_ROUTES, pero la página se renderiza en el
+     cliente: sin este guard, un visitante sin sesión veía el perfil vacío
+     con "—" en todos los campos. Se espera a hidratar el store persistido
+     para noGatear al usuario real durante la hidratación de React. */
+  if (isMounted && !isAuthenticated) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-6 animate-fadeIn">
+        <div className="space-y-2">
+          <h1 className="text-2xl font-medium tracking-tight">Inicia sesión para ver tu cuenta</h1>
+          <p className="text-sm text-brand-muted max-w-sm mx-auto">
+            Accede a tu perfil para revisar tus datos personales y el historial de tus pedidos.
+          </p>
+        </div>
+        <div className="flex gap-3">
+          <Link href="/login"><Button variant="primary" className="h-11 px-6">Iniciar sesión</Button></Link>
+          <Link href="/register"><Button variant="outline" className="h-11 px-6">Crear cuenta</Button></Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-12">

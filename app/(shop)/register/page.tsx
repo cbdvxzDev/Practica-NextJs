@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { RegisterForm, type RegisterFormData } from "../../compents/forms/RegisterForm";
+import { RegisterForm, type RegisterFormData } from "../../components/forms/RegisterForm";
 import { AuthService } from "@/services/auth.service";
 import { useAuthStore } from "@/store/auth.store";
 

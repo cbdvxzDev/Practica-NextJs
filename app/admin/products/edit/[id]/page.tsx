@@ -5,8 +5,10 @@ import Link from "next/link";
 import { notFound, useParams, useRouter } from "next/navigation";
 import { PageTitle } from "@/components/common/PageTitle";
 import { ProductForm, type ProductFormData } from "@/components/forms/ProductForm";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useProductStore } from "@/store/product.store";
 import { useCategoryStore } from "@/store/category.store";
+import { CONFIG } from "@/constants/config";
 
 export default function AdminEditProductPage() {
   const params = useParams();
@@ -14,9 +16,14 @@ export default function AdminEditProductPage() {
   const id = params.id as string;
 
   const product = useProductStore((state) => state.products.find((p) => p.id === id));
+  const loading = useProductStore((state) => state.loading);
   const updateProduct = useProductStore((state) => state.updateProduct);
   const categories = useCategoryStore((state) => state.categories);
   const [error, setError] = React.useState("");
+
+  // El catálogo se hidrata desde la API en el cliente: sin este gate, entrar
+  // directo por URL o recargar la página resolvía notFound() con la lista aún vacía.
+  const resolved = !loading;
 
   const categoryOptions = categories.map((c) => ({ id: c.id, label: c.name }));
 
@@ -26,16 +33,18 @@ export default function AdminEditProductPage() {
 
     try {
       await updateProduct(id, {
+        sku: data.sku,
         title: data.name,
         description: data.description,
         price: Number(data.price),
         compareAtPrice: data.originalPrice ? Number(data.originalPrice) : undefined,
-        images: data.images?.length > 0 ? data.images : product?.images,
+        images: data.images.length > 0 ? data.images : [CONFIG.images.placeholder],
         category: {
           id: category?.id ?? data.category,
-          name: category?.name ?? "",
-          slug: category?.slug ?? "",
+          name: category?.name ?? product?.category.name ?? "",
+          slug: category?.slug || product?.category.slug || "",
         },
+        sizes: data.sizes,
         stock: Number(data.stock),
       });
       router.push("/admin/products");
@@ -43,6 +52,15 @@ export default function AdminEditProductPage() {
       setError(err instanceof Error ? err.message : "No se pudo guardar el producto.");
     }
   };
+
+  if (!resolved) {
+    return (
+      <div className="space-y-8 max-w-5xl mx-auto">
+        <Skeleton className="h-10 w-64" />
+        <Skeleton className="h-96 w-full" />
+      </div>
+    );
+  }
 
   if (!product) {
     notFound();
@@ -74,6 +92,7 @@ export default function AdminEditProductPage() {
             category: product.category.id,
             stock: product.stock,
             images: product.images,
+            sizes: product.sizes,
           }}
           categories={categoryOptions}
           onSubmit={handleSubmit}

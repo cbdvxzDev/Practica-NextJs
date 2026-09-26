@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Button } from "../../../compents/ui/Button";
+import { Button } from "../../../components/ui/Button";
 
 export default function CheckoutSuccessPage() {
   const searchParams = useSearchParams();

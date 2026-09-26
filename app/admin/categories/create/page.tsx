@@ -11,12 +11,13 @@ export default function AdminCreateCategoryPage() {
   const router = useRouter();
   const [error, setError] = React.useState("");
 
-  const handleSubmit = async (data: { name: string; slug: string; description: string }) => {
+  const handleSubmit = async (data: { name: string; slug: string; description: string; imageUrl: string }) => {
     try {
       await CategoryService.create({
         name: data.name,
         slug: data.slug,
         description: data.description,
+        imageUrl: data.imageUrl || undefined,
       });
       router.push("/admin/categories");
     } catch (err) {

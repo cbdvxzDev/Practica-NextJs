@@ -1,5 +1,6 @@
 "use client";
 
+import { useIsMounted } from "@/hooks/useIsMounted";
 import * as React from "react";
 import { PageTitle } from "@/components/common/PageTitle";
 import { InventoryTable, type InventoryItem } from "@/components/admin/InventoryTable";
@@ -8,13 +9,23 @@ import { useProductStore } from "@/store/product.store";
 
 const LOW_STOCK_THRESHOLD = 6;
 
+/**
+ * Escapa texto antes de inyectarlo con `document.write`: el título y el SKU son
+ * editables por un administrador, así que no se puede confiar en ellos.
+ */
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
 export default function AdminInventoryPage() {
+  const isMounted = useIsMounted();
   const products = useProductStore((state) => state.products);
   const loading = useProductStore((state) => state.loading);
   const updateStock = useProductStore((state) => state.updateStock);
-  const [isMounted, setIsMounted] = React.useState(false);
-
-  React.useEffect(() => setIsMounted(true), []);
 
   const items: InventoryItem[] = React.useMemo(
     () =>
@@ -50,6 +61,51 @@ export default function AdminInventoryPage() {
     { label: "Agotados", value: outOfStock },
   ];
 
+  /**
+   * Abre una ventana de impresión con una etiqueta por producto (código SKU,
+   * nombre y existencias). Se cierra sola si el usuario cancela el diálogo.
+   */
+  const handlePrintLabels = () => {
+    const win = window.open("", "_blank", "width=800,height=600");
+    if (!win) return;
+
+    const labels = products
+      .map(
+        (p) => `
+        <div class="label">
+          <p class="sku">${escapeHtml(p.sku)}</p>
+          <p class="name">${escapeHtml(p.title)}</p>
+          <p class="stock">Stock: ${escapeHtml(String(p.stock))}</p>
+        </div>`
+      )
+      .join("");
+
+    win.document.write(`<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Etiquetas SKU — Esencial</title>
+    <style>
+      body { font-family: system-ui, sans-serif; padding: 24px; }
+      h1 { font-size: 14px; text-transform: uppercase; letter-spacing: .1em; }
+      .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+      .label { border: 1px solid #d6d3d1; border-radius: 8px; padding: 12px; text-align: center; }
+      .sku { font-family: ui-monospace, monospace; font-size: 14px; font-weight: 700; margin: 0; }
+      .name { font-size: 11px; color: #57534e; margin: 4px 0 0; }
+      .stock { font-size: 10px; color: #a8a29e; margin: 2px 0 0; }
+      @media print { h1 { display: none; } .grid { gap: 8px; } }
+    </style>
+  </head>
+  <body>
+    <h1>Etiquetas SKU</h1>
+    <div class="grid">${labels}</div>
+  </body>
+</html>`);
+    win.document.close();
+    win.focus();
+    win.print();
+  };
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-5">
@@ -58,7 +114,7 @@ export default function AdminInventoryPage() {
           description="Monitoreo físico de existencias, códigos SKU y alertas de reabastecimiento crítico."
         />
         <div className="flex items-center space-x-3">
-          <Button variant="secondary" className="h-9 text-xs">
+          <Button variant="secondary" className="h-9 text-xs" onClick={handlePrintLabels} disabled={products.length === 0}>
             Imprimir etiquetas SKU
           </Button>
         </div>

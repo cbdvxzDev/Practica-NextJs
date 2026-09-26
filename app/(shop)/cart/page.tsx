@@ -1,22 +1,23 @@
 "use client";
 
+import { useIsMounted } from "@/hooks/useIsMounted";
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { PageTitle } from "../../compents/common/PageTitle";
-import { CartItem } from "../../compents/cart/CartItem";
-import { CartSummary } from "../../compents/cart/CartSummary";
-import { Button } from "../../compents/ui/Button";
+import { PageTitle } from "../../components/common/PageTitle";
+import { CartItem } from "../../components/cart/CartItem";
+import { CartSummary } from "../../components/cart/CartSummary";
+import { Button } from "../../components/ui/Button";
 import { useCartStore } from "../../store/cart.store";
+import { CONFIG } from "@/constants/config";
 
 export default function CartPage() {
+  const isMounted = useIsMounted();
   const router = useRouter();
   const items = useCartStore((state) => state.items);
   const removeItem = useCartStore((state) => state.removeItem);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
 
-  const [isMounted, setIsMounted] = React.useState(false);
-  React.useEffect(() => setIsMounted(true), []);
 
   if (!isMounted) return null;
 
@@ -48,16 +49,17 @@ export default function CartPage() {
         <section className="lg:col-span-8 space-y-px bg-border/40 rounded-card overflow-hidden border border-border/60">
           {items.map((item) => (
             <CartItem
-              key={item.id}
-              id={item.id}
+              key={item.lineId}
+              id={item.lineId}
               slug={item.slug}
               name={item.name}
               price={item.price}
-              image={item.image || "https://placehold.co/300x400/e8e4df/6B7280?text=Producto"}
+              image={item.image || CONFIG.images.placeholder}
+              size={item.size}
               quantity={item.quantity}
               stock={item.stock ?? 99}
-              onQuantityChange={(id, newQuantity) => updateQuantity(id, newQuantity)}
-              onRemove={(id) => removeItem(id)}
+              onQuantityChange={(lineId, newQuantity) => updateQuantity(lineId, newQuantity)}
+              onRemove={(lineId) => removeItem(lineId)}
             />
           ))}
         </section>

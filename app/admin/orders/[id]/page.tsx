@@ -1,11 +1,15 @@
 "use client";
 
+import { useIsMounted } from "@/hooks/useIsMounted";
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useParams, notFound } from "next/navigation";
 import { PageTitle } from "@/components/common/PageTitle";
 import { Button } from "@/components/ui/Button";
 import { useOrderStore } from "@/store/order.store";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { CONFIG } from "@/constants/config";
 
 const getOrderStatusStyles = (status: string) => {
   switch (status) {
@@ -18,17 +22,25 @@ const getOrderStatusStyles = (status: string) => {
 };
 
 export default function AdminOrderDetailPage() {
+  const isMounted = useIsMounted();
   const params = useParams();
   const id = params.id as string;
 
-  const [isMounted, setIsMounted] = React.useState(false);
-  React.useEffect(() => setIsMounted(true), []);
 
   const order = useOrderStore((state) => state.orders.find((o) => o.id === id));
+  const loading = useOrderStore((state) => state.loading);
   const updateOrderStatus = useOrderStore((state) => state.updateOrderStatus);
 
-  // 🔑 Esperamos a que el store termine de hidratar antes de decidir si es 404
-  if (!isMounted) return null;
+  // 🔑 Esperamos a que el store termine de hidratar antes de decidir si es 404.
+  // Un simple "montado" no basta: en el primer render las órdenes siguen vacías.
+  if (!isMounted || loading) {
+    return (
+      <div className="space-y-8 max-w-4xl mx-auto">
+        <Skeleton className="h-10 w-72" />
+        <Skeleton className="h-64 w-full" />
+      </div>
+    );
+  }
 
   if (!order) {
     notFound();
@@ -83,7 +95,35 @@ export default function AdminOrderDetailPage() {
           <tbody className="divide-y divide-border/30">
             {order.items.map((item, idx) => (
               <tr key={idx}>
-                <td className="py-3 px-5 text-brand-dark">{item.name}</td>
+                <td className="py-3 px-5">
+                  <div className="flex items-center gap-3">
+                    <div className="h-11 w-11 flex-shrink-0 rounded-card overflow-hidden relative bg-neutral-100 border border-border/30">
+                      <Image
+                        src={item.image || CONFIG.images.placeholder}
+                        alt={item.name}
+                        fill
+                        sizes="44px"
+                        className="object-cover object-center"
+                        unoptimized={!item.image}
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      {item.slug ? (
+                        <Link
+                          href={`/products/${item.slug}`}
+                          className="text-brand-dark hover:underline underline-offset-4 transition-opacity block truncate"
+                        >
+                          {item.name}
+                        </Link>
+                      ) : (
+                        <span className="text-brand-dark block truncate">{item.name}</span>
+                      )}
+                      {item.size && (
+                        <span className="text-[11px] text-brand-muted uppercase">Talla: {item.size}</span>
+                      )}
+                    </div>
+                  </div>
+                </td>
                 <td className="py-3 px-5 text-center text-brand-muted">{item.quantity}</td>
                 <td className="py-3 px-5 text-right font-medium text-brand-dark">${item.price.toLocaleString("es-CO")}</td>
               </tr>

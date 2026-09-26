@@ -12,7 +12,7 @@ export default function AdminEditCategoryPage() {
   const router = useRouter();
   const id = params.id as string;
 
-  const [category, setCategory] = React.useState<{ name: string; slug: string; description: string } | null>(null);
+  const [category, setCategory] = React.useState<{ name: string; slug: string; description: string; imageUrl: string } | null>(null);
   const [error, setError] = React.useState("");
 
   React.useEffect(() => {
@@ -22,14 +22,20 @@ export default function AdminEditCategoryPage() {
           name: c.name,
           slug: c.slug,
           description: c.description ?? "",
+          imageUrl: c.imageUrl ?? "",
         })
       )
       .catch((err) => setError(err instanceof Error ? err.message : "No se pudo cargar la categoría."));
   }, [id]);
 
-  const handleSubmit = async (data: { name: string; slug: string; description: string }) => {
+  const handleSubmit = async (data: { name: string; slug: string; description: string; imageUrl: string }) => {
     try {
-      await CategoryService.update(id, data);
+      await CategoryService.update(id, {
+        name: data.name,
+        slug: data.slug,
+        description: data.description,
+        imageUrl: data.imageUrl || undefined,
+      });
       router.push("/admin/categories");
     } catch (err) {
       setError(err instanceof Error ? err.message : "No se pudo guardar la categoría.");

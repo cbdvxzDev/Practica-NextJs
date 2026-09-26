@@ -3,25 +3,31 @@
 import * as React from "react";
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { ProductGrid } from "../../compents/product/ProductGrid";
-import { ProductFilters } from "../../compents/filters/ProductFilters";
-import { ProductSort } from "../../compents/filters/ProductSort";
-import { ProductPagination } from "../../compents/filters/ProductPagination";
-import { PageTitle } from "../../compents/common/PageTitle";
+import { ProductGrid } from "../../components/product/ProductGrid";
+import { ProductFilters } from "../../components/filters/ProductFilters";
+import { ProductSort } from "../../components/filters/ProductSort";
+import { ProductPagination } from "../../components/filters/ProductPagination";
+import { PageTitle } from "../../components/common/PageTitle";
+import { cn } from "../../lib/utils";
 import { useProductStore } from "../../store/product.store";
 import { useCategoryStore } from "../../store/category.store";
 import { CONFIG } from "../../constants/config";
 
 const FALLBACK_CATEGORIES = [
   { id: "abrigo", label: "Prendas de Abrigo" },
-  { id: "basicos", label: "Básicos" },
-  { id: "camisas", label: "Camisas" },
+  { id: "vestidos", label: "Vestidos" },
+  { id: "tejidos", label: "Tejidos de Punto" },
+  { id: "denim", label: "Denim" },
+  { id: "camisas", label: "Camisas y Blusas" },
   { id: "pantalones", label: "Pantalones" },
+  { id: "calzado", label: "Calzado" },
+  { id: "accesorios", label: "Accesorios" },
+  { id: "basicos", label: "Básicos Esenciales" },
 ];
 
 function CatalogSkeleton() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 animate-pulse">
+    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 animate-pulse">
       {Array.from({ length: 8 }).map((_, i) => (
         <div key={i} className="space-y-3">
           <div className="aspect-[3/4] rounded-lg bg-neutral-100" />
@@ -38,6 +44,7 @@ function ProductCatalogPage() {
   const allProducts = useProductStore((state) => state.products);
   const loading = useProductStore((state) => state.loading);
   const categories = useCategoryStore((state) => state.categories);
+  const [showFilters, setShowFilters] = React.useState(false);
 
   // Las categorías se cargan desde la API; mientras tanto usamos las conocidas.
   const categoryItems = React.useMemo(() => {
@@ -54,7 +61,9 @@ function ProductCatalogPage() {
     const max = Number(searchParams.get("maxPrice")) || Number.MAX_SAFE_INTEGER;
     const sort = searchParams.get("sort") || "featured";
 
-    let products = allProducts.filter((p) => p.isActive && p.stock > 0);
+    // Se listan también las piezas agotadas (el carrito las marca como no
+    // comprables) para que el catálogo coincida con el contador de categorías.
+    let products = allProducts.filter((p) => p.isActive);
 
     if (category) {
       products = products.filter(
@@ -113,13 +122,48 @@ function ProductCatalogPage() {
         />
       </div>
 
+      <div className="flex items-center justify-between lg:hidden">
+        <button
+          type="button"
+          onClick={() => setShowFilters((prev) => !prev)}
+          aria-expanded={showFilters}
+          className="inline-flex items-center gap-2 px-4 h-10 rounded-button border border-border/70 bg-white text-sm font-medium text-brand-dark hover:bg-brand-light transition-colors"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 4h18M6 12h12M10 20h4" />
+          </svg>
+          Filtros
+          {showFilters && (
+            <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          )}
+        </button>
+        <ProductSort />
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-        <aside className="hidden lg:flex flex-col space-y-8 sticky top-24 p-1">
+        <aside
+          className={cn(
+            "flex-col space-y-8 lg:sticky lg:top-24 lg:flex p-1",
+            showFilters ? "flex" : "hidden"
+          )}
+        >
+          <div className="lg:hidden flex items-center justify-between">
+            <span className="text-sm font-semibold text-brand-dark">Filtros</span>
+            <button
+              type="button"
+              onClick={() => setShowFilters(false)}
+              className="text-xs font-medium text-brand-muted underline underline-offset-4"
+            >
+              Cerrar
+            </button>
+          </div>
           <ProductFilters categories={categoryItems} />
         </aside>
 
         <div className="lg:col-span-3 space-y-10">
-          <div className="flex items-center justify-between text-sm text-brand-muted border-b border-border/40 pb-4">
+          <div className="hidden lg:flex items-center justify-between text-sm text-brand-muted border-b border-border/40 pb-4">
             <p>
               Mostrando {filtered.length} {filtered.length === 1 ? "producto" : "productos"}
             </p>

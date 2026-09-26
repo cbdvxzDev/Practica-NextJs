@@ -2,11 +2,12 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { PageTitle } from "../../compents/common/PageTitle";
-import { StatsCard } from "../../compents/admin/StatsCard";
-import { Button } from "../../compents/ui/Button";
+import { PageTitle } from "../../components/common/PageTitle";
+import { StatsCard } from "../../components/admin/StatsCard";
+import { Button } from "../../components/ui/Button";
 import { useProductStore } from "../../store/product.store";
 import { useOrderStore } from "../../store/order.store";
+import { downloadCSV, todayStamp } from "@/lib/csv";
 
 export default function AdminDashboardPage() {
   const products = useProductStore((state) => state.products);
@@ -66,11 +67,36 @@ export default function AdminDashboardPage() {
 
   const recentOrders = orders.slice(0, 3);
 
+  /** Reporte comercial: una fila por producto con su inventario y sus ventas. */
+  const handleExportReport = () => {
+    const unitsByProduct: Record<string, number> = {};
+
+    orders.forEach((order) => {
+      order.items.forEach((item) => {
+        unitsByProduct[item.name] = (unitsByProduct[item.name] ?? 0) + item.quantity;
+      });
+    });
+
+    downloadCSV(
+      `reporte-comercial-${todayStamp()}`,
+      ["SKU", "Producto", "Categoría", "Precio", "Stock", "Unidades vendidas", "Estado"],
+      products.map((p) => [
+        p.sku,
+        p.title,
+        p.category.name,
+        p.price,
+        p.stock,
+        unitsByProduct[p.title] ?? 0,
+        p.isActive ? "Activo" : "Inactivo",
+      ])
+    );
+  };
+
   return (
     <div className="space-y-10">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-5">
         <PageTitle title="Panel de Control" description="Vista general del rendimiento comercial e inventario de la tienda." />
-        <Button variant="secondary" className="h-9 text-xs">Exportar reporte</Button>
+        <Button variant="secondary" className="h-9 text-xs" onClick={handleExportReport}>Exportar reporte</Button>
       </div>
 
       <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">

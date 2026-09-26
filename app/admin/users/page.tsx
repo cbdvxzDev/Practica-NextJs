@@ -6,6 +6,7 @@ import { Users as UsersIcon } from "lucide-react";
 import { PageTitle } from "@/components/common/PageTitle";
 import { Button } from "@/components/ui/Button";
 import { UserService, type UserAdmin } from "@/services/user.service";
+import { downloadCSV, todayStamp } from "@/lib/csv";
 
 const getInitials = (name: string) =>
   name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
@@ -29,26 +30,17 @@ export default function AdminUsersPage() {
   }, []);
 
   const exportCSV = () => {
-    const headers = ["Nombre", "Email", "Rol", "Creado", "Estado"];
-    const rows = users.map((u) => [
-      u.name,
-      u.email,
-      u.role,
-      new Date(u.createdAt).toLocaleDateString("es-CO"),
-      u.isActive ? "Activo" : "Inactivo",
-    ]);
-    const csv = [headers, ...rows]
-      .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
-      .join("\n");
-    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `usuarios-${new Date().toISOString().split("T")[0]}.csv`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    downloadCSV(
+      `usuarios-${todayStamp()}`,
+      ["Nombre", "Email", "Rol", "Creado", "Estado"],
+      users.map((u) => [
+        u.name,
+        u.email,
+        u.role,
+        new Date(u.createdAt).toLocaleDateString("es-CO"),
+        u.isActive ? "Activo" : "Inactivo",
+      ])
+    );
   };
 
   return (

@@ -37,6 +37,7 @@ export const PUT = apiHandler(async (request: NextRequest, ctx: RouteContext<"/a
     compareAtPrice: body.compareAtPrice !== undefined ? Number(body.compareAtPrice) : existing.compareAtPrice,
     images: body.images !== undefined ? body.images : existing.images,
     category: body.category !== undefined ? body.category : existing.category,
+    sizes: body.sizes !== undefined ? body.sizes : existing.sizes,
     stock: body.stock !== undefined ? Number(body.stock) : existing.stock,
     isActive: body.isActive !== undefined ? Boolean(body.isActive) : existing.isActive,
     updatedAt: new Date().toISOString(),

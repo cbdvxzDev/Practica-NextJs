@@ -10,6 +10,10 @@ export interface OrderItem {
   name: string;
   quantity: number;
   price: number;
+  /** Fotografía, slug y talla capturados al momento de la compra (opcionales). */
+  image?: string;
+  slug?: string;
+  size?: string;
 }
 
 export interface Order {
@@ -52,7 +56,7 @@ export const OrderService = {
    * Crea una orden desde el carrito. El precio total se calcula en el servidor.
    */
   async create(input: {
-    items: { productId: string; quantity: number }[];
+    items: { productId: string; quantity: number; size?: string }[];
     shippingAddress: string;
   }): Promise<Order> {
     const res = await fetcher<{ data: Order }>("/api/orders", {

@@ -1,104 +1,113 @@
-"use client";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ProductGallery } from "../../../components/product/ProductGallery";
+import { ProductBuyBox } from "../../../components/product/ProductBuyBox";
+import { ProductPrice } from "../../../components/product/ProductPrice";
+import { ProductDetails } from "../../../components/product/ProductDetails";
+import { ProductGrid } from "../../../components/product/ProductGrid";
+import { SectionHeading } from "../../../components/common/SectionHeading";
+import { readCollection } from "@/lib/db";
+import { CONFIG } from "@/constants/config";
+import type { DbProduct } from "@/types/db";
 
-import * as React from "react";
-import { notFound, useParams } from "next/navigation";
-import { ProductGallery } from "../../../compents/product/ProductGallery";
-import { ProductBuyBox } from "../../../compents/product/ProductBuyBox";
-import { ProductPrice } from "../../../compents/product/ProductPrice";
-import { ProductService } from "../../../services/product.service";
-import { useProductStore } from "../../../store/product.store";
-import type { Product } from "../../../services/product.service";
+interface ProductPageProps {
+  params: Promise<{ slug: string }>;
+}
 
-export default function ProductPage() {
-  const params = useParams();
-  const slug = params.slug as string;
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const products = readCollection<DbProduct>("products");
+  const product = products.find((p) => p.slug === slug);
 
-  const storeProduct = useProductStore((state) => state.products.find((p) => p.slug === slug));
-  const fetchProducts = useProductStore((state) => state.fetchProducts);
-
-  const [product, setProduct] = React.useState<Product | null>(storeProduct ?? null);
-  const [missing, setMissing] = React.useState(false);
-
-  React.useEffect(() => {
-    if (storeProduct) return;
-
-    let cancelled = false;
-    const load = async () => {
-      try {
-        const fetched = await ProductService.getBySlug(slug);
-        if (!cancelled) setProduct(fetched);
-      } catch {
-        if (!cancelled) {
-          setProduct(null);
-          setMissing(true);
-        }
-      }
-    };
-
-    load();
-    // Por si el hidratado global aún no termina, reintentamos refrescar el catálogo.
-    fetchProducts().catch(() => {});
-
-    return () => {
-      cancelled = true;
-    };
-  }, [slug, storeProduct, fetchProducts]);
-
-  const current = storeProduct ?? product;
-
-  if (!current) {
-    if (missing) notFound();
-
-    return (
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10 animate-pulse">
-        <div className="lg:col-span-7 h-[420px] bg-neutral-100 rounded-2xl" />
-        <div className="lg:col-span-5 space-y-4">
-          <div className="h-4 bg-neutral-100 rounded w-40" />
-          <div className="h-8 bg-neutral-100 rounded w-64" />
-          <div className="h-4 bg-neutral-100 rounded w-full" />
-          <div className="h-4 bg-neutral-100 rounded w-3/4" />
-          <div className="h-12 bg-neutral-100 rounded-xl mt-6" />
-        </div>
-      </div>
-    );
+  if (!product) {
+    return { title: "Producto no encontrado" };
   }
 
-  if (!current.isActive) {
+  return {
+    title: product.title,
+    description: product.description,
+    openGraph: {
+      title: `${product.title} · ${CONFIG.appName}`,
+      description: product.description,
+      images: product.images.slice(0, 1),
+    },
+  };
+}
+
+export default async function ProductPage({ params }: ProductPageProps) {
+  const { slug } = await params;
+  const products = readCollection<DbProduct>("products");
+  const product = products.find((p) => p.slug === slug);
+
+  if (!product || !product.isActive) {
     notFound();
   }
 
+  // Relacionados: primero los de la misma categoría y, si faltan, los más recientes.
+  const related = products
+    .filter((p) => p.isActive && p.id !== product.id && p.stock > 0)
+    .sort((a, b) => {
+      const sameCategoryA = a.category.id === product.category.id ? 0 : 1;
+      const sameCategoryB = b.category.id === product.category.id ? 0 : 1;
+      if (sameCategoryA !== sameCategoryB) return sameCategoryA - sameCategoryB;
+      return b.createdAt.localeCompare(a.createdAt);
+    })
+    .slice(0, 4);
+
   return (
-    <article className="grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10 items-start">
-      <section className="lg:col-span-7 w-full">
-        <ProductGallery images={current.images} name={current.title} />
+    <>
+      <article className="grid grid-cols-1 lg:grid-cols-12 gap-x-8 lg:gap-x-12 gap-y-10 lg:gap-y-0 items-start">
+        <section className="lg:col-span-7 w-full">
+          <ProductGallery images={product.images} name={product.title} />
+        </section>
+
+        <section className="lg:col-span-5 flex flex-col space-y-8 lg:sticky lg:top-24">
+          <div className="space-y-4 border-b border-border pb-6">
+            <Link
+              href={`/categories/${product.category.slug}`}
+              className="inline-block text-xs font-semibold tracking-widest uppercase text-brand-muted transition-colors hover:text-brand-accent"
+            >
+              {product.category.name}
+            </Link>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-normal tracking-tight text-brand-dark">
+              {product.title}
+            </h1>
+            <ProductPrice price={product.price} originalPrice={product.compareAtPrice} />
+          </div>
+
+          <p className="text-sm text-brand-muted leading-relaxed">
+            {product.description}
+          </p>
+
+          <div className="pt-2">
+            <ProductBuyBox
+              id={product.id}
+              slug={product.slug}
+              name={product.title}
+              price={product.price}
+              image={product.images[0]}
+              stock={product.stock}
+              sizes={product.sizes}
+            />
+          </div>
+        </section>
+      </article>
+
+      <section className="mt-14 border-t border-border pt-10">
+        <ProductDetails product={product} />
       </section>
 
-      <section className="lg:col-span-5 flex flex-col space-y-8 sticky top-24">
-        <div className="space-y-4 border-b border-border pb-6">
-          <span className="text-xs font-semibold tracking-widest uppercase text-brand-muted">
-            {current.category.name}
-          </span>
-          <h1 className="text-3xl font-normal tracking-tight text-brand-dark sm:text-4xl">
-            {current.title}
-          </h1>
-          <ProductPrice price={current.price} originalPrice={current.compareAtPrice} />
-        </div>
-
-        <p className="text-sm text-brand-muted leading-relaxed">
-          {current.description}
-        </p>
-
-        <div className="pt-2">
-          <ProductBuyBox
-            id={current.id}
-            slug={current.slug}
-            name={current.title}
-            price={current.price}
-            image={current.images[0]}
-            stock={current.stock}
+      {related.length > 0 && (
+        <section className="mt-16 space-y-6">
+          <SectionHeading
+            title="También te puede gustar"
+            description="Piezas de la misma colección que combinan bien con esta referencia."
+            action={{ href: `/categories/${product.category.slug}`, label: "Ver la categoría" }}
           />
-        </div>
-      </section>
-    </article>
+          <ProductGrid products={related} />
+        </section>
+      )}
+    </>
   );
 }

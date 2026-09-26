@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { insertRecord, readCollection, generateId } from "@/lib/db";
 import { ForbiddenError, getTokenPayload } from "@/lib/auth";
 import { apiHandler } from "@/lib/api";
+import { CONFIG } from "@/constants/config";
 import type { DbProduct } from "@/types/db";
 
 function toSlug(text: string): string {
@@ -51,7 +52,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
   }
 
   const body = await request.json().catch(() => ({}));
-  const { sku, title, description, price, compareAtPrice, images, category, stock, isActive } = body;
+  const { sku, title, description, price, compareAtPrice, images, sizes, category, stock, isActive } = body;
 
   if (!sku || !title || !price || !category) {
     return NextResponse.json(
@@ -71,12 +72,13 @@ export const POST = apiHandler(async (request: NextRequest) => {
     compareAtPrice: compareAtPrice ? Number(compareAtPrice) : undefined,
     images: Array.isArray(images) && images.length > 0
       ? images
-      : ["https://placehold.co/600x800/e8e4df/6B7280?text=Producto"],
+      : [CONFIG.images.placeholder],
     category: {
       id: category?.id ?? String(category),
       name: category?.name ?? "",
-      slug: category?.slug ?? toSlug(category?.name ?? String(category)),
+      slug: category?.slug || toSlug(category?.name ?? String(category)),
     },
+    sizes: Array.isArray(sizes) && sizes.length > 0 ? sizes : ["S", "M", "L"],
     stock: Number(stock ?? 0),
     isActive: isActive !== undefined ? Boolean(isActive) : true,
     createdAt: now,

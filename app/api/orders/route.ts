@@ -15,7 +15,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ message: "No autorizado." }, { status: 401 });
   }
 
-  let orders = readCollection<DbOrder>("orders").sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1));
+  // Del pedido más reciente al más antiguo.
+  let orders = readCollection<DbOrder>("orders").sort((a, b) =>
+    b.createdAt.localeCompare(a.createdAt)
+  );
 
   if (user.role !== "admin" && user.role !== "support") {
     orders = orders.filter((o) => o.email.toLowerCase() === user.email.toLowerCase());
@@ -31,7 +34,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json().catch(() => ({}));
-  const items = body?.items as { productId: string; quantity: number }[] | undefined;
+  const items = body?.items as { productId: string; quantity: number; size?: string }[] | undefined;
   const shippingAddress = String(body?.shippingAddress ?? "").trim();
 
   if (!Array.isArray(items) || items.length === 0) {
@@ -63,8 +66,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const size = typeof item.size === "string" && item.size.trim() ? item.size.trim() : undefined;
+    if (size && !product.sizes.includes(size)) {
+      return NextResponse.json(
+        { message: `La talla "${size}" no está disponible para "${product.title}".` },
+        { status: 400 }
+      );
+    }
+
     subtotal += product.price * quantity;
-    orderItems.push({ name: product.title, quantity, price: product.price });
+
+    // Dos tallas del mismo producto son líneas distintas del pedido.
+    const existingLine = orderItems.find(
+      (line) => line.name === product.title && (line.size ?? undefined) === size
+    );
+    if (existingLine) {
+      existingLine.quantity += quantity;
+    } else {
+      orderItems.push({
+        name: product.title,
+        quantity,
+        price: product.price,
+        image: product.images[0],
+        slug: product.slug,
+        size,
+      });
+    }
 
     updateRecord<DbProduct>("products", product.id, {
       stock: product.stock - quantity,
@@ -76,7 +103,14 @@ export async function POST(request: NextRequest) {
   const now = new Date();
   const date = now.toLocaleDateString("es-CO", { day: "numeric", month: "short", year: "numeric" });
 
-  const orderSequence = readCollection<DbOrder>("orders").length + 1;
+  // El consecutivo se deriva del mayor ID existente, no del tamaño del arreglo:
+  // contar elementos reutilizaba el ID de un pedido eliminado.
+  const existingOrders = readCollection<DbOrder>("orders");
+  const lastSequence = existingOrders.reduce((max, order) => {
+    const match = /(\d+)$/.exec(order.id);
+    return match ? Math.max(max, Number(match[1])) : max;
+  }, 0);
+  const orderSequence = lastSequence + 1;
 
   const order: DbOrder = {
     id: `ORD-${now.getFullYear()}-${String(orderSequence).padStart(3, "0")}`,

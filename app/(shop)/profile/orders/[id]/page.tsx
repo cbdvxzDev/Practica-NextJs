@@ -1,11 +1,14 @@
 "use client";
 
+import { useIsMounted } from "@/hooks/useIsMounted";
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { PageTitle } from "../../../../compents/common/PageTitle";
+import { PageTitle } from "../../../../components/common/PageTitle";
 import { useAuthStore } from "../../../../store/auth.store";
 import { useOrderStore } from "../../../../store/order.store";
+import { CONFIG } from "@/constants/config";
 
 const STATUS_MAP: Record<string, { label: string; cls: string; step: number }> = {
   pending:    { label: "Pendiente",  cls: "bg-stone-100 text-stone-600",                               step: 1 },
@@ -18,6 +21,7 @@ const STATUS_MAP: Record<string, { label: string; cls: string; step: number }> =
 const STEPS = ["Pendiente", "En proceso", "Enviado", "Entregado"];
 
 export default function CustomerOrderDetailPage() {
+  const isMounted = useIsMounted();
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
 
@@ -26,8 +30,6 @@ export default function CustomerOrderDetailPage() {
   const order = useOrderStore((state) => state.orders.find((o) => o.id === id));
 
   // Esperamos a que el store hidrate desde localStorage antes de tomar decisiones
-  const [isMounted, setIsMounted] = React.useState(false);
-  React.useEffect(() => { setIsMounted(true); }, []);
 
   // Cuando el usuario cierra sesión estando en esta página → redirigir al login
   React.useEffect(() => {
@@ -148,10 +150,31 @@ export default function CustomerOrderDetailPage() {
         <div className="divide-y divide-stone-100">
           {order.items.map((item, i) => (
             <div key={i} className="flex items-center gap-4 px-6 py-4">
-              <div className="h-16 w-16 rounded-xl bg-gradient-to-br from-stone-200 to-stone-300 flex-shrink-0" />
+              <div className="h-16 w-16 rounded-xl bg-stone-100 flex-shrink-0 overflow-hidden relative border border-stone-200">
+                <Image
+                  src={item.image || CONFIG.images.placeholder}
+                  alt={item.name}
+                  fill
+                  sizes="64px"
+                  className="object-cover object-center"
+                  unoptimized={!item.image}
+                />
+              </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-stone-900 truncate">{item.name}</p>
-                <p className="text-xs text-stone-400 mt-0.5">Cantidad: {item.quantity}</p>
+                {item.slug ? (
+                  <Link
+                    href={`/products/${item.slug}`}
+                    className="text-sm font-semibold text-stone-900 truncate block hover:underline underline-offset-4"
+                  >
+                    {item.name}
+                  </Link>
+                ) : (
+                  <p className="text-sm font-semibold text-stone-900 truncate">{item.name}</p>
+                )}
+                <p className="text-xs text-stone-400 mt-0.5">
+                  {item.size && <>Talla: <span className="text-stone-600 font-semibold uppercase">{item.size}</span> · </>}
+                  Cantidad: {item.quantity} · ${item.price.toLocaleString("es-CO")} c/u
+                </p>
               </div>
               <p className="text-sm font-bold text-stone-900 flex-shrink-0">
                 ${(item.price * item.quantity).toLocaleString("es-CO")}
@@ -213,9 +236,12 @@ export default function CustomerOrderDetailPage() {
             Nuestro equipo te responde en menos de 24 horas.
           </p>
         </div>
-        <button className="flex-shrink-0 h-10 px-5 text-xs font-bold rounded-xl border-2 border-stone-900 text-stone-900 hover:bg-stone-900 hover:text-white transition-all">
+        <a
+          href={`mailto:${CONFIG.site.contactEmail}?subject=${encodeURIComponent(`Consulta sobre el pedido ${order.id}`)}`}
+          className="flex-shrink-0 h-10 px-5 inline-flex items-center text-xs font-bold rounded-xl border-2 border-stone-900 text-stone-900 hover:bg-stone-900 hover:text-white transition-all"
+        >
           Contactar soporte
-        </button>
+        </a>
       </div>
 
     </div>

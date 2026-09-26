@@ -7,6 +7,7 @@ import { PageTitle } from "@/components/common/PageTitle";
 import { ProductForm, type ProductFormData } from "@/components/forms/ProductForm";
 import { useProductStore } from "@/store/product.store";
 import { useCategoryStore } from "@/store/category.store";
+import { CONFIG } from "@/constants/config";
 
 export default function AdminCreateProductPage() {
   const router = useRouter();
@@ -20,6 +21,11 @@ export default function AdminCreateProductPage() {
     setError("");
     const category = categories.find((c) => c.id === data.category);
 
+    if (!category) {
+      setError("No hay categorías cargadas. Recarga la página e inténtalo de nuevo.");
+      return;
+    }
+
     try {
       await addProduct({
         sku: data.sku,
@@ -27,15 +33,13 @@ export default function AdminCreateProductPage() {
         description: data.description,
         price: Number(data.price),
         compareAtPrice: data.originalPrice ? Number(data.originalPrice) : undefined,
-        images:
-          data.images?.length > 0
-            ? data.images
-            : ["https://placehold.co/600x800/e8e4df/6B7280?text=Producto"],
+        images: data.images.length > 0 ? data.images : [CONFIG.images.placeholder],
         category: {
-          id: category?.id ?? data.category,
-          name: category?.name ?? "",
-          slug: category?.slug ?? "",
+          id: category.id,
+          name: category.name,
+          slug: category.slug,
         },
+        sizes: data.sizes,
         stock: Number(data.stock),
         isActive: true,
       });

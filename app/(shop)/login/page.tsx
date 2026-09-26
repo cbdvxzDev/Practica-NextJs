@@ -2,18 +2,49 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { LoginForm } from "../../compents/forms/LoginForm";
+import { useRouter, useSearchParams } from "next/navigation";
+import { LoginForm } from "../../components/forms/LoginForm";
 import { AuthService } from "@/services/auth.service";
 import { useAuthStore } from "@/store/auth.store";
+import { ROUTES } from "@/constants/routes";
 
 const DEMO_ACCOUNTS = [
   { label: "Admin", email: "admin@giborsec.com", password: "admin123" },
   { label: "Cliente", email: "carlos@example.com", password: "carlos123" },
 ];
 
+/**
+ * Solo se aceptan rutas internas. Sin esta comprobación, `/login?next=https://otro-sitio`
+ * convertiría el login en un redirector abierto.
+ */
+function safeNextPath(next: string | null, role: string): string {
+  const isStaff = role === "admin" || role === "support";
+  const defaultPath = isStaff ? ROUTES.ADMIN.DASHBOARD : ROUTES.HOME;
+
+  if (!next || !next.startsWith("/") || next.startsWith("//")) return defaultPath;
+  if (next.startsWith("/admin") && !isStaff) return defaultPath;
+  if (next.startsWith("/login") || next.startsWith("/register")) return defaultPath;
+
+  return next;
+}
+
 export default function LoginPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="flex min-h-[70vh] items-center justify-center">
+          <span className="h-8 w-8 animate-spin rounded-full border-2 border-brand-dark/20 border-t-brand-dark" />
+        </div>
+      }
+    >
+      <LoginContent />
+    </React.Suspense>
+  );
+}
+
+function LoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const setAuth = useAuthStore((state) => state.setAuth);
   const [demoError, setDemoError] = React.useState("");
 
@@ -24,7 +55,7 @@ export default function LoginPage() {
       name: user.name,
       role: user.role === "admin" ? "admin" : user.role === "support" ? "support" : "customer",
     });
-    router.push(user.role === "admin" ? "/admin/dashboard" : "/");
+    router.push(safeNextPath(searchParams.get("next"), user.role));
   };
 
   const handleSubmit = async (email: string, password: string) => {

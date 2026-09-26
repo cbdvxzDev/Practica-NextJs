@@ -1,17 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { PageTitle } from "../../compents/common/PageTitle";
-import { ProductGrid } from "../../compents/product/ProductGrid";
-import { Button } from "../../compents/ui/Button";
+import { PageTitle } from "../../components/common/PageTitle";
+import { ProductGrid } from "../../components/product/ProductGrid";
+import { Button } from "../../components/ui/Button";
 import { useProductStore } from "../../store/product.store";
 import { useWishlistStore } from "../../store/wishlist.store";
 import { useAuthStore } from "../../store/auth.store";
+import { useIsMounted } from "../../hooks/useIsMounted";
 
 export default function WishlistPage() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const allProducts = useProductStore((state) => state.products);
   const wishlistIds = useWishlistStore((state) => state.items);
+  // Sin esperar a hidratar, el store persistido todavía dice "sin sesión" y la
+  // página pintaba el aviso de login aunque el usuario tuviese una sesión activa.
+  const isMounted = useIsMounted();
+
+  if (!isMounted) {
+    return <div className="min-h-[50vh]" aria-hidden="true" />;
+  }
 
   if (!isAuthenticated) {
     return (
