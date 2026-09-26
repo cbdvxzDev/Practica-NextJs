@@ -7,112 +7,1351 @@
     "description": "Confeccionada con lana de origen responsable, esta chaqueta presenta un corte estructurado contemporáneo, cierre frontal oculto y bolsillos laterales discretos.",
     "price": 189000,
     "compareAtPrice": 240000,
-    "images": ["https://placehold.co/600x800/e8e4df/6B7280?text=Chaqueta"],
-    "category": { "id": "cat-1", "name": "Prendas de Abrigo", "slug": "abrigo" },
+    "images": [
+      "/images/products/chaqueta-minimalista-lana-1.webp",
+      "/images/products/chaqueta-minimalista-lana-2.webp",
+      "/images/products/chaqueta-minimalista-lana-3.webp"
+    ],
+    "category": {
+      "id": "cat-1",
+      "name": "Prendas de Abrigo",
+      "slug": "abrigo"
+    },
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
     "stock": 5,
     "isActive": true,
-    "createdAt": "2026-05-01T10:00:00.000Z",
+    "createdAt": "2026-04-02T10:00:00.000Z",
     "updatedAt": "2026-06-27T10:00:00.000Z"
   },
   {
     "id": "prod-2",
+    "sku": "TRC-ALD-009",
+    "slug": "trench-de-algodon-encerado",
+    "title": "Trench de Algodón Encerado",
+    "description": "Trench largo en algodón encerado con costura al bies, correas removibles y forro satinado. Abrigo impermeable de ciudad con silueta amplia.",
+    "price": 265000,
+    "compareAtPrice": 310000,
+    "images": [
+      "/images/products/trench-de-algodon-encerado-1.webp",
+      "/images/products/trench-de-algodon-encerado-2.webp",
+      "/images/products/trench-de-algodon-encerado-3.webp"
+    ],
+    "category": {
+      "id": "cat-1",
+      "name": "Prendas de Abrigo",
+      "slug": "abrigo"
+    },
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 4,
+    "isActive": true,
+    "createdAt": "2026-04-04T10:00:00.000Z",
+    "updatedAt": "2026-08-24T10:00:00.000Z"
+  },
+  {
+    "id": "prod-3",
+    "sku": "PRK-IMP-010",
+    "slug": "parka-ligera-impermeable",
+    "title": "Parka Ligera Impermeable",
+    "description": "Parka técnica de plumón reciclado con capucha desmontable, costuras selladas y detalles reflectantes. Se compacta en su propio bolsillo para viajar.",
+    "price": 328000,
+    "images": [
+      "/images/products/parka-ligera-impermeable-1.webp",
+      "/images/products/parka-ligera-impermeable-2.webp",
+      "/images/products/parka-ligera-impermeable-3.webp"
+    ],
+    "category": {
+      "id": "cat-1",
+      "name": "Prendas de Abrigo",
+      "slug": "abrigo"
+    },
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 3,
+    "isActive": true,
+    "createdAt": "2026-04-06T10:00:00.000Z",
+    "updatedAt": "2026-08-21T10:00:00.000Z"
+  },
+  {
+    "id": "prod-4",
+    "sku": "BKR-CUO-011",
+    "slug": "chaqueta-biker-de-cuero",
+    "title": "Chaqueta Biker de Cuero",
+    "description": "Cuero vacuno de curtido vegetal con cremalleras de metal latonado, cuello con ribete y forro de viscosa. Una pieza con actitud que mejora con los años.",
+    "price": 385000,
+    "images": [
+      "/images/products/chaqueta-biker-de-cuero-1.webp",
+      "/images/products/chaqueta-biker-de-cuero-2.webp",
+      "/images/products/chaqueta-biker-de-cuero-3.webp"
+    ],
+    "category": {
+      "id": "cat-1",
+      "name": "Prendas de Abrigo",
+      "slug": "abrigo"
+    },
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "stock": 2,
+    "isActive": true,
+    "createdAt": "2026-04-09T10:00:00.000Z",
+    "updatedAt": "2026-08-19T10:00:00.000Z"
+  },
+  {
+    "id": "prod-5",
+    "sku": "BLZ-TW-008",
+    "slug": "blazer-de-tweed-urbano",
+    "title": "Blazer de Tweed Urbano",
+    "description": "Tweed con acabado melange y hombros naturales. Elegancia estructurada para la ciudad.",
+    "price": 210000,
+    "images": [
+      "/images/products/blazer-de-tweed-urbano-1.webp",
+      "/images/products/blazer-de-tweed-urbano-2.webp",
+      "/images/products/blazer-de-tweed-urbano-3.webp"
+    ],
+    "category": {
+      "id": "cat-1",
+      "name": "Prendas de Abrigo",
+      "slug": "abrigo"
+    },
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "stock": 2,
+    "isActive": true,
+    "createdAt": "2026-04-11T10:00:00.000Z",
+    "updatedAt": "2026-06-20T10:00:00.000Z"
+  },
+  {
+    "id": "prod-6",
     "sku": "TSH-ORG-002",
     "slug": "camiseta-algodon-organico",
     "title": "Camiseta Esencial Algodón Orgánico",
     "description": "Prenda atemporal de algodón premium cortada para un ajuste perfecto. Suavidad y durabilidad en una sola pieza.",
     "price": 45000,
     "compareAtPrice": 60000,
-    "images": ["https://placehold.co/600x800/e8e4df/6B7280?text=Camiseta"],
-    "category": { "id": "cat-2", "name": "Básicos Esenciales", "slug": "basicos" },
+    "images": [
+      "/images/products/camiseta-algodon-organico-1.webp"
+    ],
+    "category": {
+      "id": "cat-2",
+      "name": "Básicos Esenciales",
+      "slug": "basicos"
+    },
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
     "stock": 12,
     "isActive": true,
-    "createdAt": "2026-05-01T10:00:00.000Z",
-    "updatedAt": "2026-06-27T10:00:00.000Z"
+    "createdAt": "2026-04-13T10:00:00.000Z",
+    "updatedAt": "2026-06-26T10:00:00.000Z"
   },
   {
-    "id": "prod-3",
+    "id": "prod-7",
+    "sku": "TSH-MRN-012",
+    "slug": "camiseta-de-rayas-marineras",
+    "title": "Camiseta de Rayas Marineras",
+    "description": "Punto de algodón peinado de 220 g/m² con rayas tejidas, no estampadas. Cuello y puños en canalé que mantienen la forma lavado tras lavado.",
+    "price": 58000,
+    "images": [
+      "/images/products/camiseta-de-rayas-marineras-1.webp",
+      "/images/products/camiseta-de-rayas-marineras-2.webp",
+      "/images/products/camiseta-de-rayas-marineras-3.webp"
+    ],
+    "category": {
+      "id": "cat-2",
+      "name": "Básicos Esenciales",
+      "slug": "basicos"
+    },
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 18,
+    "isActive": true,
+    "createdAt": "2026-04-15T10:00:00.000Z",
+    "updatedAt": "2026-08-22T10:00:00.000Z"
+  },
+  {
+    "id": "prod-8",
+    "sku": "TNL-LIN-013",
+    "slug": "top-de-lino-manga-larga",
+    "title": "Top de Lino Manga Larga",
+    "description": "Lino europeo de 165 g/m² con caída fresca y ligeramente arrugada. Escote redondo y costuras laterales para un ajuste limpio.",
+    "price": 72000,
+    "compareAtPrice": 88000,
+    "images": [
+      "/images/products/top-de-lino-manga-larga-1.webp",
+      "/images/products/top-de-lino-manga-larga-2.webp",
+      "/images/products/top-de-lino-manga-larga-3.webp"
+    ],
+    "category": {
+      "id": "cat-2",
+      "name": "Básicos Esenciales",
+      "slug": "basicos"
+    },
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 9,
+    "isActive": true,
+    "createdAt": "2026-04-17T10:00:00.000Z",
+    "updatedAt": "2026-08-20T10:00:00.000Z"
+  },
+  {
+    "id": "prod-9",
+    "sku": "TSH-OVS-014",
+    "slug": "camiseta-oversized-de-algodon",
+    "title": "Camiseta Oversized de Algodón",
+    "description": "Silueta amplia con hombros caídos y cuerpo rectangular. Algodón compacto de 240 g/m² que no se transparenta ni cede con el uso.",
+    "price": 52000,
+    "images": [
+      "/images/products/camiseta-oversized-de-algodon-1.webp",
+      "/images/products/camiseta-oversized-de-algodon-2.webp",
+      "/images/products/camiseta-oversized-de-algodon-3.webp"
+    ],
+    "category": {
+      "id": "cat-2",
+      "name": "Básicos Esenciales",
+      "slug": "basicos"
+    },
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 21,
+    "isActive": true,
+    "createdAt": "2026-04-19T10:00:00.000Z",
+    "updatedAt": "2026-08-18T10:00:00.000Z"
+  },
+  {
+    "id": "prod-10",
+    "sku": "POL-PIM-006",
+    "slug": "polo-de-pique-contemporaneo",
+    "title": "Polo de Piqué Contemporáneo",
+    "description": "Piqué de algodón peinado, cuello y puños en canalé. Un básico versátil para el día a día.",
+    "price": 62000,
+    "images": [
+      "/images/products/polo-de-pique-contemporaneo-1.webp",
+      "/images/products/polo-de-pique-contemporaneo-2.webp",
+      "/images/products/polo-de-pique-contemporaneo-3.webp"
+    ],
+    "category": {
+      "id": "cat-2",
+      "name": "Básicos Esenciales",
+      "slug": "basicos"
+    },
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 15,
+    "isActive": true,
+    "createdAt": "2026-04-21T10:00:00.000Z",
+    "updatedAt": "2026-06-22T10:00:00.000Z"
+  },
+  {
+    "id": "prod-11",
+    "sku": "CMS-LIN-004",
+    "slug": "camisa-de-lino-premium",
+    "title": "Camisa de Lino Premium",
+    "description": "Lino 100% natural con botones de coco y un ajuste relajado. La elección perfecta para días cálidos.",
+    "price": 128000,
+    "compareAtPrice": 155000,
+    "images": [
+      "/images/products/camisa-de-lino-premium-1.webp",
+      "/images/products/camisa-de-lino-premium-2.webp",
+      "/images/products/camisa-de-lino-premium-3.webp"
+    ],
+    "category": {
+      "id": "cat-3",
+      "name": "Camisas y Blusas",
+      "slug": "camisas"
+    },
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "stock": 8,
+    "isActive": true,
+    "createdAt": "2026-04-23T10:00:00.000Z",
+    "updatedAt": "2026-06-24T10:00:00.000Z"
+  },
+  {
+    "id": "prod-12",
+    "sku": "OXF-CDO-015",
+    "slug": "camisa-oxford-clasica",
+    "title": "Camisa Oxford Clásica",
+    "description": "Oxford de algodón con botonadura doble y cuello abotonado. Tejido que respira, resiste y se ve mejor con cada lavado.",
+    "price": 98000,
+    "images": [
+      "/images/products/camisa-oxford-clasica-1.webp",
+      "/images/products/camisa-oxford-clasica-2.webp",
+      "/images/products/camisa-oxford-clasica-3.webp"
+    ],
+    "category": {
+      "id": "cat-3",
+      "name": "Camisas y Blusas",
+      "slug": "camisas"
+    },
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 14,
+    "isActive": true,
+    "createdAt": "2026-04-25T10:00:00.000Z",
+    "updatedAt": "2026-08-17T10:00:00.000Z"
+  },
+  {
+    "id": "prod-13",
+    "sku": "BLS-SED-016",
+    "slug": "blusa-de-seda-lavada",
+    "title": "Blusa de Seda Lavada",
+    "description": "Seda lavada con un tacto mate y caída fluidísima. Cuello Mao, mangas anchas con puño elástico y botonadura oculta.",
+    "price": 185000,
+    "compareAtPrice": 225000,
+    "images": [
+      "/images/products/blusa-de-seda-lavada-1.webp"
+    ],
+    "category": {
+      "id": "cat-3",
+      "name": "Camisas y Blusas",
+      "slug": "camisas"
+    },
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 6,
+    "isActive": true,
+    "createdAt": "2026-04-27T10:00:00.000Z",
+    "updatedAt": "2026-08-16T10:00:00.000Z"
+  },
+  {
+    "id": "prod-14",
+    "sku": "CMS-STR-017",
+    "slug": "camisa-de-algodon-stretch",
+    "title": "Camisa de Algodón Stretch",
+    "description": "Mezcla de algodón con elastano para movilidad. Corte slim, puño doble y tratamiento antimanchas de base acuosa.",
+    "price": 86000,
+    "images": [
+      "/images/products/camisa-de-algodon-stretch-1.webp",
+      "/images/products/camisa-de-algodon-stretch-2.webp",
+      "/images/products/camisa-de-algodon-stretch-3.webp"
+    ],
+    "category": {
+      "id": "cat-3",
+      "name": "Camisas y Blusas",
+      "slug": "camisas"
+    },
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 11,
+    "isActive": true,
+    "createdAt": "2026-04-29T10:00:00.000Z",
+    "updatedAt": "2026-08-14T10:00:00.000Z"
+  },
+  {
+    "id": "prod-15",
+    "sku": "BLS-CRP-018",
+    "slug": "blusa-crop-de-punto",
+    "title": "Blusa Crop de Punto",
+    "description": "Punto fino de algodón y viscosa con cintura elástica. Cropped para combinar con pantalonetas altas o faldas midi.",
+    "price": 68000,
+    "images": [
+      "/images/products/blusa-crop-de-punto-1.webp",
+      "/images/products/blusa-crop-de-punto-2.webp",
+      "/images/products/blusa-crop-de-punto-3.webp"
+    ],
+    "category": {
+      "id": "cat-3",
+      "name": "Camisas y Blusas",
+      "slug": "camisas"
+    },
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 13,
+    "isActive": true,
+    "createdAt": "2026-04-31T10:00:00.000Z",
+    "updatedAt": "2026-08-12T10:00:00.000Z"
+  },
+  {
+    "id": "prod-16",
     "sku": "PNT-SAS-003",
     "slug": "pantalon-sastrero-moderno",
     "title": "Pantalón Sastrero Moderno",
     "description": "Corte recto con caída impecable, ideal para ambientes formales o de oficina. Cintura ajustable y tela de fácil mantenimiento.",
     "price": 160000,
-    "images": ["https://placehold.co/600x800/e8e4df/6B7280?text=Pantalon"],
-    "category": { "id": "cat-4", "name": "Pantalones", "slug": "pantalones" },
-    "stock": 0,
+    "images": [
+      "/images/products/pantalon-sastrero-moderno-1.webp",
+      "/images/products/pantalon-sastrero-moderno-2.webp",
+      "/images/products/pantalon-sastrero-moderno-3.webp"
+    ],
+    "category": {
+      "id": "cat-4",
+      "name": "Pantalones",
+      "slug": "pantalones"
+    },
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 6,
     "isActive": true,
     "createdAt": "2026-05-02T10:00:00.000Z",
     "updatedAt": "2026-06-25T10:00:00.000Z"
   },
   {
-    "id": "prod-4",
-    "sku": "CMS-LIN-004",
-    "slug": "camisa-lino-premium",
-    "title": "Camisa de Lino Premium",
-    "description": "Lino 100% natural con botones de coco y un ajuste relajado. La elección perfecta para días cálidos.",
-    "price": 128000,
-    "compareAtPrice": 155000,
-    "images": ["https://placehold.co/600x800/e8e4df/6B7280?text=CamisaLino"],
-    "category": { "id": "cat-3", "name": "Camisas", "slug": "camisas" },
-    "stock": 8,
+    "id": "prod-17",
+    "sku": "CHN-ALD-019",
+    "slug": "pantalon-chino-de-algodon",
+    "title": "Pantalón Chino de Algodón",
+    "description": "Algodón peinado con lavado suave. Corte recto, cinco bolsillos y remaches ocultos en los puntos de tensión.",
+    "price": 118000,
+    "compareAtPrice": 142000,
+    "images": [
+      "/images/products/pantalon-chino-de-algodon-1.webp",
+      "/images/products/pantalon-chino-de-algodon-2.webp",
+      "/images/products/pantalon-chino-de-algodon-3.webp"
+    ],
+    "category": {
+      "id": "cat-4",
+      "name": "Pantalones",
+      "slug": "pantalones"
+    },
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 16,
     "isActive": true,
-    "createdAt": "2026-05-03T10:00:00.000Z",
-    "updatedAt": "2026-06-24T10:00:00.000Z"
+    "createdAt": "2026-05-04T10:00:00.000Z",
+    "updatedAt": "2026-08-11T10:00:00.000Z"
   },
   {
-    "id": "prod-5",
+    "id": "prod-18",
+    "sku": "PLT-WLG-020",
+    "slug": "pantalon-wide-leg-con-plegadura",
+    "title": "Pantalón Wide Leg con Plegadura",
+    "description": "Silueta amplia de cintura alta y dobladillo amplio. Un pantalón que estiliza desde la cintura hasta el zapato.",
+    "price": 132000,
+    "images": [
+      "/images/products/pantalon-wide-leg-con-plegadura-1.webp",
+      "/images/products/pantalon-wide-leg-con-plegadura-2.webp",
+      "/images/products/pantalon-wide-leg-con-plegadura-3.webp"
+    ],
+    "category": {
+      "id": "cat-4",
+      "name": "Pantalones",
+      "slug": "pantalones"
+    },
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 10,
+    "isActive": true,
+    "createdAt": "2026-05-06T10:00:00.000Z",
+    "updatedAt": "2026-08-09T10:00:00.000Z"
+  },
+  {
+    "id": "prod-19",
+    "sku": "BRM-SRG-021",
+    "slug": "bermuda-de-sarga",
+    "title": "Bermuda de Sarga",
+    "description": "Sarga de algodón resistente con dobladillo enrollado y cinturilla forrada en algodón. Largo por debajo de la rodilla para el verano.",
+    "price": 79000,
+    "compareAtPrice": 95000,
+    "images": [
+      "/images/products/bermuda-de-sarga-1.webp",
+      "/images/products/bermuda-de-sarga-2.webp",
+      "/images/products/bermuda-de-sarga-3.webp"
+    ],
+    "category": {
+      "id": "cat-4",
+      "name": "Pantalones",
+      "slug": "pantalones"
+    },
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 19,
+    "isActive": true,
+    "createdAt": "2026-05-08T10:00:00.000Z",
+    "updatedAt": "2026-08-08T10:00:00.000Z"
+  },
+  {
+    "id": "prod-20",
+    "sku": "FLD-PLS-022",
+    "slug": "falda-midi-plisada",
+    "title": "Falda Midi Plisada",
+    "description": "Plisado permanente sobre satinado mate, cintura alta y forro corto para que la silueta se mantenga.",
+    "price": 108000,
+    "images": [
+      "/images/products/falda-midi-plisada-1.webp"
+    ],
+    "category": {
+      "id": "cat-4",
+      "name": "Pantalones",
+      "slug": "pantalones"
+    },
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 12,
+    "isActive": true,
+    "createdAt": "2026-05-10T10:00:00.000Z",
+    "updatedAt": "2026-08-06T10:00:00.000Z"
+  },
+  {
+    "id": "prod-21",
+    "sku": "VST-SAT-023",
+    "slug": "vestido-midi-satinado",
+    "title": "Vestido Midi Satinado",
+    "description": "Satin con caída fluida, escote corazón y espalda abierta con cremallera oculta. Pensado para cenas y ocasiones.",
+    "price": 198000,
+    "compareAtPrice": 245000,
+    "images": [
+      "/images/products/vestido-midi-satinado-1.webp",
+      "/images/products/vestido-midi-satinado-2.webp",
+      "/images/products/vestido-midi-satinado-3.webp"
+    ],
+    "category": {
+      "id": "cat-5",
+      "name": "Vestidos",
+      "slug": "vestidos"
+    },
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 7,
+    "isActive": true,
+    "createdAt": "2026-05-12T10:00:00.000Z",
+    "updatedAt": "2026-08-05T10:00:00.000Z"
+  },
+  {
+    "id": "prod-22",
+    "sku": "VCS-LIN-024",
+    "slug": "vestido-camisero-de-lino",
+    "title": "Vestido Camisero de Lino",
+    "description": "Lino lavado con botones de coco, cinturón de la misma tela y costuras a la vista. Un solo look, dos ocasiones.",
+    "price": 168000,
+    "images": [
+      "/images/products/vestido-camisero-de-lino-1.webp",
+      "/images/products/vestido-camisero-de-lino-2.webp",
+      "/images/products/vestido-camisero-de-lino-3.webp"
+    ],
+    "category": {
+      "id": "cat-5",
+      "name": "Vestidos",
+      "slug": "vestidos"
+    },
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 9,
+    "isActive": true,
+    "createdAt": "2026-05-14T10:00:00.000Z",
+    "updatedAt": "2026-08-04T10:00:00.000Z"
+  },
+  {
+    "id": "prod-23",
+    "sku": "VPT-RBT-025",
+    "slug": "vestido-de-punto-ribete",
+    "title": "Vestido de Punto Ribete",
+    "description": "Punto acanalado de algodón y viscosa con ribete en cuello, mangas y bajo. Tejido con elastano para acompañar el movimiento.",
+    "price": 125000,
+    "compareAtPrice": 149000,
+    "images": [
+      "/images/products/vestido-de-punto-ribete-1.webp",
+      "/images/products/vestido-de-punto-ribete-2.webp",
+      "/images/products/vestido-de-punto-ribete-3.webp"
+    ],
+    "category": {
+      "id": "cat-5",
+      "name": "Vestidos",
+      "slug": "vestidos"
+    },
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 14,
+    "isActive": true,
+    "createdAt": "2026-05-16T10:00:00.000Z",
+    "updatedAt": "2026-08-03T10:00:00.000Z"
+  },
+  {
+    "id": "prod-24",
+    "sku": "VST-FLU-026",
+    "slug": "vestido-fluido-a-la-pierna",
+    "title": "Vestido Fluido a la Pierna",
+    "description": "Jersey crepé de caída pesada, tirantes ajustables y abertura lateral profunda. Silueta columna y usoabda todo el día.",
+    "price": 142000,
+    "images": [
+      "/images/products/vestido-fluido-a-la-pierna-1.webp",
+      "/images/products/vestido-fluido-a-la-pierna-2.webp",
+      "/images/products/vestido-fluido-a-la-pierna-3.webp"
+    ],
+    "category": {
+      "id": "cat-5",
+      "name": "Vestidos",
+      "slug": "vestidos"
+    },
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 11,
+    "isActive": true,
+    "createdAt": "2026-05-18T10:00:00.000Z",
+    "updatedAt": "2026-08-02T10:00:00.000Z"
+  },
+  {
+    "id": "prod-25",
+    "sku": "VBL-CIN-027",
+    "slug": "vestido-blazer-con-cinturon",
+    "title": "Vestido Blazer con Cinturón",
+    "description": "Sastrería ligera en mezcla de lino con hombreras suaves y cinturón a juego. Marcado en cintura y holgado en cuerpo.",
+    "price": 215000,
+    "images": [
+      "/images/products/vestido-blazer-con-cinturon-1.webp"
+    ],
+    "category": {
+      "id": "cat-5",
+      "name": "Vestidos",
+      "slug": "vestidos"
+    },
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 5,
+    "isActive": true,
+    "createdAt": "2026-05-20T10:00:00.000Z",
+    "updatedAt": "2026-08-01T10:00:00.000Z"
+  },
+  {
+    "id": "prod-26",
     "sku": "SWT-MER-005",
-    "slug": "sueter-merino-clasico",
+    "slug": "sueter-de-merino-clasico",
     "title": "Suéter de Merino Clásico",
     "description": "Punto de lana merino extrafina, cuello redondo y puños elásticos. Calidez ligera para todo el año.",
     "price": 145000,
-    "images": ["https://placehold.co/600x800/e8e4df/6B7280?text=Sueter"],
-    "category": { "id": "cat-1", "name": "Prendas de Abrigo", "slug": "abrigo" },
+    "images": [
+      "/images/products/sueter-de-merino-clasico-1.webp",
+      "/images/products/sueter-de-merino-clasico-2.webp",
+      "/images/products/sueter-de-merino-clasico-3.webp"
+    ],
+    "category": {
+      "id": "cat-6",
+      "name": "Tejidos de Punto",
+      "slug": "tejidos"
+    },
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L"
+    ],
     "stock": 3,
     "isActive": true,
-    "createdAt": "2026-05-04T10:00:00.000Z",
+    "createdAt": "2026-05-22T10:00:00.000Z",
     "updatedAt": "2026-06-23T10:00:00.000Z"
   },
   {
-    "id": "prod-6",
-    "sku": "POL-PIM-006",
-    "slug": "polo-pique-moda",
-    "title": "Polo de Piqué Contemporáneo",
-    "description": "Piqué de algodón peinado, cuello y puños en canalé. Un básico versátil para el día a día.",
-    "price": 62000,
-    "images": ["https://placehold.co/600x800/e8e4df/6B7280?text=Polo"],
-    "category": { "id": "cat-2", "name": "Básicos Esenciales", "slug": "basicos" },
-    "stock": 15,
+    "id": "prod-27",
+    "sku": "CDG-OVR-028",
+    "slug": "cardigan-overthickness",
+    "title": "Cardigan Overthickness",
+    "description": "Grosor oversize en lana merino con hombros caídos, botones de madera y bolsillos de ribete. Abrigo de punto que funciona como chaqueta ligera.",
+    "price": 178000,
+    "compareAtPrice": 215000,
+    "images": [
+      "/images/products/cardigan-overthickness-1.webp",
+      "/images/products/cardigan-overthickness-2.webp",
+      "/images/products/cardigan-overthickness-3.webp"
+    ],
+    "category": {
+      "id": "cat-6",
+      "name": "Tejidos de Punto",
+      "slug": "tejidos"
+    },
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 8,
     "isActive": true,
-    "createdAt": "2026-05-05T10:00:00.000Z",
-    "updatedAt": "2026-06-22T10:00:00.000Z"
+    "createdAt": "2026-05-24T10:00:00.000Z",
+    "updatedAt": "2026-07-31T10:00:00.000Z"
   },
   {
-    "id": "prod-7",
-    "sku": "JNS-ORG-007",
-    "slug": "jeans-corte-recto-organico",
+    "id": "prod-28",
+    "sku": "HDT-ALG-029",
+    "slug": "sudadera-con-capucha-de-algodon",
+    "title": "Sudadera con Capucha de Algodón",
+    "description": "Algodón cepillado de 400 g/m² con capucha doble y puños y bajo en canalé. Sudadera pesada de corte amplio con costuras reforzadas.",
+    "price": 96000,
+    "images": [
+      "/images/products/sudadera-con-capucha-de-algodon-1.webp",
+      "/images/products/sudadera-con-capucha-de-algodon-2.webp",
+      "/images/products/sudadera-con-capucha-de-algodon-3.webp"
+    ],
+    "category": {
+      "id": "cat-6",
+      "name": "Tejidos de Punto",
+      "slug": "tejidos"
+    },
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 24,
+    "isActive": true,
+    "createdAt": "2026-05-26T10:00:00.000Z",
+    "updatedAt": "2026-07-30T10:00:00.000Z"
+  },
+  {
+    "id": "prod-29",
+    "sku": "JRY-CVV-030",
+    "slug": "jersey-de-cuello-v",
+    "title": "Jersey de Cuello V",
+    "description": "Jersey de algodón con costuras reforzadas en hombros y escote en V. Tejido medio de entretiempo, disponible en tres colores.",
+    "price": 84000,
+    "compareAtPrice": 99000,
+    "images": [
+      "/images/products/jersey-de-cuello-v-1.webp",
+      "/images/products/jersey-de-cuello-v-2.webp",
+      "/images/products/jersey-de-cuello-v-3.webp"
+    ],
+    "category": {
+      "id": "cat-6",
+      "name": "Tejidos de Punto",
+      "slug": "tejidos"
+    },
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 17,
+    "isActive": true,
+    "createdAt": "2026-05-28T10:00:00.000Z",
+    "updatedAt": "2026-07-29T10:00:00.000Z"
+  },
+  {
+    "id": "prod-30",
+    "sku": "CHL-PUN-031",
+    "slug": "chaleco-de-punto-sin-mangas",
+    "title": "Chaleco de Punto sin Mangas",
+    "description": "Calado de punto en mezcla de algodón y lino con bordes ribeteados. Capa ligera para llevar sobre camisa o jersey de punto.",
+    "price": 92000,
+    "images": [
+      "/images/products/chaleco-de-punto-sin-mangas-1.webp"
+    ],
+    "category": {
+      "id": "cat-6",
+      "name": "Tejidos de Punto",
+      "slug": "tejidos"
+    },
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 10,
+    "isActive": true,
+    "createdAt": "2026-05-30T10:00:00.000Z",
+    "updatedAt": "2026-07-28T10:00:00.000Z"
+  },
+  {
+    "id": "prod-31",
+    "sku": "JNS-RTO-007",
+    "slug": "jeans-de-corte-recto-organico",
     "title": "Jeans de Corte Recto Orgánico",
     "description": "Denim orgánico con elasticidad sutil y lavado profundo. Corte recto que se adapta a cualquier look.",
     "price": 98000,
     "compareAtPrice": 125000,
-    "images": ["https://placehold.co/600x800/e8e4df/6B7280?text=Jeans"],
-    "category": { "id": "cat-4", "name": "Pantalones", "slug": "pantalones" },
+    "images": [
+      "/images/products/jeans-de-corte-recto-organico-1.webp",
+      "/images/products/jeans-de-corte-recto-organico-2.webp",
+      "/images/products/jeans-de-corte-recto-organico-3.webp"
+    ],
+    "category": {
+      "id": "cat-7",
+      "name": "Denim",
+      "slug": "denim"
+    },
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
     "stock": 10,
     "isActive": true,
-    "createdAt": "2026-05-06T10:00:00.000Z",
+    "createdAt": "2026-06-01T10:00:00.000Z",
     "updatedAt": "2026-06-21T10:00:00.000Z"
   },
   {
-    "id": "prod-8",
-    "sku": "BLZ-TW-008",
-    "slug": "blazer-tweed-urbano",
-    "title": "Blazer de Tweed Urbano",
-    "description": "Tweed con acabado melange y hombros naturales. Elegancia estructurada para la ciudad.",
-    "price": 210000,
-    "images": ["https://placehold.co/600x800/e8e4df/6B7280?text=Blazer"],
-    "category": { "id": "cat-1", "name": "Prendas de Abrigo", "slug": "abrigo" },
-    "stock": 2,
+    "id": "prod-32",
+    "sku": "JNS-SLM-032",
+    "slug": "jeans-slim-de-stretch",
+    "title": "Jeans Slim de Stretch",
+    "description": "Mezclilla con 2% de elastano, lavado oscuro y bajoTTY ajustado. Pierna slim desde el muslo con dobladillo limpio.",
+    "price": 89000,
+    "images": [
+      "/images/products/jeans-slim-de-stretch-1.webp",
+      "/images/products/jeans-slim-de-stretch-2.webp",
+      "/images/products/jeans-slim-de-stretch-3.webp"
+    ],
+    "category": {
+      "id": "cat-7",
+      "name": "Denim",
+      "slug": "denim"
+    },
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 22,
     "isActive": true,
-    "createdAt": "2026-05-07T10:00:00.000Z",
-    "updatedAt": "2026-06-20T10:00:00.000Z"
+    "createdAt": "2026-06-03T10:00:00.000Z",
+    "updatedAt": "2026-07-27T10:00:00.000Z"
+  },
+  {
+    "id": "prod-33",
+    "sku": "CHQ-MZL-033",
+    "slug": "chaqueta-de-mezclilla",
+    "title": "Chaqueta de Mezclilla",
+    "description": "Chaqueta tipo trucker en mezclilla rígida con ribete en cuello y puños, y cuatro bolsillos. Se usa sola o como segunda piel.",
+    "price": 135000,
+    "compareAtPrice": 168000,
+    "images": [
+      "/images/products/chaqueta-de-mezclilla-1.webp",
+      "/images/products/chaqueta-de-mezclilla-2.webp",
+      "/images/products/chaqueta-de-mezclilla-3.webp"
+    ],
+    "category": {
+      "id": "cat-7",
+      "name": "Denim",
+      "slug": "denim"
+    },
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 9,
+    "isActive": true,
+    "createdAt": "2026-06-05T10:00:00.000Z",
+    "updatedAt": "2026-07-26T10:00:00.000Z"
+  },
+  {
+    "id": "prod-34",
+    "sku": "CRG-DNM-034",
+    "slug": "pantalon-cargo-de-denim",
+    "title": "Pantalón Cargo de Denim",
+    "description": "Cargo de mezclilla con bolsillos laterales, cordón en tobillo y corte holgado. Amplio desde la cadera.",
+    "price": 112000,
+    "images": [
+      "/images/products/pantalon-cargo-de-denim-1.webp",
+      "/images/products/pantalon-cargo-de-denim-2.webp",
+      "/images/products/pantalon-cargo-de-denim-3.webp"
+    ],
+    "category": {
+      "id": "cat-7",
+      "name": "Denim",
+      "slug": "denim"
+    },
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 13,
+    "isActive": true,
+    "createdAt": "2026-06-07T10:00:00.000Z",
+    "updatedAt": "2026-07-25T10:00:00.000Z"
+  },
+  {
+    "id": "prod-35",
+    "sku": "SHD-LAV-035",
+    "slug": "shorts-de-denim-lavado",
+    "title": "Shorts de Denim Lavado",
+    "description": "Shorts de mezclilla con lavado suave de verano, cintura media y pierna amplia de ocho pulgadas.",
+    "price": 65000,
+    "compareAtPrice": 79000,
+    "images": [
+      "/images/products/shorts-de-denim-lavado-1.webp",
+      "/images/products/shorts-de-denim-lavado-2.webp",
+      "/images/products/shorts-de-denim-lavado-3.webp"
+    ],
+    "category": {
+      "id": "cat-7",
+      "name": "Denim",
+      "slug": "denim"
+    },
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 20,
+    "isActive": true,
+    "createdAt": "2026-06-09T10:00:00.000Z",
+    "updatedAt": "2026-07-24T10:00:00.000Z"
+  },
+  {
+    "id": "prod-36",
+    "sku": "ZPD-URB-036",
+    "slug": "zapatillas-deportivas-urbanas",
+    "title": "Zapatillas Deportivas Urbanas",
+    "description": "Empeine de malla knit con overlays sintéticos y suela de goma vulcanizada. Livianas, para caminar todo el día.",
+    "price": 245000,
+    "compareAtPrice": 299000,
+    "images": [
+      "/images/products/zapatillas-deportivas-urbanas-1.webp",
+      "/images/products/zapatillas-deportivas-urbanas-2.webp",
+      "/images/products/zapatillas-deportivas-urbanas-3.webp"
+    ],
+    "category": {
+      "id": "cat-8",
+      "name": "Calzado",
+      "slug": "calzado"
+    },
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "stock": 14,
+    "isActive": true,
+    "createdAt": "2026-06-11T10:00:00.000Z",
+    "updatedAt": "2026-07-23T10:00:00.000Z"
+  },
+  {
+    "id": "prod-37",
+    "sku": "TNS-LNA-037",
+    "slug": "tenis-clasicos-de-lona",
+    "title": "Tenis Clásicos de Lona",
+    "description": "Lona de algodón encerado con suela de goma vulcanizada y plantilla acolchada. El básico del armario, temporada tras temporada.",
+    "price": 168000,
+    "images": [
+      "/images/products/tenis-clasicos-de-lona-1.webp",
+      "/images/products/tenis-clasicos-de-lona-2.webp",
+      "/images/products/tenis-clasicos-de-lona-3.webp"
+    ],
+    "category": {
+      "id": "cat-8",
+      "name": "Calzado",
+      "slug": "calzado"
+    },
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "stock": 26,
+    "isActive": true,
+    "createdAt": "2026-06-13T10:00:00.000Z",
+    "updatedAt": "2026-07-22T10:00:00.000Z"
+  },
+  {
+    "id": "prod-38",
+    "sku": "BNT-CUO-038",
+    "slug": "botines-de-cuero",
+    "title": "Botines de Cuero",
+    "description": "Cuero de ternera con suela de goma y tacón de tres centímetros. Suela y forro a tono, barefoot con estructura.",
+    "price": 289000,
+    "images": [
+      "/images/products/botines-de-cuero-1.webp",
+      "/images/products/botines-de-cuero-2.webp",
+      "/images/products/botines-de-cuero-3.webp"
+    ],
+    "category": {
+      "id": "cat-8",
+      "name": "Calzado",
+      "slug": "calzado"
+    },
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "stock": 11,
+    "isActive": true,
+    "createdAt": "2026-06-15T10:00:00.000Z",
+    "updatedAt": "2026-07-21T10:00:00.000Z"
+  },
+  {
+    "id": "prod-39",
+    "sku": "BTS-CNV-039",
+    "slug": "botas-de-canvas-altas",
+    "title": "Botas de Canvas Altas",
+    "description": "Canvas de algodón con cordones hasta la pantorrilla y suela de goma vulcanizada. Botas de lona para el entretiempo.",
+    "price": 195000,
+    "compareAtPrice": 229000,
+    "images": [
+      "/images/products/botas-de-canvas-altas-1.webp",
+      "/images/products/botas-de-canvas-altas-2.webp",
+      "/images/products/botas-de-canvas-altas-3.webp"
+    ],
+    "category": {
+      "id": "cat-8",
+      "name": "Calzado",
+      "slug": "calzado"
+    },
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "stock": 8,
+    "isActive": true,
+    "createdAt": "2026-06-17T10:00:00.000Z",
+    "updatedAt": "2026-07-20T10:00:00.000Z"
+  },
+  {
+    "id": "prod-40",
+    "sku": "SDL-PEL-040",
+    "slug": "sandalias-de-piel",
+    "title": "Sandalias de Piel",
+    "description": "Piel curtida al vegetal con suela de cuero y correa de tobillo. Hebilla de metal cepillado y plantilla de espuma viscoelástica.",
+    "price": 215000,
+    "images": [
+      "/images/products/sandalias-de-piel-1.webp"
+    ],
+    "category": {
+      "id": "cat-8",
+      "name": "Calzado",
+      "slug": "calzado"
+    },
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "stock": 12,
+    "isActive": true,
+    "createdAt": "2026-06-19T10:00:00.000Z",
+    "updatedAt": "2026-07-19T10:00:00.000Z"
+  },
+  {
+    "id": "prod-41",
+    "sku": "OXD-CRD-041",
+    "slug": "zapatos-oxford-de-cordones",
+    "title": "Zapatos Oxford de Cordones",
+    "description": "Construcción Goodyear con cuero de becerro y suela de cuero. Formal discreto para traje o jeans oscuro.",
+    "price": 355000,
+    "images": [
+      "/images/products/zapatos-oxford-de-cordones-1.webp",
+      "/images/products/zapatos-oxford-de-cordones-2.webp",
+      "/images/products/zapatos-oxford-de-cordones-3.webp"
+    ],
+    "category": {
+      "id": "cat-8",
+      "name": "Calzado",
+      "slug": "calzado"
+    },
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "stock": 6,
+    "isActive": true,
+    "createdAt": "2026-06-21T10:00:00.000Z",
+    "updatedAt": "2026-07-18T10:00:00.000Z"
+  },
+  {
+    "id": "prod-42",
+    "sku": "BTA-CHL-042",
+    "slug": "botas-chelsea-de-piel",
+    "title": "Botas Chelsea de Piel",
+    "description": "Piel lisa con elasticity lateral en elástico, puntera redondeada y suela gruesa de goma. Botas de ciudad.",
+    "price": 268000,
+    "compareAtPrice": 312000,
+    "images": [
+      "/images/products/botas-chelsea-de-piel-1.webp",
+      "/images/products/botas-chelsea-de-piel-2.webp",
+      "/images/products/botas-chelsea-de-piel-3.webp"
+    ],
+    "category": {
+      "id": "cat-8",
+      "name": "Calzado",
+      "slug": "calzado"
+    },
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "stock": 7,
+    "isActive": true,
+    "createdAt": "2026-06-23T10:00:00.000Z",
+    "updatedAt": "2026-07-17T10:00:00.000Z"
+  },
+  {
+    "id": "prod-43",
+    "sku": "BMS-CUO-043",
+    "slug": "bolso-de-mano-de-cuero",
+    "title": "Bolso de Mano de Cuero",
+    "description": "Cuero de curtido vegetal con estructura propia, cierre de imán y forro de algodón. Cabe un tablet de once pulgadas.",
+    "price": 268000,
+    "compareAtPrice": 320000,
+    "images": [
+      "/images/products/bolso-de-mano-de-cuero-1.webp",
+      "/images/products/bolso-de-mano-de-cuero-2.webp"
+    ],
+    "category": {
+      "id": "cat-9",
+      "name": "Accesorios",
+      "slug": "accesorios"
+    },
+    "sizes": [
+      "Única"
+    ],
+    "stock": 9,
+    "isActive": true,
+    "createdAt": "2026-06-25T10:00:00.000Z",
+    "updatedAt": "2026-07-16T10:00:00.000Z"
+  },
+  {
+    "id": "prod-44",
+    "sku": "MCH-URB-044",
+    "slug": "mochila-urbana-impermeable",
+    "title": "Mochila Urbana Impermeable",
+    "description": "Nylon ripstop reciclado con laminado impermeable, compartimento acolchado para portátil y salida USB.",
+    "price": 195000,
+    "images": [
+      "/images/products/mochila-urbana-impermeable-1.webp",
+      "/images/products/mochila-urbana-impermeable-2.webp"
+    ],
+    "category": {
+      "id": "cat-9",
+      "name": "Accesorios",
+      "slug": "accesorios"
+    },
+    "sizes": [
+      "Única"
+    ],
+    "stock": 15,
+    "isActive": true,
+    "createdAt": "2026-06-27T10:00:00.000Z",
+    "updatedAt": "2026-07-15T10:00:00.000Z"
+  },
+  {
+    "id": "prod-45",
+    "sku": "BUF-CSH-045",
+    "slug": "bufanda-de-cachemira",
+    "title": "Bufanda de Cachemira",
+    "description": "Cachemira de grado Nepal con flecos hechos a mano. Suave, cálida y ligera: se dobla para llevar en el bolsillo.",
+    "price": 225000,
+    "images": [
+      "/images/products/bufanda-de-cachemira-1.webp",
+      "/images/products/bufanda-de-cachemira-2.webp"
+    ],
+    "category": {
+      "id": "cat-9",
+      "name": "Accesorios",
+      "slug": "accesorios"
+    },
+    "sizes": [
+      "Única"
+    ],
+    "stock": 10,
+    "isActive": true,
+    "createdAt": "2026-06-29T10:00:00.000Z",
+    "updatedAt": "2026-07-14T10:00:00.000Z"
+  },
+  {
+    "id": "prod-46",
+    "sku": "SOM-FLT-046",
+    "slug": "sombrero-de-fieltro",
+    "title": "Sombrero de Fieltro",
+    "description": "Fieltro de lana prensada con ala media y cinta de grosgrain. Sombrero estructurado y reversible.",
+    "price": 138000,
+    "compareAtPrice": 165000,
+    "images": [
+      "/images/products/sombrero-de-fieltro-1.webp",
+      "/images/products/sombrero-de-fieltro-2.webp",
+      "/images/products/sombrero-de-fieltro-3.webp"
+    ],
+    "category": {
+      "id": "cat-9",
+      "name": "Accesorios",
+      "slug": "accesorios"
+    },
+    "sizes": [
+      "S/M",
+      "L/XL"
+    ],
+    "stock": 8,
+    "isActive": true,
+    "createdAt": "2026-07-01T10:00:00.000Z",
+    "updatedAt": "2026-07-13T10:00:00.000Z"
+  },
+  {
+    "id": "prod-47",
+    "sku": "CIN-CUO-047",
+    "slug": "cinturon-de-cuero-clasico",
+    "title": "Cinturón de Cuero Clásico",
+    "description": "Cuero de vacuno con hebilla de latón cepillado y pasador fijo. Cinco agujeros y dos centímetros extra de largo.",
+    "price": 78000,
+    "compareAtPrice": 95000,
+    "images": [
+      "/images/products/cinturon-de-cuero-clasico-1.webp",
+      "/images/products/cinturon-de-cuero-clasico-2.webp",
+      "/images/products/cinturon-de-cuero-clasico-3.webp"
+    ],
+    "category": {
+      "id": "cat-9",
+      "name": "Accesorios",
+      "slug": "accesorios"
+    },
+    "sizes": [
+      "Única"
+    ],
+    "stock": 23,
+    "isActive": true,
+    "createdAt": "2026-07-03T10:00:00.000Z",
+    "updatedAt": "2026-07-12T10:00:00.000Z"
+  },
+  {
+    "id": "prod-48",
+    "sku": "LNT-ACT-048",
+    "slug": "lentes-de-sol-de-acetato",
+    "title": "Lentes de Sol de Acetato",
+    "description": "Acetato italiano con bisagra de siete barras y lentes polarizadas de categoría tres. Estuche rígido incluido.",
+    "price": 245000,
+    "images": [
+      "/images/products/lentes-de-sol-de-acetato-1.webp"
+    ],
+    "category": {
+      "id": "cat-9",
+      "name": "Accesorios",
+      "slug": "accesorios"
+    },
+    "sizes": [
+      "Única"
+    ],
+    "stock": 17,
+    "isActive": true,
+    "createdAt": "2026-07-05T10:00:00.000Z",
+    "updatedAt": "2026-07-11T10:00:00.000Z"
   }
 ]

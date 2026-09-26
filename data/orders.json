@@ -4,10 +4,18 @@
     "customer": "Carlos Mendoza",
     "email": "carlos@example.com",
     "date": "27 Jun, 2026",
-    "total": 189000,
+    "total": 201000,
     "status": "processing",
     "paymentStatus": "paid",
-    "items": [{ "name": "Chaqueta Minimalista en Lana", "quantity": 1, "price": 189000 }],
+    "items": [
+      {
+        "name": "Chaqueta Minimalista en Lana",
+        "quantity": 1,
+        "price": 189000,
+        "slug": "chaqueta-minimalista-lana",
+        "image": "/images/products/chaqueta-minimalista-lana-1.webp"
+      }
+    ],
     "shippingAddress": "Calle 10 #20-30, Cartagena, Bolívar",
     "createdAt": "2026-06-27T09:00:00.000Z",
     "updatedAt": "2026-06-27T09:00:00.000Z"
@@ -17,10 +25,18 @@
     "customer": "Sofía Restrepo",
     "email": "sofia@example.com",
     "date": "26 Jun, 2026",
-    "total": 45000,
+    "total": 57000,
     "status": "shipped",
     "paymentStatus": "paid",
-    "items": [{ "name": "Camiseta Esencial Algodón Orgánico", "quantity": 1, "price": 45000 }],
+    "items": [
+      {
+        "name": "Camiseta Esencial Algodón Orgánico",
+        "quantity": 1,
+        "price": 45000,
+        "slug": "camiseta-algodon-organico",
+        "image": "/images/products/camiseta-algodon-organico-1.webp"
+      }
+    ],
     "shippingAddress": "Carrera 5 #12-40, Bogotá, Cundinamarca",
     "createdAt": "2026-06-26T09:00:00.000Z",
     "updatedAt": "2026-06-26T09:00:00.000Z"
@@ -34,8 +50,20 @@
     "status": "delivered",
     "paymentStatus": "paid",
     "items": [
-      { "name": "Chaqueta Minimalista en Lana", "quantity": 1, "price": 189000 },
-      { "name": "Camiseta Esencial Algodón Orgánico", "quantity": 1, "price": 45000 }
+      {
+        "name": "Chaqueta Minimalista en Lana",
+        "quantity": 1,
+        "price": 189000,
+        "slug": "chaqueta-minimalista-lana",
+        "image": "/images/products/chaqueta-minimalista-lana-1.webp"
+      },
+      {
+        "name": "Camiseta Esencial Algodón Orgánico",
+        "quantity": 1,
+        "price": 45000,
+        "slug": "camiseta-algodon-organico",
+        "image": "/images/products/camiseta-algodon-organico-1.webp"
+      }
     ],
     "shippingAddress": "Carrera 20 #33-12, Medellín, Antioquia",
     "createdAt": "2026-06-25T09:00:00.000Z",
@@ -43,13 +71,21 @@
   },
   {
     "id": "ORD-2026-004",
-    "customer": "Mariana Vélez",
-    "email": "mariana@example.com",
+    "customer": "Carlos Mendoza",
+    "email": "carlos@example.com",
     "date": "24 Jun, 2026",
-    "total": 120000,
+    "total": 172000,
     "status": "pending",
     "paymentStatus": "pending",
-    "items": [{ "name": "Pantalón Sastrero Moderno", "quantity": 1, "price": 120000 }],
+    "items": [
+      {
+        "name": "Pantalón Sastrero Moderno",
+        "quantity": 1,
+        "price": 160000,
+        "slug": "pantalon-sastrero-moderno",
+        "image": "/images/products/pantalon-sastrero-moderno-1.webp"
+      }
+    ],
     "shippingAddress": "Calle 80 #15-20, Cali, Valle del Cauca",
     "createdAt": "2026-06-24T09:00:00.000Z",
     "updatedAt": "2026-06-24T09:00:00.000Z"
@@ -59,10 +95,17 @@
     "customer": "Sofía Restrepo",
     "email": "sofia@example.com",
     "date": "22 Jun, 2026",
-    "total": 128000,
+    "total": 140000,
     "status": "delivered",
     "paymentStatus": "paid",
-    "items": [{ "name": "Camisa de Lino Premium", "quantity": 1, "price": 128000 }],
+    "items": [
+      {
+        "name": "Camisa de Lino Premium",
+        "quantity": 1,
+        "price": 128000,
+        "slug": "camisa-lino-premium"
+      }
+    ],
     "shippingAddress": "Carrera 5 #12-40, Bogotá, Cundinamarca",
     "createdAt": "2026-06-22T09:00:00.000Z",
     "updatedAt": "2026-06-22T09:00:00.000Z"

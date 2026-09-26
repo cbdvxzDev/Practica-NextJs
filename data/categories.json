@@ -3,28 +3,63 @@
     "id": "cat-1",
     "slug": "abrigo",
     "name": "Prendas de Abrigo",
-    "description": "Diseños estructurados y materiales térmicos de alta calidad para el día a día.",
-    "imageUrl": "https://placehold.co/600x400/e8e4df/6B7280?text=Abrigo"
+    "description": "Chaquetas, trenchs, parkas y blazers con corte estructurado y tejidos de protección térmica.",
+    "imageUrl": "/images/categories/abrigo-1.webp"
   },
   {
     "id": "cat-2",
     "slug": "basicos",
     "name": "Básicos Esenciales",
-    "description": "Prendas atemporales de algodón premium cortadas para un ajuste perfecto.",
-    "imageUrl": "https://placehold.co/600x400/e8e4df/6B7280?text=Basicos"
+    "description": "Camisetas, polos y tops en algodón premium: las piezas que se repiten temporada tras temporada.",
+    "imageUrl": "/images/categories/basicos-1.webp"
   },
   {
     "id": "cat-3",
     "slug": "camisas",
-    "name": "Camisas",
-    "description": "Camisas versátiles que combinan elegancia y comodidad para cualquier ocasión.",
-    "imageUrl": "https://placehold.co/600x400/e8e4df/6B7280?text=Camisas"
+    "name": "Camisas y Blusas",
+    "description": "De la oxford a la seda lavada. Tejidos respirables que funcionan del escritorio a la cena.",
+    "imageUrl": "/images/categories/camisas-1.webp"
   },
   {
     "id": "cat-4",
     "slug": "pantalones",
     "name": "Pantalones",
-    "description": "Cortes rectos y modernos con caída impecable para el día a día y la oficina.",
-    "imageUrl": "https://placehold.co/600x400/e8e4df/6B7280?text=Pantalones"
+    "description": "Corte recto, wide leg, chinos y bermudas: siluetas limpias con caída impecable todo el año.",
+    "imageUrl": "/images/categories/pantalones-1.webp"
+  },
+  {
+    "id": "cat-5",
+    "slug": "vestidos",
+    "name": "Vestidos",
+    "description": "Midis satinados, camiseros de lino y siluetas fluidas para cada momento del día.",
+    "imageUrl": "/images/categories/vestidos-1.webp"
+  },
+  {
+    "id": "cat-6",
+    "slug": "tejidos",
+    "name": "Tejidos de Punto",
+    "description": "Lana merina, algodón cepillado y cachemira: calor ligero con caída estructurada.",
+    "imageUrl": "/images/categories/tejidos-1.webp"
+  },
+  {
+    "id": "cat-7",
+    "slug": "denim",
+    "name": "Denim",
+    "description": "Mezclilla orgánica, lavados profundos y siluetas urbanas con desgaste sutil.",
+    "imageUrl": "/images/categories/denim-1.webp"
+  },
+  {
+    "id": "cat-8",
+    "slug": "calzado",
+    "name": "Calzado",
+    "description": "Tenis, botines, botas y sandalias en cuero curtido y textiles técnicos.",
+    "imageUrl": "/images/categories/calzado-1.webp"
+  },
+  {
+    "id": "cat-9",
+    "slug": "accesorios",
+    "name": "Accesorios",
+    "description": "Bolsos, bufandas, cinturones y lentes: el detalle que define cada silueta.",
+    "imageUrl": "/images/categories/accesorios-1.webp"
   }
 ]
