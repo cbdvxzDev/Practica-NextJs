@@ -9,6 +9,7 @@ import { Input } from "../../components/ui/Input";
 import { useAuthStore } from "../../store/auth.store";
 import { useOrderStore } from "../../store/order.store";
 import { useIsMounted } from "../../hooks/useIsMounted";
+import { isOrderOwnedBy } from "../../utils/orderOwnership";
 
 const getStatusStyles = (status: string) => {
   switch (status) {
@@ -45,7 +46,9 @@ export default function ProfilePage() {
     setEmail(user?.email ?? "");
   }
 
-  const myOrders = allOrders.filter((o) => o.email.toLowerCase() === user?.email.toLowerCase());
+  // Sin usuario no hay historial propio que filtrar (aún no sabemos si hay
+  // sesión: el store persistido se hidrata después del primer render).
+  const myOrders = user ? allOrders.filter((o) => isOrderOwnedBy(o, user)) : [];
 
   const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault();

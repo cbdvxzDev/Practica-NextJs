@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { insertRecord, readCollection, updateRecord } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
+import { isOrderOwnedBy } from "@/utils/orderOwnership";
 import type { DbOrder, DbProduct } from "@/types/db";
 
 const FREE_SHIPPING_THRESHOLD = 200000;
@@ -21,7 +22,9 @@ export async function GET(request: NextRequest) {
   );
 
   if (user.role !== "admin" && user.role !== "support") {
-    orders = orders.filter((o) => o.email.toLowerCase() === user.email.toLowerCase());
+    // Por id de usuario, no por email: el cliente puede cambiar su correo y
+    // aun así debe conservar el historial.
+    orders = orders.filter((o) => isOrderOwnedBy(o, user));
   }
 
   return NextResponse.json({ data: orders, meta: { total: orders.length } });
@@ -116,6 +119,7 @@ export async function POST(request: NextRequest) {
     id: `ORD-${now.getFullYear()}-${String(orderSequence).padStart(3, "0")}`,
     customer: user.name,
     email: user.email,
+    userId: user.id,
     date,
     total: subtotal + shippingCost,
     status: "pending",

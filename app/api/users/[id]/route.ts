@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { findById, readCollection, updateRecord } from "@/lib/db";
 import { ForbiddenError, getCurrentUser } from "@/lib/auth";
+import { isOrderOwnedBy } from "@/utils/orderOwnership";
 import { apiHandler } from "@/lib/api";
 import type { DbOrder, DbUser } from "@/types/db";
 
@@ -17,9 +18,7 @@ export const GET = apiHandler(async (request: NextRequest, ctx: RouteContext<"/a
     return NextResponse.json({ message: "Usuario no encontrado." }, { status: 404 });
   }
 
-  const orders = readCollection<DbOrder>("orders").filter(
-    (o) => o.email.toLowerCase() === target.email.toLowerCase()
-  );
+  const orders = readCollection<DbOrder>("orders").filter((o) => isOrderOwnedBy(o, target));
 
   return NextResponse.json({
     data: {

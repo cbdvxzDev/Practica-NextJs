@@ -1,6 +1,7 @@
 "use client";
 
 import { useIsMounted } from "@/hooks/useIsMounted";
+import { isOrderOwnedBy } from "@/utils/orderOwnership";
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -55,7 +56,7 @@ export default function CustomerOrderDetailPage() {
   if (!isAuthenticated || !user) return null;
 
   // Si la orden no existe o no pertenece al usuario actual
-  if (!order || order.email !== user.email) {
+  if (!order || !isOrderOwnedBy(order, user)) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
         <p className="text-7xl font-black text-stone-200">404</p>

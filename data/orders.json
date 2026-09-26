@@ -18,7 +18,8 @@
     ],
     "shippingAddress": "Calle 10 #20-30, Cartagena, Bolívar",
     "createdAt": "2026-06-27T09:00:00.000Z",
-    "updatedAt": "2026-06-27T09:00:00.000Z"
+    "updatedAt": "2026-06-27T09:00:00.000Z",
+    "userId": "usr-3"
   },
   {
     "id": "ORD-2026-002",
@@ -39,7 +40,8 @@
     ],
     "shippingAddress": "Carrera 5 #12-40, Bogotá, Cundinamarca",
     "createdAt": "2026-06-26T09:00:00.000Z",
-    "updatedAt": "2026-06-26T09:00:00.000Z"
+    "updatedAt": "2026-06-26T09:00:00.000Z",
+    "userId": "usr-4"
   },
   {
     "id": "ORD-2026-003",
@@ -67,7 +69,8 @@
     ],
     "shippingAddress": "Carrera 20 #33-12, Medellín, Antioquia",
     "createdAt": "2026-06-25T09:00:00.000Z",
-    "updatedAt": "2026-06-25T09:00:00.000Z"
+    "updatedAt": "2026-06-25T09:00:00.000Z",
+    "userId": "usr-3"
   },
   {
     "id": "ORD-2026-004",
@@ -88,7 +91,8 @@
     ],
     "shippingAddress": "Calle 80 #15-20, Cali, Valle del Cauca",
     "createdAt": "2026-06-24T09:00:00.000Z",
-    "updatedAt": "2026-06-24T09:00:00.000Z"
+    "updatedAt": "2026-06-24T09:00:00.000Z",
+    "userId": "usr-3"
   },
   {
     "id": "ORD-2026-005",
@@ -108,6 +112,7 @@
     ],
     "shippingAddress": "Carrera 5 #12-40, Bogotá, Cundinamarca",
     "createdAt": "2026-06-22T09:00:00.000Z",
-    "updatedAt": "2026-06-22T09:00:00.000Z"
+    "updatedAt": "2026-06-22T09:00:00.000Z",
+    "userId": "usr-4"
   }
 ]

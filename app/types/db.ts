@@ -59,6 +59,13 @@ export interface DbOrder {
   id: string;
   customer: string;
   email: string;
+  /**
+   * Dueño del pedido. El historial se filtra por este id y no por `email`,
+   * porque el usuario puede cambiar su correo desde el perfil: si nos
+   * filtriéramos por email, un cambio de correo le ocultaría sus pedidos.
+   * Puede faltar en pedidos sembrados antes de que existiera este campo.
+   */
+  userId?: string;
   date: string;
   total: number;
   status: DbOrderStatus;
