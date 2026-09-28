@@ -74,14 +74,12 @@ export function Navbar() {
     });
 
     return {
-      // Escritorio: catálogo + colecciones destacadas + acceso a todas.
-      desktop: [
-        { href: "/products", label: "Catálogo" },
-        ...highlighted,
-        { href: "/categories", label: "Categorías" },
-      ],
+      /* Se quitó el enlace "Categorías" del menú: /categories era un índice
+         que solo repetía las categorías que ya aparecen aquí y en el catálogo.
+         La página sigue existiendo para enlazarla desde el footer. */
+      desktop: [{ href: "/products", label: "Catálogo" }, ...highlighted],
       // Móvil: catálogo + cada categoría, para no esconder ninguna.
-      mobile: [{ href: "/products", label: "Catálogo" }, ...allCategories, { href: "/categories", label: "Ver todas las categorías" }],
+      mobile: [{ href: "/products", label: "Catálogo" }, ...allCategories],
     };
   }, [categories]);
 

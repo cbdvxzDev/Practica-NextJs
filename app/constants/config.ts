@@ -25,6 +25,10 @@ export const CONFIG = {
     site: {
       contactEmail: 'soporte@esencial.store',
       currency: 'COP',
+      // Origen público de la tienda. Lo usan el sitemap, robots y las URLs
+      // absolutas de Open Graph, así que sin él Next avisa al hacer build.
+      // En local cae a localhost:3000; en despliegue se define por entorno.
+      url: (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, ''),
     },
     images: {
       // Se usa cuando un producto todavía no tiene fotografía asociada.

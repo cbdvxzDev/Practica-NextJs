@@ -21,11 +21,13 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const product = products.find((p) => p.slug === slug);
 
   if (!product) {
-    return { title: "Producto no encontrado" };
+    return { title: { absolute: `${CONFIG.appName} - Producto no encontrado` } };
   }
 
   return {
-    title: product.title,
+    // `absolute` porque esta ruta cuelga de products/layout.tsx, que ya trae
+    // título: el template del raíz no llegaría hasta aquí.
+    title: { absolute: `${CONFIG.appName} - ${product.title}` },
     description: product.description,
     openGraph: {
       title: `${product.title} · ${CONFIG.appName}`,

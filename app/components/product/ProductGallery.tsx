@@ -45,7 +45,7 @@ export function ProductGallery({ images, name, className }: ProductGalleryProps)
                 type="button"
                 onClick={() => setActiveIndex(index)}
                 className={cn(
-                  "aspect-[3/4] w-full overflow-hidden rounded-button bg-neutral-50 border transition-all focus:outline-none",
+                  "relative aspect-[3/4] w-full overflow-hidden rounded-button bg-neutral-50 border transition-all focus:outline-none",
                   isSelected
                     ? "border-brand-dark ring-1 ring-brand-dark opacity-100"
                     : "border-border/40 opacity-60 hover:opacity-100"

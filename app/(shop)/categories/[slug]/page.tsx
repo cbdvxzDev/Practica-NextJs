@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { ProductGrid } from "../../../components/product/ProductGrid";
 import { ProductSort } from "../../../components/filters/ProductSort";
 import { PageTitle } from "../../../components/common/PageTitle";
@@ -12,6 +13,23 @@ interface CategoryPageProps {
   searchParams: Promise<{
     sort?: string;
   }>;
+}
+
+/* El título lleva el nombre real de la categoría: "Esencial - Vestidos", no
+   "Esencial - Categorías" en todas. Se usa `absolute` para que no dependa del
+   template de un layout superior. */
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const category = readCollection<DbCategory>("categories").find((c) => c.slug === slug);
+
+  if (!category) {
+    return { title: { absolute: "Esencial - Categoría no encontrada" } };
+  }
+
+  return {
+    title: { absolute: `Esencial - ${category.name}` },
+    description: category.description,
+  };
 }
 
 export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {

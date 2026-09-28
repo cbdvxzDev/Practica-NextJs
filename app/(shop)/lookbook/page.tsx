@@ -2,114 +2,43 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { EDITORIAL_IMAGES, type EditorialImageKey } from "@/constants/editorialImages";
 
 export const metadata: Metadata = {
   title: "Lookbook",
   description:
-    "El lookbook de Esencial: siluetas neutras, el taller, los percheros y los tejidos con los que armamos cada colección.",
+    "El lookbook de Esencial: siluetas neutras, percheros y tejidos con los que armamos cada colección.",
 };
 
 interface Look {
-  src: string;
+  key: EditorialImageKey;
   alt: string;
   span: string;
 }
 
+/* Las fotos salen del pipeline verificado (`app/constants/editorialImages.ts`):
+   mismo filtro que el catálogo, sin paisajes y sin repetir ninguna. Los textos
+   de aquí describen la prenda de la foto, no un lugar. */
 const LOOKS: Look[] = [
   {
-    src: "https://cdn.stocksnap.io/img-thumbs/960w/2OGDPAVS48.jpg",
+    key: "lookbook-01",
     alt: "Perchero con ropa de la colección Esencial",
-    span: "md:col-span-2 md:row-span-2 aspect-[3/4] md:aspect-auto",
+    span: "md:col-span-2 md:row-span-2 aspect-[4/5] md:aspect-auto",
   },
+  { key: "lookbook-02", alt: "Prendas colgadas en tonos neutros", span: "aspect-[4/5]" },
+  { key: "lookbook-03", alt: "Armario con piezas ordenadas", span: "aspect-[4/5]" },
+  { key: "lookbook-04", alt: "Silueta con abrigo largo", span: "aspect-[4/5]" },
+  { key: "lookbook-05", alt: "Detalle de un look monocromático", span: "aspect-[4/5]" },
+  { key: "lookbook-06", alt: "Punto grueso en tonos tierra", span: "aspect-[4/5]" },
+  { key: "lookbook-07", alt: "Lino crudo con luz natural", span: "aspect-[4/5]" },
+  { key: "lookbook-08", alt: "Tejido de algodón orgánico plegado", span: "aspect-[4/5]" },
+  { key: "lookbook-09", alt: "Silueta minimalista con jersey", span: "aspect-[4/5]" },
+  { key: "lookbook-10", alt: "Denim en tono crudo", span: "aspect-[4/5]" },
+  { key: "lookbook-11", alt: "Conjunto de dos piezas en tonos neutros", span: "aspect-[4/5]" },
   {
-    src: "https://cdn.stocksnap.io/img-thumbs/960w/8QLY0AUTPF.jpg",
-    alt: "Prendas colgadas en tonos neutros",
-    span: "aspect-[3/4]",
-  },
-  {
-    src: "https://cdn.stocksnap.io/img-thumbs/960w/XSM5N2TADD.jpg",
-    alt: "Interior de la tienda con percheros",
-    span: "aspect-[3/4]",
-  },
-  {
-    src: "https://cdn.stocksnap.io/img-thumbs/960w/NSFAPOC1RZ.jpg",
-    alt: "Textiles naturales apilados",
-    span: "aspect-[3/4]",
-  },
-  {
-    src: "https://cdn.stocksnap.io/img-thumbs/960w/INNJ1PW8LT.jpg",
-    alt: "Silueta minimalista con abrigo largo",
-    span: "aspect-[3/4]",
-  },
-  {
-    src: "https://cdn.stocksnap.io/img-thumbs/960w/6MFQR1VDEJ.jpg",
-    alt: "Detalle minimalista de una silueta",
-    span: "aspect-[3/4]",
-  },
-  {
-    src: "https://cdn.stocksnap.io/img-thumbs/960w/QO7AHBYWQE.jpg",
-    alt: "Lino crudo con luz natural",
-    span: "aspect-[3/4]",
-  },
-  {
-    src: "https://cdn.stocksnap.io/img-thumbs/960w/VHPAZL4PNV.jpg",
-    alt: "Punto grueso en tonos tierra",
-    span: "aspect-[3/4]",
-  },
-  {
-    src: "https://cdn.stocksnap.io/img-thumbs/960w/YIFUERVLUT.jpg",
-    alt: "Tejido de algodón orgánico plegado",
-    span: "aspect-[3/4]",
-  },
-  {
-    src: "https://cdn.stocksnap.io/img-thumbs/960w/IA1A0DATOJ.jpg",
-    alt: "Interior del taller de Esencial",
-    span: "aspect-[3/4]",
-  },
-  {
-    src: "https://cdn.stocksnap.io/img-thumbs/960w/DC17RTS8K9.jpg",
-    alt: "Máquina de coser en uso",
-    span: "aspect-[3/4]",
-  },
-  {
-    src: "https://cdn.stocksnap.io/img-thumbs/960w/WDKYJMDRG7.jpg",
-    alt: "Corte de tela sobre la mesa de trabajo",
-    span: "aspect-[3/4]",
-  },
-  {
-    src: "https://cdn.stocksnap.io/img-thumbs/960w/EXICURVOSX.jpg",
-    alt: "Detalle de un look monocromático",
-    span: "aspect-[3/4]",
-  },
-  {
-    src: "https://cdn.stocksnap.io/img-thumbs/960w/UE4PDNKNCS.jpg",
-    alt: "Bordado y costuras a la vista",
-    span: "aspect-[3/4]",
-  },
-  {
-    src: "https://cdn.stocksnap.io/img-thumbs/960w/0WHUTGE4PV.jpg",
-    alt: "Hilo y agujas sobre superficie clara",
-    span: "aspect-[3/4]",
-  },
-  {
-    src: "https://cdn.stocksnap.io/img-thumbs/960w/EWLKIGUYVR.jpg",
+    key: "lookbook-12",
     alt: "Boutique con percheros de ropa",
-    span: "md:col-span-2 aspect-[16/9]",
-  },
-  {
-    src: "https://cdn.stocksnap.io/img-thumbs/960w/DE3YKC6CUM.jpg",
-    alt: "Percheros de ropa en tonos neutros",
-    span: "aspect-[3/4]",
-  },
-  {
-    src: "https://cdn.stocksnap.io/img-thumbs/960w/NQPGL2OX5H.jpg",
-    alt: "Armario con prendas ordenadas",
-    span: "aspect-[3/4]",
-  },
-  {
-    src: "https://cdn.stocksnap.io/img-thumbs/960w/UNK2Z4WP7I.jpg",
-    alt: "Silueta con texturas neutras",
-    span: "aspect-[3/4]",
+    span: "md:col-span-2 aspect-[4/5] md:aspect-auto",
   },
 ];
 
@@ -126,26 +55,25 @@ export default function LookbookPage() {
         </h1>
 
         <p className="text-sm sm:text-base text-brand-muted leading-relaxed">
-          Nueve colecciones pensadas para combinarse entre sí: el taller, los percheros, los
-          tejidos y las siluetas con las que armamos cada referencia. Sin estridencias y sin
-          tendencias pasajeras.
+          Colecciones pensadas para combinarse entre sí: percheros, tejidos y siluetas con
+          las que armamos cada referencia. Sin estridencias y sin tendencias pasajeras.
         </p>
       </section>
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 auto-rows-auto">
         {LOOKS.map((look) => (
           <figure
-            key={look.src}
+            key={look.key}
             className={`relative overflow-hidden rounded-card bg-neutral-100 ${look.span}`}
           >
             <Image
-              src={look.src}
+              src={EDITORIAL_IMAGES[look.key]}
               alt={look.alt}
               fill
               sizes="(min-width: 768px) 33vw, 50vw"
               className="object-cover transition-transform duration-500 hover:scale-105"
             />
-            <figcaption className="absolute left-3 bottom-3 rounded-full bg-white/90 px-3 py-1 text-[10px] uppercase tracking-wider text-brand-dark">
+            <figcaption className="absolute left-3 bottom-3 right-3 rounded-full bg-white/90 px-3 py-1 text-[10px] uppercase tracking-wider text-brand-dark truncate">
               {look.alt}
             </figcaption>
           </figure>

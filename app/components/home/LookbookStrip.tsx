@@ -1,14 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { EDITORIAL_IMAGES, type EditorialImageKey } from "@/constants/editorialImages";
 
-const LOOKBOOK = [
-  { src: "https://cdn.stocksnap.io/img-thumbs/960w/MWTEN9NDZM.jpg", alt: "Perchero de ropa clara" },
-  { src: "https://cdn.stocksnap.io/img-thumbs/960w/XSM5N2TADD.jpg", alt: "Interior de la tienda" },
-  { src: "https://cdn.stocksnap.io/img-thumbs/960w/INNJ1PW8LT.jpg", alt: "Silueta minimalista" },
-  { src: "https://cdn.stocksnap.io/img-thumbs/960w/8QLY0AUTPF.jpg", alt: "Prendas colgadas en tonos neutros" },
-  { src: "https://cdn.stocksnap.io/img-thumbs/960w/EXICURVOSX.jpg", alt: "Detalle de un look monocromático" },
-  { src: "https://cdn.stocksnap.io/img-thumbs/960w/ECJ7KWKEVA.jpg", alt: "Boutique con percheros de ropa" },
+/* Miniaturas del lookbook. Las fotos salen del pipeline verificado, así que
+   ninguna es un paisaje ni un estampado que se repita. */
+const LOOKBOOK: { key: EditorialImageKey; alt: string }[] = [
+  { key: "lookbook-01", alt: "Perchero de ropa clara" },
+  { key: "lookbook-02", alt: "Silueta minimalista" },
+  { key: "lookbook-03", alt: "Prendas colgadas en tonos neutros" },
+  { key: "lookbook-04", alt: "Armario con piezas ordenadas" },
+  { key: "lookbook-05", alt: "Detalle de un look monocromático" },
+  { key: "lookbook-06", alt: "Boutique con percheros de ropa" },
 ];
 
 export function LookbookStrip() {
@@ -40,11 +43,11 @@ export function LookbookStrip() {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
         {LOOKBOOK.map((shot) => (
           <figure
-            key={shot.src}
-            className="group relative aspect-[3/4] overflow-hidden rounded-card bg-neutral-100"
+            key={shot.key}
+            className="group relative aspect-[4/5] overflow-hidden rounded-card bg-neutral-100"
           >
             <Image
-              src={shot.src}
+              src={EDITORIAL_IMAGES[shot.key]}
               alt={shot.alt}
               fill
               sizes="(min-width: 1024px) 16vw, (min-width: 768px) 33vw, 50vw"

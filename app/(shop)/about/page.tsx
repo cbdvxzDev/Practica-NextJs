@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { CONFIG } from "@/constants/config";
+import { EDITORIAL_IMAGES, type EditorialImageKey } from "@/constants/editorialImages";
 
 export const metadata: Metadata = {
   title: "Quiénes somos",
@@ -112,8 +113,8 @@ export default function AboutPage() {
 
         <div className="relative aspect-[4/5] overflow-hidden rounded-card bg-neutral-100">
           <Image
-            src="https://cdn.stocksnap.io/img-thumbs/960w/IA1A0DATOJ.jpg"
-            alt="Interior del taller de Esencial"
+            src={EDITORIAL_IMAGES["about-01"]}
+            alt="Perchero del taller de Esencial"
             fill
             sizes="(min-width: 1024px) 50vw, 100vw"
             className="object-cover"
@@ -176,26 +177,19 @@ export default function AboutPage() {
       </section>
 
       <section className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        {[
-          {
-            src: "https://cdn.stocksnap.io/img-thumbs/960w/DC17RTS8K9.jpg",
-            alt: "Máquina de coser en uso",
-          },
-          {
-            src: "https://cdn.stocksnap.io/img-thumbs/960w/WDKYJMDRG7.jpg",
-            alt: "Corte de tela sobre la mesa de trabajo",
-          },
-          {
-            src: "https://cdn.stocksnap.io/img-thumbs/960w/X7QQCCGUTM.jpg",
-            alt: "Prendas colgadas recién planchadas",
-          },
-        ].map((image) => (
+        {(
+          [
+            { key: "about-02", alt: "Prendas en tonos tierra" },
+            { key: "about-03", alt: "Tejidos naturales del taller" },
+            { key: "about-04", alt: "Serie pequeña lista para planchar" },
+          ] satisfies { key: EditorialImageKey; alt: string }[]
+        ).map((image) => (
           <div
-            key={image.src}
+            key={image.key}
             className="relative aspect-[3/4] overflow-hidden rounded-card bg-neutral-100"
           >
             <Image
-              src={image.src}
+              src={EDITORIAL_IMAGES[image.key]}
               alt={image.alt}
               fill
               sizes="(min-width: 640px) 33vw, 100vw"

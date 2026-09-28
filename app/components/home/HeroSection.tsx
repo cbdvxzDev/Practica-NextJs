@@ -2,12 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { CONFIG } from "@/constants/config";
-
-const HERO_IMAGES = {
-  main: "https://cdn.stocksnap.io/img-thumbs/960w/2OGDPAVS48.jpg",
-  top: "https://cdn.stocksnap.io/img-thumbs/960w/6MFQR1VDEJ.jpg",
-  bottom: "https://cdn.stocksnap.io/img-thumbs/960w/NSFAPOC1RZ.jpg",
-};
+import { EDITORIAL_IMAGES } from "@/constants/editorialImages";
 
 export function HeroSection({ productCount }: { productCount: number }) {
   return (
@@ -65,10 +60,17 @@ export function HeroSection({ productCount }: { productCount: number }) {
           </dl>
         </div>
 
+        {/* Mosaico de la portada. Las tres fotos vienen del pipeline verificado
+            (`app/constants/editorialImages.ts`) y están en 4:5 como el resto
+            del catálogo, así que `object-cover` no recorta la prenda.
+            La foto grande fija la altura de las dos filas (`aspect-[4/5]` +
+            `row-span-2`) y las pequeñas se estiran a su fila con `h-full`.
+            Si las pequeñas llevaran su propio `aspect`, la retícula
+            desbordaría: dos 4:5 apilados son más altos que un 4:5 a lo ancho. */}
         <div className="order-1 lg:order-2 grid grid-cols-5 grid-rows-2 gap-3 sm:gap-4">
-          <div className="col-span-3 row-span-2 relative aspect-[3/4] overflow-hidden rounded-card bg-neutral-100">
+          <div className="col-span-3 row-span-2 relative aspect-[4/5] overflow-hidden rounded-card bg-neutral-100">
             <Image
-              src={HERO_IMAGES.main}
+              src={EDITORIAL_IMAGES["hero-main"]}
               alt="Perchero con ropa de la colección Esencial"
               fill
               priority
@@ -80,9 +82,9 @@ export function HeroSection({ productCount }: { productCount: number }) {
             </span>
           </div>
 
-          <div className="col-span-2 row-span-1 relative aspect-[16/9] overflow-hidden rounded-card bg-neutral-100">
+          <div className="col-span-2 row-span-1 relative h-full min-h-0 overflow-hidden rounded-card bg-neutral-100">
             <Image
-              src={HERO_IMAGES.top}
+              src={EDITORIAL_IMAGES["hero-top"]}
               alt="Detalle minimalista de una silueta"
               fill
               priority
@@ -91,9 +93,9 @@ export function HeroSection({ productCount }: { productCount: number }) {
             />
           </div>
 
-          <div className="col-span-2 row-span-1 relative aspect-[16/9] overflow-hidden rounded-card bg-neutral-100">
+          <div className="col-span-2 row-span-1 relative h-full min-h-0 overflow-hidden rounded-card bg-neutral-100">
             <Image
-              src={HERO_IMAGES.bottom}
+              src={EDITORIAL_IMAGES["hero-bottom"]}
               alt="Textiles naturales del taller"
               fill
               priority

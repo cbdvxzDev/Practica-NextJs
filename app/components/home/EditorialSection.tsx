@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Scissors } from "lucide-react";
+import { EDITORIAL_IMAGES } from "@/constants/editorialImages";
 
 const STATS = [
   { value: "09", label: "Colecciones" },
@@ -14,7 +15,7 @@ export function EditorialSection() {
     <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center">
       <div className="relative aspect-[4/5] rounded-card overflow-hidden bg-neutral-100">
         <Image
-          src="https://cdn.stocksnap.io/img-thumbs/960w/IA1A0DATOJ.jpg"
+          src={EDITORIAL_IMAGES["editorial-01"]}
           alt="Interior del taller de Esencial"
           fill
           sizes="(min-width: 1024px) 50vw, 100vw"

@@ -12,7 +12,9 @@ import { readCollection } from "@/lib/db";
 import type { DbCategory, DbProduct } from "@/types/db";
 
 export const metadata: Metadata = {
-  title: "Esencial | Ropa atemporal para el día a día",
+  // El template de app/layout.tsx antepone la marca: "Esencial - Ropa
+  // atemporal para el día a día". Aquí va solo la parte propia.
+  title: "Ropa atemporal para el día a día",
   description:
     "48 piezas de ropa, denim, calzado y accesorios: algodón orgánico, lana merina, lino y cuero curtido. Envíos a toda Colombia.",
 };

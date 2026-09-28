@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import { PageTitle } from "../../components/common/PageTitle";
 import { CategoryCard } from "../../components/common/CategoryCard";
 import { readCollection } from "@/lib/db";
 import type { DbCategory, DbProduct } from "@/types/db";
+
+export const metadata: Metadata = {
+  title: "Categorías",
+  description: "Todas las categorías de Esencial: ABRIGOS, denim, vestidos, camisetas y más.",
+};
 
 export default function CategoriesPage() {
   const categories = readCollection<DbCategory>("categories");

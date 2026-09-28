@@ -60,6 +60,9 @@ function ProductCatalogPage() {
     const min = Number(searchParams.get("minPrice")) || 0;
     const max = Number(searchParams.get("maxPrice")) || Number.MAX_SAFE_INTEGER;
     const sort = searchParams.get("sort") || "featured";
+    const sizes = (searchParams.get("size") || "").split(",").filter(Boolean);
+    const inStockOnly = searchParams.get("inStock") === "1";
+    const onSaleOnly = searchParams.get("sale") === "1";
 
     // Se listan también las piezas agotadas (el carrito las marca como no
     // comprables) para que el catálogo coincida con el contador de categorías.
@@ -79,6 +82,20 @@ function ProductCatalogPage() {
           p.title.toLowerCase().includes(q) ||
           p.description.toLowerCase().includes(q) ||
           p.sku.toLowerCase().includes(q)
+      );
+    }
+
+    if (sizes.length > 0) {
+      products = products.filter((p) => sizes.some((s) => p.sizes.includes(s)));
+    }
+
+    if (inStockOnly) {
+      products = products.filter((p) => p.stock > 0);
+    }
+
+    if (onSaleOnly) {
+      products = products.filter(
+        (p) => p.compareAtPrice != null && p.compareAtPrice > p.price
       );
     }
 
@@ -102,6 +119,27 @@ function ProductCatalogPage() {
 
     return products;
   }, [allProducts, searchParams]);
+
+  /* La faceta de tallas se calcula sobre el catálogo completo, no sobre el
+     resultado ya filtrado: si se calculara después, al elegir "S" desaparecería
+     el resto de tallas y no se podría cambiar de opinión. */
+  const availableSizes = React.useMemo(() => {
+    const set = new Set<string>();
+    allProducts.filter((p) => p.isActive).forEach((p) => p.sizes.forEach((s) => set.add(s)));
+    return Array.from(set);
+  }, [allProducts]);
+
+  /* Cuenta de filtros activos: alimenta el badge del botón "Filtros" en móvil. */
+  const activeFilterCount = React.useMemo(() => {
+    let count = 0;
+    if (searchParams.get("q")) count++;
+    if (searchParams.get("category")) count++;
+    if (searchParams.get("size")) count++;
+    if (searchParams.get("minPrice") || searchParams.get("maxPrice")) count++;
+    if (searchParams.get("inStock") === "1") count++;
+    if (searchParams.get("sale") === "1") count++;
+    return count;
+  }, [searchParams]);
 
   const pageSize = CONFIG.pagination.defaultLimit;
   const rawPage = Number(searchParams.get("page")) || 1;
@@ -133,6 +171,11 @@ function ProductCatalogPage() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 4h18M6 12h12M10 20h4" />
           </svg>
           Filtros
+          {activeFilterCount > 0 && (
+            <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-dark px-1.5 text-[10px] font-semibold text-white">
+              {activeFilterCount}
+            </span>
+          )}
           {showFilters && (
             <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -143,23 +186,60 @@ function ProductCatalogPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+        {/*
+          En escritorio el panel es una columna normal del grid. En móvil se
+          convierte en un drawer superpuesto: antes el `hidden`/`flex` inline
+          empujaba la rejilla de productos hacia abajo y obligaba a hacer scroll
+          para volver a ver los productos.
+        */}
         <aside
           className={cn(
-            "flex-col space-y-8 lg:sticky lg:top-24 lg:flex p-1",
-            showFilters ? "flex" : "hidden"
+            "lg:flex lg:sticky lg:top-24 space-y-6",
+            showFilters
+              ? "fixed inset-0 z-50 flex flex-col bg-white lg:static lg:z-auto"
+              : "hidden"
           )}
         >
-          <div className="lg:hidden flex items-center justify-between">
-            <span className="text-sm font-semibold text-brand-dark">Filtros</span>
+          {showFilters && (
             <button
               type="button"
+              aria-label="Cerrar filtros"
               onClick={() => setShowFilters(false)}
-              className="text-xs font-medium text-brand-muted underline underline-offset-4"
-            >
-              Cerrar
-            </button>
+              className="absolute inset-0 -z-10 bg-neutral-900/40 lg:hidden"
+            />
+          )}
+
+          <div className="flex flex-col h-full">
+            <div className="flex items-center justify-between px-4 h-14 border-b border-border/60 lg:hidden">
+              <span className="text-sm font-semibold text-brand-dark">Filtros</span>
+              <button
+                type="button"
+                onClick={() => setShowFilters(false)}
+                className="p-2 -mr-2 text-brand-muted hover:text-brand-dark"
+                aria-label="Cerrar filtros"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto overscroll-contain p-4 pb-24 lg:static lg:overflow-visible lg:p-1 lg:pb-0">
+              <ProductFilters categories={categoryItems} sizes={availableSizes} />
+            </div>
+
+            {showFilters && (
+              <div className="absolute bottom-0 inset-x-0 p-3 border-t border-border/60 bg-white/95 backdrop-blur lg:hidden">
+                <button
+                  type="button"
+                  onClick={() => setShowFilters(false)}
+                  className="w-full h-11 rounded-button bg-brand-dark text-white text-sm font-semibold hover:bg-neutral-800 transition-colors"
+                >
+                  Ver {filtered.length} {filtered.length === 1 ? "prenda" : "prendas"}
+                </button>
+              </div>
+            )}
           </div>
-          <ProductFilters categories={categoryItems} />
         </aside>
 
         <div className="lg:col-span-3 space-y-10">

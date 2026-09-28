@@ -3,8 +3,11 @@ import { Footer } from "../components/layout/Footer";
 import { ShopDataProvider } from "../components/providers/ShopDataProvider";
 import type { Metadata } from "next";
 
+/* Sin `title` a propósito. Un layout que define el título como string anula el
+   `template` del layout raíz, y todas las páginas de la tienda acababan
+   mostrándose como "Carrito de compras" en vez de "Esencial - Carrito de
+   compras". Aquí solo va la descripción. */
 export const metadata: Metadata = {
-  title: "Esencial",
   description:
     "Ropa atemporal, minimalismo funcional y piezas confeccionadas de forma consciente. Envíos a toda Colombia.",
 };
