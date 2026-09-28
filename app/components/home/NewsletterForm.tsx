@@ -1,18 +1,56 @@
 "use client";
 
 import * as React from "react";
-import { Check, Mail } from "lucide-react";
+import { AlertCircle, Check, Loader2, Mail } from "lucide-react";
 import { Button } from "../ui/Button";
+import { NewsletterService } from "@/services/newsletter.service";
+import { EMAIL_PATTERN } from "@/lib/validation";
+
+type Status = "idle" | "sending" | "done" | "error";
 
 export function NewsletterForm() {
   const [email, setEmail] = React.useState("");
-  const [status, setStatus] = React.useState<"idle" | "done" | "error">("idle");
+  const [status, setStatus] = React.useState<Status>("idle");
+  const [message, setMessage] = React.useState("");
+  // Campo trampa: invisible para el usuario, tentador para los bots.
+  const [honeypot, setHoneypot] = React.useState("");
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
-    setStatus(isValid ? "done" : "error");
-  };
+
+    const candidate = email.trim();
+    if (!EMAIL_PATTERN.test(candidate)) {
+      setStatus("error");
+      setMessage("Revisa el correo: no parece una dirección válida.");
+      return;
+    }
+
+    setStatus("sending");
+    setMessage("");
+
+    try {
+      const result = await NewsletterService.subscribe(candidate, honeypot);
+      setStatus("done");
+      setMessage(
+        result.alreadySubscribed
+          ? `Ya estabas en la lista, ${candidate}.`
+          : `¡Listo! Te escribiremos a ${candidate} con la próxima carta.`
+      );
+      setEmail("");
+    } catch (error) {
+      setStatus("error");
+      setMessage(error instanceof Error ? error.message : "No pudimos guardar tu correo.");
+    }
+  }
+
+  function handleChange(value: string) {
+    setEmail(value);
+    // Al corregir, el error desaparece: no hay queванеjar para ver el cambio.
+    if (status === "error" || status === "done") {
+      setStatus("idle");
+      setMessage("");
+    }
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center rounded-card border border-border bg-white p-6 sm:p-10 shadow-subtle">
@@ -37,31 +75,62 @@ export function NewsletterForm() {
         <div className="flex flex-col sm:flex-row gap-2">
           <input
             id="newsletter-email"
+            name="email"
             type="email"
             value={email}
-            onChange={(event) => {
-              setEmail(event.target.value);
-              if (status !== "idle") setStatus("idle");
-            }}
+            onChange={(event) => handleChange(event.target.value)}
+            disabled={status === "sending"}
+            aria-invalid={status === "error"}
+            aria-describedby="newsletter-feedback"
             placeholder="tucorreo@ejemplo.com"
-            className="h-11 flex-1 rounded-button border border-border bg-white px-4 text-sm text-brand-dark placeholder:text-neutral-400 transition-colors focus:border-brand-dark"
+            autoComplete="email"
+            className="h-11 flex-1 rounded-button border border-border bg-white px-4 text-sm text-brand-dark placeholder:text-neutral-400 transition-colors focus:border-brand-dark disabled:opacity-60"
           />
-          <Button type="submit" className="h-11 px-6 text-sm text-white">
+          <Button
+            type="submit"
+            className="h-11 px-6 text-sm text-white"
+            disabled={status === "sending"}
+            isLoading={status === "sending"}
+          >
             Suscribirme
           </Button>
         </div>
 
-        {status === "done" && (
-          <p className="flex items-center gap-2 text-xs text-emerald-700">
-            <Check className="h-3.5 w-3.5" />
-            ¡Listo! Te escribiremos a {email.trim()} con la próxima carta.
-          </p>
-        )}
-        {status === "error" && (
-          <p role="alert" className="text-xs text-red-600">
-            Revisa el correo: no parece una dirección válida.
-          </p>
-        )}
+        {/* Trampa anti-bots: oculta a la vista y a los lectores de pantalla. */}
+        <div className="absolute h-0 w-0 overflow-hidden" aria-hidden="true">
+          <label htmlFor="newsletter-website">No rellenes esto</label>
+          <input
+            id="newsletter-website"
+            name="website"
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            value={honeypot}
+            onChange={(event) => setHoneypot(event.target.value)}
+          />
+        </div>
+
+        {/* Un solo live region: los lectores de pantalla anuncian el cambio. */}
+        <div id="newsletter-feedback" aria-live="polite">
+          {status === "sending" && (
+            <p className="flex items-center gap-2 text-xs text-brand-muted">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              Guardando tu correo...
+            </p>
+          )}
+          {status === "done" && (
+            <p className="flex items-center gap-2 text-xs text-emerald-700">
+              <Check className="h-3.5 w-3.5" />
+              {message}
+            </p>
+          )}
+          {status === "error" && (
+            <p role="alert" className="flex items-center gap-2 text-xs text-red-600">
+              <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+              {message}
+            </p>
+          )}
+        </div>
 
         <p className="text-[11px] text-brand-muted">
           Al suscribirte aceptas la{" "}

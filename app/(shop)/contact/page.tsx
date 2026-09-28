@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { CONFIG } from "../../constants/config";
+import { ContactForm } from "../../components/forms/ContactForm";
 
 export const metadata: Metadata = {
   title: "Contacto",
@@ -54,6 +55,18 @@ export default function ContactPage() {
             <p className="text-xs text-brand-muted">{channel.note}</p>
           </div>
         ))}
+      </div>
+
+      <div className="bg-white border border-border/60 rounded-card p-6 sm:p-8 space-y-6">
+        <div className="space-y-1">
+          <h2 className="text-lg font-medium text-brand-dark">Escríbenos</h2>
+          <p className="text-sm text-brand-muted">
+            Los campos marcados con <span className="text-brand-accent">*</span> son obligatorios.
+            Leemos cada mensaje y respondemos por correo.
+          </p>
+        </div>
+
+        <ContactForm />
       </div>
 
       <div className="bg-neutral-50/60 border border-border/40 rounded-card p-6 text-sm text-brand-muted leading-relaxed space-y-2">

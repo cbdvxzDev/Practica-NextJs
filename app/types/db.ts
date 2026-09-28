@@ -75,3 +75,23 @@ export interface DbOrder {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface DbSubscriber {
+  id: string;
+  email: string;
+  createdAt: string;
+}
+
+export const CONTACT_TOPICS = ["pedido", "producto", "devoluciones", "otro"] as const;
+export type DbContactTopic = (typeof CONTACT_TOPICS)[number];
+
+export interface DbContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  topic: DbContactTopic;
+  message: string;
+  /** El equipo de soporte marca los mensajes como atendidos. */
+  read: boolean;
+  createdAt: string;
+}
