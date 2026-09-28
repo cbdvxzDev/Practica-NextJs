@@ -1,0 +1,52 @@
+name: Backend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "backend/**"
+
+concurrency:
+  group: backend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Tests de la API
+    runs-on: ubuntu-latest
+
+    # Los tests que usan Testcontainers necesitan un demonio de Docker. En
+    # ubuntu-latest viene instalado y ya arrancado, asi que alli se ejecutan
+    # enteros; en un portatil sin Docker se saltan solos.
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ runner.os }}-${{ hashFiles('backend/pom.xml') }}
+          restore-keys: maven-${{ runner.os }}-
+
+      - name: Tests
+        working-directory: backend
+        run: ./mvnw -B test
+
+      - name: Empaquetar
+        working-directory: backend
+        run: ./mvnw -B -DskipTests package
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: esencial-api
+          path: backend/target/*.jar
+          if-no-files-found: error
