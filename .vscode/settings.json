@@ -15,18 +15,25 @@
     // configura en los ajustes de usuario. Ver .vscode/README.md.
     "java.test.defaultConfig": "default",
 
-    // Silencia un unico aviso del analizador de nulabilidad de JDT: el 67109822,
-    // "Null type safety: parameter 'this' ... needs unchecked conversion to
-    // conform to @NonNull". Aparece en metodos-referencia usados como interfaz
-    // funcional (User::isActive, String::trim, AbstractHttpConfigurer::disable)
-    // porque Spring anota sus APIs con @NonNull y JDT no distingue esa anotacion
-    // de una promesa real. En los tres sitios el valor ya es no nulo: sale de un
-    // Optional, de un filter previo que descarta null, o de un framework que
-    // siempre pasa el configurer. Se silencia el ID en vez de desactivar el
-    // analisis entero, para que un posible NPE de verdad siga apareciendo.
-    "[java]": {
-        "editor.diagnostics.severity": {
-            "67109822": "ignore"
-        }
-    }
+    // Esta lista es la que hace que JDT marque "Null type safety: parameter
+    // 'this' needs unchecked conversion to conform to @NonNull" en los
+    // metodos-referencia. Sin esta configuracion el aviso no aparece, y
+    // desactivarlo tampoco es la solucion: la causa es la ultima entrada.
+    //
+    // org.springframework.lang.NonNullApi va por defecto, y JDT lo interpreta
+    // como "todo este paquete es no nulable". Spring lo pone en el package-info
+    // de sus paquetes, asi que la anotacion se propaga desde las APIs de Spring
+    // hasta el codigo propio: el Optional<User> que devuelve findById hace que
+    // User cuente como no nulable, y entonces una referencia como User::isActive
+    // parece incumplir la promesa, porque Predicate.test no declara nada.
+    //
+    // Quitar Spring de la lista no desactiva el analisis: el proyecto no usa
+    // @NonNullApi en ningun sitio (no hay package-info.java), asi que lo unico
+    // que se pierde es la inferencia tomada de las anotaciones de Spring. Un
+    // NullPointerException posible en codigo propio se sigue marcando.
+    "java.compile.nullAnalysis.nonnullbydefault": [
+        "javax.annotation.ParametersAreNonnullByDefault",
+        "org.eclipse.jdt.annotation.NonNullByDefault",
+        "org.jspecify.annotations.NullMarked"
+    ]
 }

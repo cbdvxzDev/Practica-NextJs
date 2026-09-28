@@ -34,10 +34,10 @@ asi el editor y la terminal compilan con la misma version. En
 necesitan MongoDB (Testcontainers) se **saltan solos** si no hay Docker; en un
 portatil sin Docker es lo esperado, y en CI corren enteros.
 
-## Por que hay un aviso silenciado
+## Los tres avisos de nulabilidad
 
-`settings.json` ignora el problema `67109822` del analizador de JDT. Es el
-"Null type safety" que salia en tres sitios con metodos-referencia:
+Quedaban tres avisos "Null type safety: parameter 'this' needs unchecked
+conversion to conform to @NonNull" en metodos-referencia:
 
 - `UserService`, con `User::isActive` sobre un `Optional<User>`.
 - `ProductService`, con `String::trim` justo detras de un `filter` que ya
@@ -45,11 +45,20 @@ portatil sin Docker es lo esperado, y en CI corren enteros.
 - `SecurityConfig`, con `AbstractHttpConfigurer::disable`, que es el patron que
   documenta Spring Security.
 
-En ninguno hay un nulo posible; lo que ocurre es que Spring anota sus APIs con
-`@NonNull` y JDT interpreta esa anotacion como una promesa que la referencia a
-metodo incumple.
+No hay ningun nulo posible en ninguno de los tres. La causa esta en
+`java.compile.nullAnalysis.nonnullbydefault`, que por defecto incluye
+`org.springframework.lang.NonNullApi`. Spring lo pone en el `package-info` de sus
+paquetes, y JDT lo lee como "todo esto es no nulable", de modo que la
+anotacion se propaga hasta el codigo propio y una referencia a metodo parece
+incumplir la promesa.
 
-Se silencia ese ID en concreto y **no** se desactiva `java.compile.nullAnalysis`,
-para que un posible NullPointerException de verdad siga marcandose. Si prefieres
-verlos, quita el bloque `"[java]"` y reescribe las tres referencias como
-lambdas explicitas, que JDT no se queja de esas.
+La configuracion quita Spring de esa lista. No apaga el analisis de
+nulabilidad: el proyecto no usa `@NonNullApi` en ningun sitio, asi que lo unico
+que deja de inferir son las anotaciones de Spring, y un
+`NullPointerException` posible en codigo propio se sigue marcando.
+
+Un intento anterior de silenciarlos por ID de diagnostico
+(`editor.diagnostics.severity` con `67109822`) no funciono: la extension no
+respeta ese ID para los avisos del analizador de nulabilidad. Si algun dia
+vuelven, la otra via es reescribir las tres referencias como lambdas
+explicitas, que no pasan por el descriptor de metodo y esquivan el aviso.
