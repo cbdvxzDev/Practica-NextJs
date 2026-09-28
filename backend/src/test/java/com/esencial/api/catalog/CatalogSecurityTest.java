@@ -21,6 +21,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.esencial.api.catalog.controller.AdminProductController;
 import com.esencial.api.catalog.controller.CategoryController;
 import com.esencial.api.catalog.controller.ProductController;
 import com.esencial.api.catalog.domain.Category;
