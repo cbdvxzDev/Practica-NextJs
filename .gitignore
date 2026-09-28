@@ -42,6 +42,16 @@ yarn-error.log*
 # vercel
 .vercel
 
+# IntelliJ IDEA
+# El backend es un proyecto Maven estándar y funciona en cualquier IDE, así que
+# la configuración propia de IntelliJ no se versiona: son rutas absolutas de tu
+# disco, y subirlas te rompe el proyecto a ti y al resto.
+/.idea/
+*.iml
+*.iws
+*.ipr
+/out/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
