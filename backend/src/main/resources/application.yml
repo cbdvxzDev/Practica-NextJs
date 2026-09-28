@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: esencial-api
+  data:
+    mongodb:
+      uri: ${MONGO_URI:mongodb://localhost:27017/esencial}
+      # Sin esto los @Indexed(unique = true) de las entidades no se crean y la
+      # unicidad de email, sku y slug queda solo garantizada en el codigo: un
+      # insert directo (el seeder, un script) podria colar duplicados.
+      auto-index-creation: true
+  jackson:
+    default-property-inclusion: non_null
+    mapper:
+      # Jackson convierte en silencio un entero en un booleano: {"isActive": 42}
+      # llegaba al servicio como true y activaba o desactivaba la cuenta que el
+      # cliente creia estar tocando por otra cosa. Con esto, un tipo numerico
+      # donde va un booleano es un 400 explicito.
+      # Lo que sigue aceptando es un numero donde va un texto ({"status": 42}
+      # pasa a "42"); es inocuo porque el enum lo rechaza despues con su propio
+      # 400, asi que no se complica la configuracion para taparlo aqui.
+      allow-coercion-of-scalars: false
+
+server:
+  port: ${PORT:8080}
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:esencial-clave-local-de-desarrollo-cambiala-en-produccion}
+    ttl: ${JWT_TTL:24h}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+  seed:
+    # Sembrado del catalogo y de las cuentas de prueba desde /data.
+    # Apagado salvo que se pida explicitamente con APP_SEED=1 o -Dapp.seed=true.
+    enabled: ${APP_SEED:false}
+    data-dir: ${APP_SEED_DATA_DIR:../data}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: alpha
+    tags-sorter: alpha
