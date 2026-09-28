@@ -1,7 +1,7 @@
 // app/api/auth/register/route.ts
 import { NextResponse } from "next/server";
 import { insertRecord, readCollection, generateId } from "@/lib/db";
-import { createSessionToken, hashPassword, toPublicUser } from "@/lib/auth";
+import { createSessionToken, hashPassword, setSessionCookie, toPublicUser } from "@/lib/auth";
 import type { DbUser } from "@/types/db";
 
 
@@ -48,11 +48,15 @@ export async function POST(request: Request) {
   insertRecord("users", user);
   const token = createSessionToken(user);
 
-  return NextResponse.json(
+  const response = NextResponse.json(
     {
       token,
       user: toPublicUser(user),
     },
     { status: 201 }
   );
+
+  setSessionCookie(response, token);
+
+  return response;
 }

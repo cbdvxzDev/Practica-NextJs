@@ -1,7 +1,7 @@
 // app/api/auth/login/route.ts
 import { NextResponse } from "next/server";
 import { readCollection } from "@/lib/db";
-import { createSessionToken, toPublicUser, verifyPassword } from "@/lib/auth";
+import { createSessionToken, setSessionCookie, toPublicUser, verifyPassword } from "@/lib/auth";
 import type { DbUser } from "@/types/db";
 
 
@@ -29,8 +29,14 @@ export async function POST(request: Request) {
 
   const token = createSessionToken(user);
 
-  return NextResponse.json({
+  const response = NextResponse.json({
     token,
     user: toPublicUser(user),
   });
+
+  // La cookie permite que proxy.ts valide la sesión en el servidor, sin
+  // depender de que el panel confíe en el store del navegador.
+  setSessionCookie(response, token);
+
+  return response;
 }

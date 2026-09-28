@@ -2,58 +2,22 @@
 // Mini autenticación para el backend local: tokens firmados + hash de contraseñas.
 
 import crypto from "crypto";
-import type { NextRequest } from "next/server";
+import type { NextRequest, NextResponse } from "next/server";
 import { findById } from "./db";
+import {
+  SESSION_COOKIE,
+  TOKEN_TTL_SECONDS,
+  createSessionToken,
+  signToken,
+  verifyToken,
+} from "./session-token";
+import type { TokenPayload } from "./session-token";
 import type { DbUser, PublicUser } from "@/types/db";
 
-const SECRET = process.env.AUTH_SECRET || "giborsec-dev-secret-2026";
-const TOKEN_TTL_SECONDS = 60 * 60 * 24; // 24 horas
-
-interface TokenPayload {
-  sub: string;
-  email: string;
-  role: string;
-  iat: number;
-  exp: number;
-}
-
-function b64url(input: string | Buffer): string {
-  return Buffer.from(input).toString("base64url");
-}
-
-/**
- * Firma un payload y produce un token: base64url(payload).hmacHex
- */
-export function signToken(payload: TokenPayload): string {
-  const encoded = b64url(JSON.stringify(payload));
-  const signature = crypto
-    .createHmac("sha256", SECRET)
-    .update(encoded)
-    .digest("hex");
-  return `${encoded}.${signature}`;
-}
-
-/**
- * Verifica un token y devuelve su payload. null si es inválido o expiró.
- */
-export function verifyToken(token: string | null | undefined): TokenPayload | null {
-  if (!token) return null;
-  const [encoded, signature] = token.split(".");
-  if (!encoded || !signature) return null;
-
-  const expected = crypto.createHmac("sha256", SECRET).update(encoded).digest("hex");
-  const a = Buffer.from(signature, "hex");
-  const b = Buffer.from(expected, "hex");
-  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return null;
-
-  try {
-    const payload = JSON.parse(Buffer.from(encoded, "base64url").toString("utf-8")) as TokenPayload;
-    if (!payload.sub || payload.exp < Date.now() / 1000) return null;
-    return payload;
-  } catch {
-    return null;
-  }
-}
+// La firma del token vive en ./session-token para que proxy.ts pueda verificarla
+// sin importar la capa de datos. Se reexporta aquí para no romper los imports.
+export { SESSION_COOKIE, TOKEN_TTL_SECONDS, createSessionToken, signToken, verifyToken };
+export type { TokenPayload };
 
 /**
  * Extrae y valida el Bearer token del request. Devuelve el payload o null.
@@ -130,15 +94,35 @@ export function verifyPassword(password: string, stored: string): boolean {
 }
 
 /**
- * Crea un token para un usuario.
+ * Escribe la cookie de sesión en una respuesta.
+ *
+ * La cookie es httpOnly a propósito: el token sigue en localStorage para que
+ * el cliente lo mande como `Authorization: Bearer` en sus llamadas a la API,
+ * pero la cookie es la que le permite a `proxy.ts` decidir en el servidor si
+ * /admin debe servirse o redirigir. `sameSite: lax` evita que un sitio de
+ * terceros pueda navegar usando la sesión del usuario.
  */
-export function createSessionToken(user: DbUser): string {
-  const now = Math.floor(Date.now() / 1000);
-  return signToken({
-    sub: user.id,
-    email: user.email,
-    role: user.role,
-    iat: now,
-    exp: now + TOKEN_TTL_SECONDS,
+export function setSessionCookie(response: NextResponse, token: string): void {
+  response.cookies.set({
+    name: SESSION_COOKIE,
+    value: token,
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: TOKEN_TTL_SECONDS,
+  });
+}
+
+/** Borra la cookie de sesión (logout). */
+export function clearSessionCookie(response: NextResponse): void {
+  response.cookies.set({
+    name: SESSION_COOKIE,
+    value: "",
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 0,
   });
 }

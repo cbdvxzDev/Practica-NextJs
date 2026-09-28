@@ -54,9 +54,23 @@ export const AuthService = {
 
   /**
    * Cierra sesión y limpia el almacenamiento local.
+   *
+   * Antes borra la cookie en el servidor: si solo se limpiara localStorage,
+   * `proxy.ts` seguiría viendo una sesión válida y dejaría pasar a /admin.
    */
   logout(): void {
+    // `keepalive` para que la petición llegue aunque la página navegue de inmediato.
+    void fetch("/api/auth/logout", { method: "POST", keepalive: true }).catch(() => {
+      /* Si falla, el logout local sigue siendo válido para el usuario. */
+    });
     localStorage.removeItem("auth_token");
+    // Navegación dura a propósito, y por eso se salta la regla que sugiere
+    // `useRouter().push()`: un logout no es un cambio de página normal. La cookie
+    // se está borrando con una petición en vuelo, y una recarga completa es lo
+    // único que garantiza que ni `proxy.ts` ni los server components del árbol
+    // actual sigan serveando con la sesión anterior. Además este módulo no es un
+    // Client Component, así que no tiene `useRouter`.
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
     window.location.href = "/login";
   },
 

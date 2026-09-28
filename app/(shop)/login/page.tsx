@@ -8,11 +8,6 @@ import { AuthService } from "@/services/auth.service";
 import { useAuthStore } from "@/store/auth.store";
 import { ROUTES } from "@/constants/routes";
 
-const DEMO_ACCOUNTS = [
-  { label: "Admin", email: "admin@giborsec.com", password: "admin123" },
-  { label: "Cliente", email: "carlos@example.com", password: "carlos123" },
-];
-
 /**
  * Solo se aceptan rutas internas. Sin esta comprobación, `/login?next=https://otro-sitio`
  * convertiría el login en un redirector abierto.
@@ -46,7 +41,6 @@ function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const setAuth = useAuthStore((state) => state.setAuth);
-  const [demoError, setDemoError] = React.useState("");
 
   const finishLogin = (user: { id: string; email: string; name: string; role: string }) => {
     setAuth({
@@ -61,15 +55,6 @@ function LoginContent() {
   const handleSubmit = async (email: string, password: string) => {
     const user = await AuthService.login(email, password);
     finishLogin(user);
-  };
-
-  const handleDemoLogin = async (email: string, password: string) => {
-    setDemoError("");
-    try {
-      await handleSubmit(email, password);
-    } catch (err) {
-      setDemoError(err instanceof Error ? err.message : "No se pudo iniciar sesión.");
-    }
   };
 
   return (
@@ -88,26 +73,6 @@ function LoginContent() {
         </div>
 
         <LoginForm onSubmit={handleSubmit} />
-
-        <div className="border-t border-dashed border-amber-300 bg-amber-50/60 rounded-card p-4 space-y-2">
-          <p className="text-[11px] font-semibold text-amber-800 uppercase tracking-wider text-center">
-            ⚡ Accesos rápidos de prueba (base de datos local)
-          </p>
-          <div className="flex gap-2">
-            {DEMO_ACCOUNTS.map((account) => (
-              <button
-                key={account.email}
-                onClick={() => handleDemoLogin(account.email, account.password)}
-                className="flex-1 h-9 text-xs font-medium rounded-button bg-amber-600 text-white hover:bg-amber-700 transition-colors"
-              >
-                {account.label}
-              </button>
-            ))}
-          </div>
-          {demoError && (
-            <p className="text-[11px] text-red-600 text-center">{demoError}</p>
-          )}
-        </div>
 
         <div className="text-center pt-2 border-t border-border/40">
           <p className="text-sm text-brand-muted">
