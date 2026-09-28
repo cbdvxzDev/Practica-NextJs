@@ -13,5 +13,20 @@
     // El JDK no se fija aqui a proposito: una ruta absoluta de disco en un
     // archivo versionado rompe el proyecto al resto y no aporta nada. Se
     // configura en los ajustes de usuario. Ver .vscode/README.md.
-    "java.test.defaultConfig": "default"
+    "java.test.defaultConfig": "default",
+
+    // Silencia un unico aviso del analizador de nulabilidad de JDT: el 67109822,
+    // "Null type safety: parameter 'this' ... needs unchecked conversion to
+    // conform to @NonNull". Aparece en metodos-referencia usados como interfaz
+    // funcional (User::isActive, String::trim, AbstractHttpConfigurer::disable)
+    // porque Spring anota sus APIs con @NonNull y JDT no distingue esa anotacion
+    // de una promesa real. En los tres sitios el valor ya es no nulo: sale de un
+    // Optional, de un filter previo que descarta null, o de un framework que
+    // siempre pasa el configurer. Se silencia el ID en vez de desactivar el
+    // analisis entero, para que un posible NPE de verdad siga apareciendo.
+    "[java]": {
+        "editor.diagnostics.severity": {
+            "67109822": "ignore"
+        }
+    }
 }

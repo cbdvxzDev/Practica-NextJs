@@ -33,3 +33,23 @@ asi el editor y la terminal compilan con la misma version. En
 `Java: Run All Tests` usa el launcher de JUnit nativo. Los tests de la API que
 necesitan MongoDB (Testcontainers) se **saltan solos** si no hay Docker; en un
 portatil sin Docker es lo esperado, y en CI corren enteros.
+
+## Por que hay un aviso silenciado
+
+`settings.json` ignora el problema `67109822` del analizador de JDT. Es el
+"Null type safety" que salia en tres sitios con metodos-referencia:
+
+- `UserService`, con `User::isActive` sobre un `Optional<User>`.
+- `ProductService`, con `String::trim` justo detras de un `filter` que ya
+  descarta los null.
+- `SecurityConfig`, con `AbstractHttpConfigurer::disable`, que es el patron que
+  documenta Spring Security.
+
+En ninguno hay un nulo posible; lo que ocurre es que Spring anota sus APIs con
+`@NonNull` y JDT interpreta esa anotacion como una promesa que la referencia a
+metodo incumple.
+
+Se silencia ese ID en concreto y **no** se desactiva `java.compile.nullAnalysis`,
+para que un posible NullPointerException de verdad siga marcandose. Si prefieres
+verlos, quita el bloque `"[java]"` y reescribe las tres referencias como
+lambdas explicitas, que JDT no se queja de esas.
