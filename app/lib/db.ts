@@ -1,79 +1,84 @@
 // app/lib/db.ts
-// Mini base de datos basada en archivos JSON (solo se ejecuta en el servidor).
-// Cada "colección" es un archivo JSON dentro de la carpeta /data del proyecto.
+// Fachada de la capa de datos.
 //
-// Portabilidad a hosting:
-// En plataformas como Vercel o Netlify el filesystem es de solo lectura durante
-// el runtime, por lo que las escrituras se mantienen en un caché en memoria que
-// permite que la aplicación funcione correctamente durante la sesión activa.
+// Hay dos motores con la misma interfaz (`app/lib/db/types.ts`):
+//   - json  (por defecto): archivos en /data, sin dependencias ni configuracion.
+//   - mongo: se activa solo con MONGODB_URI en el entorno.
+//
+// El resto de la app importa siempre desde "@/lib/db", asi que migrar a Mongo
+// no obliga a tocar ninguna ruta API, pagina ni servicio.
 
-import fs from "fs";
-import path from "path";
+import type { CollectionName, DataStore } from "./db/types";
+import { jsonStore } from "./db/json-store";
 
-const DATA_DIR = path.join(process.cwd(), "data");
+export type { CollectionName, DataStore } from "./db/types";
 
-export type CollectionName = "products" | "categories" | "users" | "orders";
+/**
+ * Decide el motor segun el entorno.
+ *
+ * `NEXT_PHASE` se usa para no arrastrar el driver de Mongo al build: `next
+ * build` prerenderiza paginas y ahi no hay ninguna conexion que valga.
+ */
+function pickStore(): DataStore {
+  const isBuild = process.env.NEXT_PHASE === "phase-production-build" || process.env.NEXT_PHASE === "phase-export";
+  if (isBuild || !process.env.MONGODB_URI) return jsonStore;
 
-function filePath(collection: CollectionName): string {
-  return path.join(DATA_DIR, `${collection}.json`);
+  // Import diferido: si MONGODB_URI no esta, `mongodb` ni se carga.
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { mongoStore } = require("./db/mongo-store") as typeof import("./db/mongo-store");
+  return mongoStore;
 }
 
-// Caché en memoria: es la fuente de verdad durante el runtime.
-const memoryCache = new Map<CollectionName, unknown[]>();
+let store: DataStore | undefined;
 
-function loadCollection<T>(collection: CollectionName): T[] {
-  const cached = memoryCache.get(collection);
-  if (cached !== undefined) {
-    return [...(cached as T[])];
-  }
+function active(): DataStore {
+  if (!store) store = pickStore();
+  return store;
+}
 
-  const file = filePath(collection);
-  let data: T[] = [];
-  if (fs.existsSync(file)) {
+/**
+ * Abre la conexion del motor. La invoca `app/instrumentation.ts` al arrancar el
+ * servidor, de modo que la cache de Mongo este lista antes de la primera
+ * peticion y las llamadas sincronas devuelvan datos de verdad.
+ */
+export async function connectDataStore(): Promise<void> {
+  const selected = active();
+  if (selected.name === "mongo") {
     try {
-      const raw = fs.readFileSync(file, "utf-8");
-      data = JSON.parse(raw) as T[];
+      await selected.connect();
+      console.log("[db] Motor activo: mongo");
     } catch (error) {
-      console.error(`[db] Error leyendo "${collection}.json":`, error);
+      /* Si Atlas no responde se cae al motor de JSON en vez de dejar la tienda
+         sin datos, que es peor para una demo. */
+      console.error("[db] No se pudo conectar a Mongo, se usa el motor json:", error);
+      store = jsonStore;
     }
   }
+}
 
-  memoryCache.set(collection, data);
-  return [...data];
+export function dataStoreName(): DataStore["name"] {
+  return active().name;
 }
 
 /**
  * Lee el contenido completo de una colección. Si el archivo no existe, devuelve [].
  */
 export function readCollection<T>(collection: CollectionName): T[] {
-  return loadCollection<T>(collection);
+  return active().readCollection<T>(collection);
 }
 
 /**
- * Sobrescribe una colección completa (en disco y en la caché en memoria).
- * Si el filesystem no permite escritura, los cambios persisten en memoria.
+ * Sobrescribe una colección completa.
  */
 export function writeCollection<T>(collection: CollectionName, data: T[]): void {
-  memoryCache.set(collection, data);
-
-  try {
-    fs.writeFileSync(filePath(collection), JSON.stringify(data, null, 2), "utf-8");
-  } catch (error) {
-    console.warn(
-      `[db] No se pudo escribir "${collection}.json"; los cambios se mantienen en memoria.`
-    );
-    void error;
-  }
+  active().writeCollection<T>(collection, data);
 }
 
 /**
  * Inserta un nuevo registro y devuelve el elemento insertado.
  */
 export function insertRecord<T extends { id: string }>(collection: CollectionName, record: T): T {
-  const records = readCollection<T>(collection);
-  records.push(record);
-  writeCollection(collection, records);
-  return record;
+  return active().insertRecord<T>(collection, record);
 }
 
 /**
@@ -84,28 +89,18 @@ export function updateRecord<T extends { id: string }>(
   id: string,
   updates: Partial<T>
 ): T | undefined {
-  const records = readCollection<T>(collection);
-  const index = records.findIndex((r) => r.id === id);
-  if (index === -1) return undefined;
-
-  records[index] = { ...records[index], ...updates };
-  writeCollection(collection, records);
-  return records[index];
+  return active().updateRecord<T>(collection, id, updates);
 }
 
 /**
  * Elimina un registro por id y devuelve true si existía.
  */
-export function deleteRecord<T extends { id: string }>(collection: CollectionName, id: string): boolean {
-  const records = readCollection<T>(collection);
-  const nextRecords = records.filter((r) => r.id !== id);
-  const removed = nextRecords.length !== records.length;
-  if (removed) writeCollection(collection, nextRecords);
-  return removed;
+export function deleteRecord(collection: CollectionName, id: string): boolean {
+  return active().deleteRecord(collection, id);
 }
 
 export function findById<T extends { id: string }>(collection: CollectionName, id: string): T | undefined {
-  return readCollection<T>(collection).find((r) => r.id === id);
+  return active().findById<T>(collection, id);
 }
 
 /**

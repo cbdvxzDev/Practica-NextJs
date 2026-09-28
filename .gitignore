@@ -16,6 +16,9 @@
 # next.js
 /.next/
 /out/
+# .next propio que levanta la suite de integracion (tests/), para poder correr
+# `npm test` sin chocar con el `npm run dev` que tengas abierto.
+/.next-test/
 
 # production
 /build
@@ -32,6 +35,9 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# ...salvo la plantilla: es la documentacion de que variables espera el proyecto
+# y no contiene ningun secreto, asi que tiene que ir versionada.
+!.env.example
 
 # vercel
 .vercel
