@@ -40,7 +40,8 @@ public class OrderSequenceService {
                 Query.query(Criteria.where("_id").is(counterId)),
                 new Update().inc("seq", 1),
                 FindAndModifyOptions.options().upsert(true).returnNew(true),
-                Document.class);
+                Document.class,
+                COLLECTION);
 
         if (counter == null) {
             // Con upsert y returnNew el documento siempre existe; si aun asi no
