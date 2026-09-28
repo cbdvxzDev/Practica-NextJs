@@ -19,6 +19,9 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    // .next propio que levanta la suite de integracion (tests/): es codigo
+    // generado por Next, no código nuestro.
+    ".next-test/**",
     "out/**",
     "build/**",
     "next-env.d.ts",

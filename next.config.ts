@@ -22,6 +22,10 @@ function getLocalIPv4Addresses(): string[] {
 }
 
 const nextConfig: NextConfig = {
+  // Next bloquea dos servidores de desarrollo sobre el mismo .next. Los tests
+  // de integración (tests/) levantan su propio servidor, así que les apuntamos
+  // a una carpeta aparte para poder convivir con `npm run dev`.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   // En desarrollo, Next.js bloquea peticiones cross-origin a assets del dev server
   // (JS/CSS/websocket de HMR). Permitimos localhost + todas las IPs de la LAN.
   allowedDevOrigins: [
