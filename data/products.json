@@ -147,7 +147,9 @@
     "price": 45000,
     "compareAtPrice": 60000,
     "images": [
-      "/images/products/camiseta-algodon-organico-1.webp"
+      "/images/products/camiseta-algodon-organico-1.webp",
+      "/images/products/camiseta-algodon-organico-2.webp",
+      "/images/products/camiseta-algodon-organico-3.webp"
     ],
     "category": {
       "id": "cat-2",
@@ -347,7 +349,9 @@
     "price": 185000,
     "compareAtPrice": 225000,
     "images": [
-      "/images/products/blusa-de-seda-lavada-1.webp"
+      "/images/products/blusa-de-seda-lavada-1.webp",
+      "/images/products/blusa-de-seda-lavada-2.webp",
+      "/images/products/blusa-de-seda-lavada-3.webp"
     ],
     "category": {
       "id": "cat-3",
@@ -546,7 +550,9 @@
     "description": "Plisado permanente sobre satinado mate, cintura alta y forro corto para que la silueta se mantenga.",
     "price": 108000,
     "images": [
-      "/images/products/falda-midi-plisada-1.webp"
+      "/images/products/falda-midi-plisada-1.webp",
+      "/images/products/falda-midi-plisada-2.webp",
+      "/images/products/falda-midi-plisada-3.webp"
     ],
     "category": {
       "id": "cat-4",
@@ -691,7 +697,9 @@
     "description": "Sastrería ligera en mezcla de lino con hombreras suaves y cinturón a juego. Marcado en cintura y holgado en cuerpo.",
     "price": 215000,
     "images": [
-      "/images/products/vestido-blazer-con-cinturon-1.webp"
+      "/images/products/vestido-blazer-con-cinturon-1.webp",
+      "/images/products/vestido-blazer-con-cinturon-2.webp",
+      "/images/products/vestido-blazer-con-cinturon-3.webp"
     ],
     "category": {
       "id": "cat-5",
@@ -833,7 +841,9 @@
     "description": "Calado de punto en mezcla de algodón y lino con bordes ribeteados. Capa ligera para llevar sobre camisa o jersey de punto.",
     "price": 92000,
     "images": [
-      "/images/products/chaleco-de-punto-sin-mangas-1.webp"
+      "/images/products/chaleco-de-punto-sin-mangas-1.webp",
+      "/images/products/chaleco-de-punto-sin-mangas-2.webp",
+      "/images/products/chaleco-de-punto-sin-mangas-3.webp"
     ],
     "category": {
       "id": "cat-6",
@@ -1124,7 +1134,9 @@
     "description": "Piel curtida al vegetal con suela de cuero y correa de tobillo. Hebilla de metal cepillado y plantilla de espuma viscoelástica.",
     "price": 215000,
     "images": [
-      "/images/products/sandalias-de-piel-1.webp"
+      "/images/products/sandalias-de-piel-1.webp",
+      "/images/products/sandalias-de-piel-2.webp",
+      "/images/products/sandalias-de-piel-3.webp"
     ],
     "category": {
       "id": "cat-8",
@@ -1215,7 +1227,8 @@
     "compareAtPrice": 320000,
     "images": [
       "/images/products/bolso-de-mano-de-cuero-1.webp",
-      "/images/products/bolso-de-mano-de-cuero-2.webp"
+      "/images/products/bolso-de-mano-de-cuero-2.webp",
+      "/images/products/bolso-de-mano-de-cuero-3.webp"
     ],
     "category": {
       "id": "cat-9",
@@ -1239,7 +1252,8 @@
     "price": 195000,
     "images": [
       "/images/products/mochila-urbana-impermeable-1.webp",
-      "/images/products/mochila-urbana-impermeable-2.webp"
+      "/images/products/mochila-urbana-impermeable-2.webp",
+      "/images/products/mochila-urbana-impermeable-3.webp"
     ],
     "category": {
       "id": "cat-9",
@@ -1263,7 +1277,8 @@
     "price": 225000,
     "images": [
       "/images/products/bufanda-de-cachemira-1.webp",
-      "/images/products/bufanda-de-cachemira-2.webp"
+      "/images/products/bufanda-de-cachemira-2.webp",
+      "/images/products/bufanda-de-cachemira-3.webp"
     ],
     "category": {
       "id": "cat-9",
@@ -1339,7 +1354,9 @@
     "description": "Acetato italiano con bisagra de siete barras y lentes polarizadas de categoría tres. Estuche rígido incluido.",
     "price": 245000,
     "images": [
-      "/images/products/lentes-de-sol-de-acetato-1.webp"
+      "/images/products/lentes-de-sol-de-acetato-1.webp",
+      "/images/products/lentes-de-sol-de-acetato-2.webp",
+      "/images/products/lentes-de-sol-de-acetato-3.webp"
     ],
     "category": {
       "id": "cat-9",
