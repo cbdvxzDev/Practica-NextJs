@@ -37,7 +37,7 @@ public class UserService {
      */
     public User profile(String userId) {
         return users.findById(userId)
-                .filter(User::isActive)
+                .filter(user -> user.isActive())
                 .orElseThrow(() -> new NotFoundException("Sesión inválida o cuenta desactivada."));
     }
 

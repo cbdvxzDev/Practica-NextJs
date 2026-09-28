@@ -243,7 +243,7 @@ public class ProductService {
         }
         return values.stream()
                 .filter(value -> value != null && !value.isBlank())
-                .map(String::trim)
+                .map(value -> value.trim())
                 .distinct()
                 .collect(Collectors.toCollection(ArrayList::new));
     }
