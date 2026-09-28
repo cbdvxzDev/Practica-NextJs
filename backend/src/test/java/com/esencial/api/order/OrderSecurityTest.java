@@ -27,7 +27,6 @@ import com.esencial.api.auth.controller.AuthController;
 import com.esencial.api.auth.controller.UserAdminController;
 import com.esencial.api.auth.domain.Role;
 import com.esencial.api.auth.domain.User;
-import com.esencial.api.auth.dto.UserResponse;
 import com.esencial.api.auth.service.AuthService;
 import com.esencial.api.auth.service.UserService;
 import com.esencial.api.common.GlobalExceptionHandler;
@@ -236,10 +235,6 @@ class OrderSecurityTest {
                 .andExpect(status().isOk());
 
         org.mockito.Mockito.verify(userService).profile(eq("usr-3"));
-    }
-
-    private UserResponse sampleUser() {
-        return UserResponse.from(sampleUserEntity());
     }
 
     private User sampleUserEntity() {
