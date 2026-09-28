@@ -1,4 +1,17 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
-    "java.configuration.updateBuildConfiguration": "interactive"
+
+    // "automatic" y no "interactive": al cambiar el pom.xml, la extension importa
+    // solo. Con "interactive" salia un aviso y, si no se aceptaba, el proyecto se
+    // quedaba con el classpath viejo y marcaba errores que no existen.
+    "java.configuration.updateBuildConfiguration": "automatic",
+
+    // El backend es un proyecto Maven anidado en backend/, no en la raiz del
+    // workspace, asi que hay que forzar el import de Maven de forma explicita.
+    "java.import.maven.enabled": true,
+
+    // El JDK no se fija aqui a proposito: una ruta absoluta de disco en un
+    // archivo versionado rompe el proyecto al resto y no aporta nada. Se
+    // configura en los ajustes de usuario. Ver .vscode/README.md.
+    "java.test.defaultConfig": "default"
 }
