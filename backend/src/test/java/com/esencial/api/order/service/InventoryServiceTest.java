@@ -16,6 +16,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -49,7 +50,7 @@ class InventoryServiceTest {
     @DisplayName("el descuento se condiciona en la propia consulta, no despues de leer")
     void elFiltroLleveLaCondicionDeStock() {
         when(mongoTemplate.findAndModify(any(Query.class), any(Update.class),
-                any(FindAndModifyOptions.class), any(Class.class))).thenReturn(new Product());
+                any(FindAndModifyOptions.class), ArgumentMatchers.<Class<Product>>any())).thenReturn(new Product());
 
         inventory.reserve("prod-1", "Chaqueta", 2);
 
@@ -59,7 +60,7 @@ class InventoryServiceTest {
         ArgumentCaptor<Query> query = ArgumentCaptor.forClass(Query.class);
         ArgumentCaptor<Update> update = ArgumentCaptor.forClass(Update.class);
         verify(mongoTemplate).findAndModify(query.capture(), update.capture(),
-                any(FindAndModifyOptions.class), any(Class.class));
+                any(FindAndModifyOptions.class), ArgumentMatchers.<Class<Product>>any());
 
         String rendered = query.getValue().getQueryObject().toJson();
         assertThat(rendered).contains("\"stock\": {\"$gte\": 2}");
@@ -72,7 +73,7 @@ class InventoryServiceTest {
     @DisplayName("avisa cuanto stock queda cuando no hay unidades suficientes")
     void errorDeStockInformativo() {
         when(mongoTemplate.findAndModify(any(Query.class), any(Update.class),
-                any(FindAndModifyOptions.class), any(Class.class))).thenReturn(null);
+                any(FindAndModifyOptions.class), ArgumentMatchers.<Class<Product>>any())).thenReturn(null);
         when(products.findById("prod-1")).thenReturn(Optional.of(product("prod-1", "Chaqueta", 1)));
 
         assertThatThrownBy(() -> inventory.reserve("prod-1", "Chaqueta", 3))
@@ -85,7 +86,7 @@ class InventoryServiceTest {
     @DisplayName("no se puede reservar un producto dado de baja")
     void productoInactivo() {
         when(mongoTemplate.findAndModify(any(Query.class), any(Update.class),
-                any(FindAndModifyOptions.class), any(Class.class))).thenReturn(null);
+                any(FindAndModifyOptions.class), ArgumentMatchers.<Class<Product>>any())).thenReturn(null);
         Product inactive = product("prod-1", "Chaqueta", 10);
         inactive.setActive(false);
         when(products.findById("prod-1")).thenReturn(Optional.of(inactive));
@@ -99,7 +100,7 @@ class InventoryServiceTest {
     @DisplayName("un id inexistente es 404, no un conflicto de stock")
     void productoInexistente() {
         when(mongoTemplate.findAndModify(any(Query.class), any(Update.class),
-                any(FindAndModifyOptions.class), any(Class.class))).thenReturn(null);
+                any(FindAndModifyOptions.class), ArgumentMatchers.<Class<Product>>any())).thenReturn(null);
         when(products.findById(anyString())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> inventory.reserve("prod-99", "Algo", 1))
@@ -114,7 +115,7 @@ class InventoryServiceTest {
         ArgumentCaptor<Query> query = ArgumentCaptor.forClass(Query.class);
         ArgumentCaptor<Update> update = ArgumentCaptor.forClass(Update.class);
         verify(mongoTemplate, org.mockito.Mockito.times(2))
-                .updateFirst(query.capture(), update.capture(), any(Class.class));
+                .updateFirst(query.capture(), update.capture(), ArgumentMatchers.<Class<Product>>any());
 
         assertThat(update.getAllValues().get(0).getUpdateObject())
                 .containsEntry("$inc", new Document("stock", 2));
@@ -127,7 +128,8 @@ class InventoryServiceTest {
     void devolucionVacia() {
         inventory.release(List.of());
 
-        verify(mongoTemplate, never()).updateFirst(any(Query.class), any(Update.class), any(Class.class));
+        verify(mongoTemplate, never()).updateFirst(any(Query.class), any(Update.class),
+                ArgumentMatchers.<Class<Product>>any());
     }
 
     private Product product(String id, String title, long stock) {
