@@ -266,6 +266,15 @@ La web se despliega en **Netlify** y la API en **Render**, ambas contra
 3. **Network Access** → `0.0.0.0/0` (o las IPs de Render/Netlify).
 4. **Connect → Drivers** → copiar la URI y definirla como `MONGODB_URI` en
    Netlify y `MONGO_URI` en Render (ambas con `<db_password>` resuelto).
+5. **Sembrar el catálogo** (idempotente, se puede repetir):
+
+   ```bash
+   MONGODB_URI="mongodb+srv://..." node scripts/seed-mongo.mjs
+   ```
+
+   Sin este paso la tienda arranca con las colecciones vacías al activar el
+   motor de Mongo. Si el DNS local bloquea consultas SRV, usa la URI
+   `mongodb://` (sin `+srv`) que da **Connect → Drivers → Advanced**.
 
 ### Alternativa: solo Netlify (sin backend Java)
 
