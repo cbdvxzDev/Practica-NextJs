@@ -1,5 +1,6 @@
 # Backend en Render (Blueprint). Repo conectado > New > Blueprint, y este
-# archivo crea el servicio web con el JAR de Maven.
+# archivo crea el servicio web con el JAR de Maven dentro de una imagen
+# Docker (Render no tiene runtime nativo para Java: docker es el camino).
 #
 # Pasos previos:
 #   1. MongoDB Atlas (M0) -> copiar la URI en el secret MONGO_URI
@@ -10,10 +11,9 @@
 services:
   - type: web
     name: esencial-api
-    runtime: java
-    rootDir: backend
-    buildCommand: ./mvnw -B -DskipTests package
-    startCommand: java -jar target/esencial-api-0.0.1-SNAPSHOT.jar
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
     healthCheckPath: /api/health
     envVars:
       - key: MONGO_URI
@@ -21,7 +21,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: CORS_ALLOWED_ORIGINS
-        value: https://example.netlify.app
-      # Siembra el catálogo y las cuentas de prueba en el primer arranque.
+        value: https://e-commerceesencial.netlify.app
+      # Siembra el catalogo y las cuentas de prueba en el primer arranque.
       - key: APP_SEED
         value: "1"
