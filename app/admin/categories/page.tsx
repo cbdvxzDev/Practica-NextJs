@@ -8,12 +8,17 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { useProductStore } from "@/store/product.store";
 import { useCategoryStore } from "@/store/category.store";
+import { useAuthStore } from "@/store/auth.store";
+import { ROLES } from "@/constants/roles";
 
 export default function AdminCategoriesPage() {
   const categories = useCategoryStore((state) => state.categories);
   const loading = useCategoryStore((state) => state.loading);
   const removeCategory = useCategoryStore((state) => state.removeCategory);
   const products = useProductStore((state) => state.products);
+  const role = useAuthStore((state) => state.user?.role);
+  // La API de categorías responde 403 a soporte en cualquier escritura.
+  const canWrite = role === ROLES.ADMIN;
 
   const handleDelete = async (id: string) => {
     if (!window.confirm("¿Seguro que deseas eliminar esta categoría?")) return;
@@ -28,9 +33,11 @@ export default function AdminCategoriesPage() {
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-5">
         <PageTitle title="Categorías" description="Administra las colecciones del catálogo." />
-        <Link href="/admin/categories/create">
-          <Button variant="primary" className="h-10 text-sm">+ Nueva categoría</Button>
-        </Link>
+        {canWrite && (
+          <Link href="/admin/categories/create">
+            <Button variant="primary" className="h-10 text-sm">+ Nueva categoría</Button>
+          </Link>
+        )}
       </div>
 
       {loading && categories.length === 0 ? (
@@ -77,18 +84,24 @@ export default function AdminCategoriesPage() {
                     <span className="font-medium text-brand-dark">{count}</span> productos
                   </span>
                   <div className="flex items-center gap-3">
-                    <Link
-                      href={`/admin/categories/edit/${cat.id}`}
-                      className="text-xs font-medium text-brand-dark hover:underline underline-offset-4 transition-colors"
-                    >
-                      Editar
-                    </Link>
-                    <button
-                      onClick={() => handleDelete(cat.id)}
-                      className="text-xs font-medium text-red-600 hover:underline underline-offset-4 transition-colors"
-                    >
-                      Eliminar
-                    </button>
+                    {canWrite ? (
+                      <>
+                        <Link
+                          href={`/admin/categories/edit/${cat.id}`}
+                          className="text-xs font-medium text-brand-dark hover:underline underline-offset-4 transition-colors"
+                        >
+                          Editar
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(cat.id)}
+                          className="text-xs font-medium text-red-600 hover:underline underline-offset-4 transition-colors"
+                        >
+                          Eliminar
+                        </button>
+                      </>
+                    ) : (
+                      <span className="text-xs text-brand-muted">Solo lectura</span>
+                    )}
                   </div>
                 </div>
               </div>

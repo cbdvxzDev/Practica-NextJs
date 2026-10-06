@@ -4,14 +4,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { LayoutDashboard, Package, FolderKanban, Receipt, Users, Boxes, ArrowLeft } from "lucide-react";
+import { useAuthStore } from "@/store/auth.store";
+import { ROLES } from "@/constants/roles";
 
 const ADMIN_NAV_ITEMS = [
-  { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/products", label: "Productos", icon: Package },
-  { href: "/admin/categories", label: "Categorías", icon: FolderKanban },
-  { href: "/admin/inventory", label: "Inventario", icon: Boxes },
-  { href: "/admin/orders", label: "Órdenes", icon: Receipt },
-  { href: "/admin/users", label: "Usuarios", icon: Users },
+  { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard, adminOnly: false },
+  { href: "/admin/products", label: "Productos", icon: Package, adminOnly: false },
+  { href: "/admin/categories", label: "Categorías", icon: FolderKanban, adminOnly: false },
+  { href: "/admin/inventory", label: "Inventario", icon: Boxes, adminOnly: false },
+  { href: "/admin/orders", label: "Órdenes", icon: Receipt, adminOnly: false },
+  // La API de usuarios responde 403 a support: no se le enseña una puerta cerrada.
+  { href: "/admin/users", label: "Usuarios", icon: Users, adminOnly: true },
 ];
 
 interface SidebarProps {
@@ -20,6 +23,8 @@ interface SidebarProps {
 
 export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname();
+  const role = useAuthStore((state) => state.user?.role);
+  const navItems = ADMIN_NAV_ITEMS.filter((item) => !item.adminOnly || role === ROLES.ADMIN);
 
   return (
     <aside className={cn(
@@ -34,7 +39,7 @@ export function Sidebar({ className }: SidebarProps) {
         </div>
 
         <nav className="mt-6 flex-1 px-4 space-y-1">
-          {ADMIN_NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const isActive = pathname === item.href || (item.href !== "/admin/dashboard" && pathname?.startsWith(item.href));
             const Icon = item.icon;
             return (

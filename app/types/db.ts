@@ -12,9 +12,13 @@ export interface DbUser {
   avatarUrl?: string;
   createdAt: string;
   passwordHash: string;
+  /** Token de recuperación guardado hasheado (SHA-256): el valor en claro solo viaja por el enlace. */
+  passwordResetToken?: string;
+  /** Caducidad del token de recuperación en ISO. */
+  passwordResetExpiresAt?: string;
 }
 
-export type PublicUser = Omit<DbUser, "passwordHash">;
+export type PublicUser = Omit<DbUser, "passwordHash" | "passwordResetToken" | "passwordResetExpiresAt">;
 
 export interface DbCategory {
   id: string;

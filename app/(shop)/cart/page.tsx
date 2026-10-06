@@ -35,13 +35,15 @@ export default function CartPage() {
   }
 
   const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  // Unidades, no líneas: 3 camisetas en una línea son 3 artículos.
+  const totalUnits = items.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
     <div className="space-y-10">
       <div className="border-b border-border pb-5">
         <PageTitle
           title="Tu Carrito"
-          description={`Tienes ${items.length} artículo${items.length === 1 ? "" : "s"} en tu bolsa de compra.`}
+          description={`Tienes ${totalUnits} artículo${totalUnits === 1 ? "" : "s"} en tu bolsa de compra.`}
         />
       </div>
 

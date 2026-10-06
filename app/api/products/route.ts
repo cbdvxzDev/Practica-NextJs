@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { insertRecord, readCollection, generateId } from "@/lib/db";
 import { ForbiddenError, getTokenPayload } from "@/lib/auth";
 import { apiHandler } from "@/lib/api";
+import { resolveCategoryInput } from "@/lib/category-input";
+import { revalidateShop } from "@/lib/shop-cache";
 import { CONFIG } from "@/constants/config";
 import type { DbProduct } from "@/types/db";
 
@@ -62,6 +64,11 @@ export const POST = apiHandler(async (request: NextRequest) => {
   }
 
   const now = new Date().toISOString();
+  const categoryRef = resolveCategoryInput(category);
+  if (!categoryRef) {
+    return NextResponse.json({ message: "La categoría es obligatoria." }, { status: 400 });
+  }
+
   const product: DbProduct = {
     id: generateId("prod"),
     sku: String(sku),
@@ -73,11 +80,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
     images: Array.isArray(images) && images.length > 0
       ? images
       : [CONFIG.images.placeholder],
-    category: {
-      id: category?.id ?? String(category),
-      name: category?.name ?? "",
-      slug: category?.slug || toSlug(category?.name ?? String(category)),
-    },
+    category: categoryRef,
     sizes: Array.isArray(sizes) && sizes.length > 0 ? sizes : ["S", "M", "L"],
     stock: Number(stock ?? 0),
     isActive: isActive !== undefined ? Boolean(isActive) : true,
@@ -86,6 +89,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
   };
 
   insertRecord("products", product);
+  revalidateShop();
 
   return NextResponse.json({ data: product }, { status: 201 });
 });

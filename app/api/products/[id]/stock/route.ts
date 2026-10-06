@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { findById, updateRecord } from "@/lib/db";
 import { ForbiddenError, getTokenPayload } from "@/lib/auth";
 import { apiHandler } from "@/lib/api";
+import { revalidateShop } from "@/lib/shop-cache";
 import type { DbProduct } from "@/types/db";
 
 export const PATCH = apiHandler(async (request: NextRequest, ctx: RouteContext<"/api/products/[id]/stock">) => {
@@ -27,6 +28,7 @@ export const PATCH = apiHandler(async (request: NextRequest, ctx: RouteContext<"
     stock: Number(body.stock),
     updatedAt: new Date().toISOString(),
   });
+  revalidateShop();
 
   return NextResponse.json({ data: updated });
 });

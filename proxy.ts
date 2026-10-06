@@ -17,7 +17,22 @@ import { SESSION_COOKIE, verifyToken } from "@/lib/session-token";
 /** Roles con acceso al panel. Debe coincidir con app/admin/layout.tsx. */
 const STAFF_ROLES = new Set(["admin", "support"]);
 
+/** Rutas de cliente que exigen sesión (además de /admin). */
+const AUTH_ROUTES = ["/checkout", "/profile"];
+
+const matches = (pathname: string, route: string) =>
+  pathname === route || pathname.startsWith(`${route}/`);
+
 export function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const isStaffRoute = matches(pathname, "/admin");
+  const needsSession =
+    isStaffRoute || AUTH_ROUTES.some((route) => matches(pathname, route));
+
+  // El matcher ya acota las rutas, pero se comprueba aquí igualmente para que
+  // ampliar el matcher sin tocar la lógica no deje nada sin proteger.
+  if (!needsSession) return NextResponse.next();
+
   const token = request.cookies.get(SESSION_COOKIE)?.value;
   const payload = verifyToken(token);
 
@@ -25,12 +40,12 @@ export function proxy(request: NextRequest) {
   if (!payload) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
-    url.search = `?next=${encodeURIComponent(request.nextUrl.pathname)}`;
+    url.search = `?next=${encodeURIComponent(pathname)}`;
     return NextResponse.redirect(url);
   }
 
-  // Con sesión pero sin rol de staff: fuera del panel, a la tienda.
-  if (!STAFF_ROLES.has(payload.role)) {
+  // Con sesión pero sin rol de staff en una ruta del panel: fuera, a la tienda.
+  if (isStaffRoute && !STAFF_ROLES.has(payload.role)) {
     const url = request.nextUrl.clone();
     url.pathname = "/";
     url.search = "";
@@ -41,7 +56,14 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Solo /admin. Acotar el matcher también evita que la lógica de auth se
-  // ejecute sobre estáticos, /_next/image o las fotos de /public.
-  matcher: ["/admin", "/admin/:path*"],
+  // Panel + las dos zonas privadas del cliente. Acotar el matcher también evita
+  // que la lógica de auth se ejecute sobre estáticos, /_next/image o /public.
+  matcher: [
+    "/admin",
+    "/admin/:path*",
+    "/checkout",
+    "/checkout/:path*",
+    "/profile",
+    "/profile/:path*",
+  ],
 };

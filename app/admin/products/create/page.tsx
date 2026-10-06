@@ -41,7 +41,7 @@ export default function AdminCreateProductPage() {
         },
         sizes: data.sizes,
         stock: Number(data.stock),
-        isActive: true,
+        isActive: data.isActive,
       });
       router.push("/admin/products");
     } catch (err) {

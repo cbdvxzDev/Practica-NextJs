@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { insertRecord, readCollection, generateId } from "@/lib/db";
 import { ForbiddenError, getTokenPayload } from "@/lib/auth";
 import { apiHandler } from "@/lib/api";
+import { revalidateShop } from "@/lib/shop-cache";
 import type { DbCategory } from "@/types/db";
 
 function toSlug(text: string): string {
@@ -42,6 +43,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
   };
 
   insertRecord("categories", category);
+  revalidateShop();
 
   return NextResponse.json({ data: category }, { status: 201 });
 });

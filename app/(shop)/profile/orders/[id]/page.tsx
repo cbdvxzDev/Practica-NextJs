@@ -29,6 +29,8 @@ export default function CustomerOrderDetailPage() {
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const order = useOrderStore((state) => state.orders.find((o) => o.id === id));
+  const loading = useOrderStore((state) => state.loading);
+  const loaded = useOrderStore((state) => state.loaded);
 
   // Esperamos a que el store hidrate desde localStorage antes de tomar decisiones
 
@@ -40,8 +42,9 @@ export default function CustomerOrderDetailPage() {
     }
   }, [isMounted, isAuthenticated, router]);
 
-  // Mientras hidrata el store, no mostramos nada (evita flash de 404)
-  if (!isMounted) {
+  // Mientras hidrata el store o siguen llegando las órdenes, no mostramos nada
+  // (evita el flash de 404 de una carrera contra la primera carga).
+  if (!isMounted || loading || !loaded) {
     return (
       <div className="max-w-3xl mx-auto space-y-6 animate-pulse">
         <div className="h-4 bg-stone-200 rounded w-40 mb-6" />

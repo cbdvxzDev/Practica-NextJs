@@ -16,12 +16,15 @@ export interface ProductFormData {
   description: string;
   images: string[];
   sizes: string[];
+  /** Publicado en la tienda. Solo lo puede cambiar admin (la API lo exige así). */
+  isActive: boolean;
 }
 
 export interface ProductFormProps {
   initialData?: Partial<ProductFormData>;
   categories: { id: string; label: string }[];
-  onSubmit: (data: ProductFormData) => void;
+  /** Puede devolver una promesa: el botón se mantiene en "Guardando" hasta que termine. */
+  onSubmit: (data: ProductFormData) => void | Promise<void>;
   className?: string;
 }
 
@@ -42,6 +45,7 @@ export function ProductForm({ initialData, categories, onSubmit, className }: Pr
     description: initialData?.description || "",
     images: initialData?.images || [],
     sizes: initialData?.sizes || [],
+    isActive: initialData?.isActive ?? true,
   });
 
   const primaryImage = formData.images[0];
@@ -98,16 +102,19 @@ export function ProductForm({ initialData, categories, onSubmit, className }: Pr
     return true;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateSku()) return;
     if (!validateImages()) return;
 
     setIsSubmitting(true);
-    setTimeout(() => {
-      onSubmit(formData);
+    try {
+      // Se espera al guardado real: el botón solo vuelve a su estado cuando
+      // la promesa termina, no cuando pasa un tiempo arbitrario.
+      await onSubmit(formData);
+    } finally {
       setIsSubmitting(false);
-    }, 700);
+    }
   };
 
   return (
@@ -266,6 +273,22 @@ export function ProductForm({ initialData, categories, onSubmit, className }: Pr
               className="h-10 px-3 text-xs border border-border/60 rounded-button bg-white focus:outline-none focus:ring-1 focus:ring-brand-dark text-brand-dark"
             />
           </div>
+
+          <label className="flex items-start gap-2.5 cursor-pointer">
+            <input
+              type="checkbox"
+              name="isActive"
+              checked={formData.isActive}
+              onChange={(e) => setFormData((prev) => ({ ...prev, isActive: e.target.checked }))}
+              className="mt-0.5 h-4 w-4 rounded border-border/60 text-brand-dark focus:ring-brand-dark"
+            />
+            <span className="text-xs text-brand-dark">
+              Publicado en la tienda{" "}
+              <span className="text-brand-muted font-normal">
+                (desmarca para ocultarlo del catálogo sin eliminarlo)
+              </span>
+            </span>
+          </label>
         </div>
 
         <div className="bg-white p-6 border border-border/40 rounded-card space-y-3">

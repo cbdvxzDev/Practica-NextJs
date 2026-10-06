@@ -114,7 +114,9 @@ export function Navbar() {
 
   if (pathname?.startsWith("/admin")) return null;
 
-  const isAdmin = isMounted && isAuthenticated && user?.role === "admin";
+  // admin y support son staff: los dos entran al panel (proxy.ts hace el
+  // guard en el servidor; aquí solo se decide qué enlace se enseña).
+  const isStaff = isMounted && isAuthenticated && (user?.role === "admin" || user?.role === "support");
 
   const handleLogout = () => {
     logout();
@@ -155,7 +157,7 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center space-x-3">
-            {isAdmin && (
+            {isStaff && (
               <Link href="/admin/dashboard" className="hidden md:block">
                 <Button variant="ghost" size="sm" className="text-xs text-brand-muted hover:text-brand-dark">
                   Admin
@@ -248,7 +250,7 @@ export function Navbar() {
             })}
 
             <div className="pt-3 mt-2 border-t border-border/30 space-y-1">
-              {isAdmin && (
+              {isStaff && (
                 <Link href="/admin/dashboard" className="block px-3 py-2.5 rounded-button text-sm font-medium text-brand-muted hover:bg-brand-light hover:text-brand-dark transition-colors">
                   Panel de Administración
                 </Link>

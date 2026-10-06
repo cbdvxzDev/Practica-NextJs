@@ -39,6 +39,10 @@ export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => ({}));
   const items = body?.items as { productId: string; quantity: number; size?: string }[] | undefined;
   const shippingAddress = String(body?.shippingAddress ?? "").trim();
+  // El cliente solo puede elegir entre estos dos estados: "failed" lo deja
+  // fuera la pasarela simulada (un rechazo es un 4xx antes de crear el pedido).
+  const paymentStatus: DbOrder["paymentStatus"] =
+    String(body?.paymentStatus ?? "paid") === "pending" ? "pending" : "paid";
 
   if (!Array.isArray(items) || items.length === 0) {
     return NextResponse.json({ message: "El pedido debe incluir al menos un producto." }, { status: 400 });
@@ -123,7 +127,7 @@ export async function POST(request: NextRequest) {
     date,
     total: subtotal + shippingCost,
     status: "pending",
-    paymentStatus: "paid",
+    paymentStatus,
     items: orderItems,
     shippingAddress,
     createdAt: now.toISOString(),

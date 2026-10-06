@@ -66,11 +66,14 @@ export class ForbiddenError extends Error {
 }
 
 /**
- * Elimina el hash de contraseña antes de devolver un usuario al cliente.
+ * Elimina los campos sensibles (hash de contraseña y token de recuperación)
+ * antes de devolver un usuario al cliente.
  */
 export function toPublicUser(user: DbUser): PublicUser {
-  const { passwordHash, ...rest } = user;
+  const { passwordHash, passwordResetToken, passwordResetExpiresAt, ...rest } = user;
   void passwordHash;
+  void passwordResetToken;
+  void passwordResetExpiresAt;
   return rest;
 }
 

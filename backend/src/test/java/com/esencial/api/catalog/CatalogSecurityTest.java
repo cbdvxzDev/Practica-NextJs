@@ -202,6 +202,35 @@ class CatalogSecurityTest {
     }
 
     @Test
+    @DisplayName("soporte lee la vista de gestion de productos (el panel de inventario es de solo lectura para el)")
+    void soportePuedeLeerLaVistaDeGestion() throws Exception {
+        when(productService.listAll()).thenReturn(List.of(sampleProduct()));
+        when(productService.get("prd-1")).thenReturn(sampleProduct());
+
+        mvc.perform(get("/api/admin/products")
+                        .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_SUPPORT"))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].id").value("prd-1"));
+
+        mvc.perform(get("/api/admin/products/prd-1")
+                        .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_SUPPORT"))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.id").value("prd-1"));
+    }
+
+    @Test
+    @DisplayName("soporte no escribe en la vista de gestion: crear y editar siguen siendo de admin")
+    void laEscrituraDelPanelSigueSiendoDeAdmin() throws Exception {
+        mvc.perform(post("/api/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(ADMIN_BODY)
+                        .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_SUPPORT"))))
+                .andExpect(status().isForbidden());
+
+        verifyNoInteractions(productService);
+    }
+
+    @Test
     @DisplayName("el panel puede leer un producto dado de baja, la tienda no")
     void elPanelAlcanzaLosDadosDeBajaYLaTiendaNo() throws Exception {
         Product inactivo = sampleProduct();

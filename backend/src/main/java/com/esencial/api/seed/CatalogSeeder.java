@@ -25,8 +25,9 @@ import com.esencial.api.catalog.domain.CategoryRef;
 import com.esencial.api.catalog.domain.Product;
 import com.esencial.api.catalog.repository.CategoryRepository;
 import com.esencial.api.catalog.repository.ProductRepository;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Importa el catalogo y las cuentas de la app de Next.js la primera vez que se
@@ -56,7 +57,7 @@ public class CatalogSeeder implements ApplicationRunner {
     private final ProductRepository products;
     private final PasswordEncoder passwordEncoder;
     private final ResourceLoader resourceLoader;
-    private final ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
     private final String dataDir;
     private final boolean seedEnabled;
 
@@ -66,7 +67,7 @@ public class CatalogSeeder implements ApplicationRunner {
             ProductRepository products,
             PasswordEncoder passwordEncoder,
             ResourceLoader resourceLoader,
-            ObjectMapper objectMapper,
+            JsonMapper jsonMapper,
             @Value("${app.seed.data-dir:../data}") String dataDir,
             @Value("${app.seed.enabled:false}") boolean seedEnabled) {
         this.mongoTemplate = mongoTemplate;
@@ -74,7 +75,7 @@ public class CatalogSeeder implements ApplicationRunner {
         this.products = products;
         this.passwordEncoder = passwordEncoder;
         this.resourceLoader = resourceLoader;
-        this.objectMapper = objectMapper;
+        this.jsonMapper = jsonMapper;
         this.dataDir = dataDir;
         this.seedEnabled = seedEnabled;
     }
@@ -175,12 +176,12 @@ public class CatalogSeeder implements ApplicationRunner {
         Path path = Path.of(dataDir, fileName);
         if (!Files.isReadable(path)) {
             log.warn("No se encontro «{}». La API arranca con la base vacia.", path.toAbsolutePath());
-            return objectMapper.convertValue(List.of(), type);
+            return jsonMapper.convertValue(List.of(), type);
         }
 
         Resource resource = resourceLoader.getResource("file:" + path.toAbsolutePath());
         try (InputStream in = resource.getInputStream()) {
-            return objectMapper.readValue(in, type);
+            return jsonMapper.readValue(in, type);
         } catch (IOException ex) {
             throw new IllegalStateException("No se pudo leer «" + path + "».", ex);
         }

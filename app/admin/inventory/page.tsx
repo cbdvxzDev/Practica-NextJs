@@ -6,6 +6,8 @@ import { PageTitle } from "@/components/common/PageTitle";
 import { InventoryTable, type InventoryItem } from "@/components/admin/InventoryTable";
 import { Button } from "@/components/ui/Button";
 import { useProductStore } from "@/store/product.store";
+import { useAuthStore } from "@/store/auth.store";
+import { ROLES } from "@/constants/roles";
 
 const LOW_STOCK_THRESHOLD = 6;
 
@@ -26,6 +28,9 @@ export default function AdminInventoryPage() {
   const products = useProductStore((state) => state.products);
   const loading = useProductStore((state) => state.loading);
   const updateStock = useProductStore((state) => state.updateStock);
+  const role = useAuthStore((state) => state.user?.role);
+  // La API de stock responde 403 a soporte: se muestra la tabla en solo lectura.
+  const readOnly = role !== ROLES.ADMIN;
 
   const items: InventoryItem[] = React.useMemo(
     () =>
@@ -138,7 +143,7 @@ export default function AdminInventoryPage() {
             <div className="h-8 bg-neutral-100 rounded w-full" />
           </div>
         ) : (
-          <InventoryTable items={items} onUpdateStock={handleUpdateStock} />
+          <InventoryTable items={items} onUpdateStock={handleUpdateStock} readOnly={readOnly} />
         )}
       </section>
     </div>

@@ -32,22 +32,30 @@ export function CartDrawer({
   onRemoveItem,
   onCheckout,
 }: CartDrawerProps) {
-  // Escuchar la tecla 'Escape' para cerrar el panel automáticamente
+  // Escuchar la tecla 'Escape' para cerrar el panel automáticamente.
+  // El bloqueo de scroll guarda y restaura el valor previo: pisarlo con
+  // "unset" rompía el bloqueo del menú móvil del Navbar.
   React.useEffect(() => {
+    if (!isOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
-    if (isOpen) document.body.style.overflow = "hidden";
     window.addEventListener("keydown", handleKeyDown);
-    
+
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, onClose]);
 
   // Calcular el subtotal sumando cada elemento de la bolsa
   const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  // Unidades, no líneas: el distintivo del encabezado cuenta piezas.
+  const totalUnits = items.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
     <div
@@ -77,7 +85,7 @@ export function CartDrawer({
           <h2 className="text-sm font-semibold uppercase tracking-wider text-brand-dark flex items-center gap-2">
             Bolsa de compra 
             <span className="text-xs font-mono lowercase bg-brand-light px-2 py-0.5 rounded text-brand-muted">
-              {items.length} {items.length === 1 ? "artículo" : "artículos"}
+              {totalUnits} {totalUnits === 1 ? "artículo" : "artículos"}
             </span>
           </h2>
           <button

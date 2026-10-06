@@ -1,0 +1,37 @@
+# ---------------------------------------------------------------
+# Despliegue en Netlify.
+#
+# Conectar el repo en Netlify (Add new site > Import an existing project) y
+# listo: Netlify detecta Next.js, aplica el runtime oficial de abajo y usa
+# este archivo como configuración de build. No hace falta tocar nada más.
+#
+# Variables de entorno obligatorias (Site configuration > Environment
+# variables). Las NEXT_PUBLIC_* se inyectan en build, así que tienen que
+# estar definidas ANTES del primer deploy (y tras cambiarlas, redeploy):
+#
+#   AUTH_SECRET           firmas de las cookies de sesión (openssl rand -hex 32)
+#   NEXT_PUBLIC_SITE_URL  dominio del sitio sin barra final
+#                         (https://<tu-sitio>.netlify.app)
+#   MONGODB_URI           Atlas; sin ella los formularios (newsletter,
+#                         contacto) no persisten porque el filesystem de
+#                         las functions es de solo lectura
+#
+# Opcionales (modo integrado con el backend Spring, ver README):
+#
+#   NEXT_PUBLIC_API_URL   origen del backend, p. ej. https://esencial-api.onrender.com
+#   API_URL               igual pero solo para el servidor (route handlers y
+#                         server components), útil para apuntar a otro backend
+#                         sin reconstruir el cliente
+#
+# Sin NEXT_PUBLIC_API_URL la web funciona entera con la mini API de Next,
+# que corre como functions del propio Netlify.
+# ---------------------------------------------------------------
+
+[build]
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

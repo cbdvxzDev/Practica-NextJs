@@ -21,7 +21,7 @@ export function ShopDataProvider({ children }: { children: React.ReactNode }) {
     hydrated.current = true;
 
     const hydrate = async () => {
-      await useAuthStore.getState().hydrate();
+      const valid = await useAuthStore.getState().hydrate();
 
       const [products, categories] = await Promise.allSettled([
         useProductStore.getState().fetchProducts(),
@@ -30,13 +30,27 @@ export function ShopDataProvider({ children }: { children: React.ReactNode }) {
       void products;
       void categories;
 
-      const { isAuthenticated } = useAuthStore.getState();
-      if (isAuthenticated) {
+      if (valid) {
         await useOrderStore.getState().fetchOrders();
       }
     };
 
     hydrate();
+  }, []);
+
+  // El montaje de arriba solo cubre la sesión que ya existía al llegar. Un
+  // login o un registro posteriores (misma sesión del navegador, sin F5)
+  // cambian `isAuthenticated` y aquí se hidratan sus pedidos; al cerrar
+  // sesión se vacían para que no se filtren de una cuenta a otra.
+  React.useEffect(() => {
+    const unsubscribe = useAuthStore.subscribe((state, previous) => {
+      if (state.isAuthenticated && !previous.isAuthenticated) {
+        void useOrderStore.getState().fetchOrders();
+      } else if (!state.isAuthenticated && previous.isAuthenticated) {
+        useOrderStore.getState().setOrders([]);
+      }
+    });
+    return unsubscribe;
   }, []);
 
   return <>{children}</>;

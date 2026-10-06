@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { deleteRecord, findById, updateRecord } from "@/lib/db";
 import { ForbiddenError, getTokenPayload } from "@/lib/auth";
 import { apiHandler } from "@/lib/api";
+import { resolveCategoryInput } from "@/lib/category-input";
+import { revalidateShop } from "@/lib/shop-cache";
 import type { DbProduct } from "@/types/db";
 
 export async function GET(_request: NextRequest, ctx: RouteContext<"/api/products/[id]">) {
@@ -36,7 +38,12 @@ export const PUT = apiHandler(async (request: NextRequest, ctx: RouteContext<"/a
     price: body.price !== undefined ? Number(body.price) : existing.price,
     compareAtPrice: body.compareAtPrice !== undefined ? Number(body.compareAtPrice) : existing.compareAtPrice,
     images: body.images !== undefined ? body.images : existing.images,
-    category: body.category !== undefined ? body.category : existing.category,
+    // Acepta objeto o cadena (slug): la cadena se resuelve contra las
+    // categorías para no perder el nombre en la mini base.
+    category:
+      body.category !== undefined
+        ? resolveCategoryInput(body.category) ?? existing.category
+        : existing.category,
     sizes: body.sizes !== undefined ? body.sizes : existing.sizes,
     stock: body.stock !== undefined ? Number(body.stock) : existing.stock,
     isActive: body.isActive !== undefined ? Boolean(body.isActive) : existing.isActive,
@@ -44,6 +51,7 @@ export const PUT = apiHandler(async (request: NextRequest, ctx: RouteContext<"/a
   };
 
   const updated = updateRecord<DbProduct>("products", id, updates);
+  revalidateShop();
 
   return NextResponse.json({ data: updated });
 });
@@ -61,5 +69,6 @@ export const DELETE = apiHandler(async (request: NextRequest, ctx: RouteContext<
     return NextResponse.json({ message: "Producto no encontrado." }, { status: 404 });
   }
 
+  revalidateShop();
   return NextResponse.json({ success: true });
 });

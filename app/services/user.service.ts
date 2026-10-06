@@ -2,6 +2,9 @@
 // Cliente para los endpoints de usuarios y perfil de la mini API.
 
 import { fetcher } from "@/lib/fetcher";
+import { apiUrl } from "@/lib/api-url";
+
+const api = <T>(path: string, options?: RequestInit) => fetcher<T>(apiUrl(path), options);
 import type { AuthUser } from "./auth.service";
 import type { DbOrder } from "@/types/db";
 
@@ -20,7 +23,7 @@ export const UserService = {
    * Obtiene el perfil del usuario autenticado.
    */
   async getProfile(): Promise<AuthUser> {
-    const res = await fetcher<{ user: AuthUser }>("/api/user/profile");
+    const res = await api<{ user: AuthUser }>("/api/user/profile");
     return res.user;
   },
 
@@ -28,7 +31,7 @@ export const UserService = {
    * Actualiza los datos básicos del perfil.
    */
   async updateProfile(data: Partial<Pick<AuthUser, "name" | "email" | "avatarUrl">>): Promise<AuthUser> {
-    const res = await fetcher<{ user: AuthUser }>("/api/user/profile", {
+    const res = await api<{ user: AuthUser }>("/api/user/profile", {
       method: "PUT",
       body: JSON.stringify(data),
     });
@@ -39,7 +42,7 @@ export const UserService = {
    * Lista de usuarios (solo admin).
    */
   async getAll(): Promise<UserAdmin[]> {
-    const res = await fetcher<ListResponse>("/api/users");
+    const res = await api<ListResponse>("/api/users");
     return res.data;
   },
 
@@ -47,7 +50,7 @@ export const UserService = {
    * Detalle de un usuario con su historial de órdenes (solo admin).
    */
   async getById(id: string): Promise<UserAdmin & { orders: DbOrder[] }> {
-    const res = await fetcher<{ data: UserAdmin & { orders: DbOrder[] } }>(`/api/users/${id}`);
+    const res = await api<{ data: UserAdmin & { orders: DbOrder[] } }>(`/api/users/${id}`);
     return res.data;
   },
 
@@ -55,7 +58,7 @@ export const UserService = {
    * Actualiza rol / estado de un usuario (solo admin).
    */
   async updateUser(id: string, data: Partial<Pick<UserAdmin, "name" | "role" | "isActive">>): Promise<UserAdmin> {
-    const res = await fetcher<{ data: UserAdmin }>(`/api/users/${id}`, {
+    const res = await api<{ data: UserAdmin }>(`/api/users/${id}`, {
       method: "PATCH",
       body: JSON.stringify(data),
     });

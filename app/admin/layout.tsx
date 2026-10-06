@@ -35,9 +35,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     }
   }, [isMounted, hasAccess, isAuthenticated, user, logout, router]);
 
+  // `AuthService.logout` ya hace una navegación dura a /login (borra la cookie
+  // con una petición en vuelo y recarga): empujar de nuevo con el router solo
+  // añadía una carrera entre las dos navegaciones.
   const handleLogout = () => {
     logout();
-    router.push("/login");
   };
 
   if (!hasAccess) {

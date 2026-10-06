@@ -44,6 +44,32 @@ export const AuthService = {
   },
 
   /**
+   * Pide un enlace para restablecer la contraseña.
+   *
+   * La respuesta es idéntica exista o no la cuenta, así el formulario no
+   * sirve para descubrir correos registrados. La mini API no envía correos,
+   * así que en la demo devuelve además `resetUrl` para poder completar el
+   * flujo sin un servidor SMTP.
+   */
+  async forgotPassword(email: string): Promise<{ message: string; resetUrl?: string }> {
+    return fetcher<{ message: string; resetUrl?: string }>("/api/auth/forgot-password", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    });
+  },
+
+  /**
+   * Cambia la contraseña usando el token del enlace de recuperación.
+   */
+  async resetPassword(token: string, password: string): Promise<string> {
+    const data = await fetcher<{ message: string }>("/api/auth/reset-password", {
+      method: "POST",
+      body: JSON.stringify({ token, password }),
+    });
+    return data.message;
+  },
+
+  /**
    * Recupera el usuario de la sesión actual usando el token guardado.
    */
   async getMe(): Promise<AuthUser | null> {

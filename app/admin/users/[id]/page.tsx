@@ -4,7 +4,17 @@ import * as React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { UserService, type UserAdmin } from "@/services/user.service";
+import { useAuthStore } from "@/store/auth.store";
+import { useUserStore } from "@/store/user.store";
+import { ROLES } from "@/constants/roles";
+import { Button } from "@/components/ui/Button";
 import type { DbOrder } from "@/types/db";
+
+const ROLE_OPTIONS: { value: string; label: string }[] = [
+  { value: ROLES.CUSTOMER, label: "Cliente" },
+  { value: ROLES.SUPPORT, label: "Soporte" },
+  { value: ROLES.ADMIN, label: "Administrador" },
+];
 
 const getInitials = (name: string) =>
   name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
@@ -19,10 +29,25 @@ const ORDER_STATUS: Record<string, { label: string; cls: string }> = {
 
 export default function AdminUserDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const role = useAuthStore((state) => state.user?.role);
+  const sessionId = useAuthStore((state) => state.user?.id);
+  const updateUser = useUserStore((state) => state.updateUser);
   const [user, setUser] = React.useState<(UserAdmin & { orders?: DbOrder[] }) | null>(null);
   const [state, setState] = React.useState<"loading" | "ready" | "missing">("loading");
 
+  // Borrador de la ficha de gestión: `null` significa "sin cambios pendientes",
+  // así se evita un effect que sincronice estado con props.
+  const [draft, setDraft] = React.useState<{ role: UserAdmin["role"]; isActive: boolean } | null>(null);
+  const [saving, setSaving] = React.useState(false);
+  const [feedback, setFeedback] = React.useState<{ type: "ok" | "error"; text: string } | null>(null);
+
+  // Igual que el listado: la API responde 403 a soporte, así que ni se pide.
+  const isForbidden = role !== undefined && role !== ROLES.ADMIN;
+
   React.useEffect(() => {
+    // El bloqueo se resuelve en el render (más abajo); aquí solo se evita
+    // llamar a una API que respondería 403.
+    if (isForbidden) return;
     let cancelled = false;
     UserService.getById(id)
       .then((data) => {
@@ -37,7 +62,50 @@ export default function AdminUserDetailPage() {
     return () => {
       cancelled = true;
     };
-  }, [id]);
+  }, [id, isForbidden]);
+
+  const values = draft ?? (user ? { role: user.role, isActive: user.isActive } : null);
+  const dirty = draft !== null && user !== null && (draft.role !== user.role || draft.isActive !== user.isActive);
+  // Un administrador no puede bajarse a sí mismo: se quedaría sin poder entrar.
+  const isSelf = user !== null && sessionId !== undefined && user.id === sessionId;
+  const locked = Boolean(isSelf) || saving;
+
+  const handleSave = async () => {
+    if (!dirty || locked || draft === null || user === null) return;
+    setSaving(true);
+    setFeedback(null);
+    try {
+      const updated = await updateUser(user.id, draft);
+      setUser((prev) => (prev ? { ...prev, ...updated } : prev));
+      setDraft(null);
+      setFeedback({ type: "ok", text: "Cambios guardados." });
+    } catch (error) {
+      setFeedback({
+        type: "error",
+        text: error instanceof Error ? error.message : "No se pudieron guardar los cambios.",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (isForbidden) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-4">
+        <p className="text-6xl font-black text-stone-200">403</p>
+        <p className="text-xl font-semibold text-stone-900">Sección restringida a administradores</p>
+        <p className="text-xs text-stone-500 max-w-xs">
+          Tu rol de soporte puede gestionar pedidos, pero no las cuentas de usuario.
+        </p>
+        <Link
+          href="/admin/orders"
+          className="text-sm font-semibold text-stone-700 underline underline-offset-4"
+        >
+          ← Ir a los pedidos
+        </Link>
+      </div>
+    );
+  }
 
   if (state === "loading") {
     return (
@@ -172,26 +240,112 @@ export default function AdminUserDetailPage() {
           )}
         </div>
 
-        <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm space-y-4 h-fit">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-stone-400">
-            Información de cuenta
-          </h2>
-          <div className="space-y-3 text-sm">
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Correo</p>
-              <p className="text-stone-700 mt-0.5 break-all">{user.email}</p>
-            </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Rol</p>
-              <p className="text-stone-700 mt-0.5 capitalize">{user.role}</p>
-            </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Estado</p>
-              <p className={`mt-0.5 font-medium ${user.isActive ? "text-emerald-600" : "text-red-600"}`}>
-                {user.isActive ? "● Activo" : "○ Inactivo"}
-              </p>
+        <div className="space-y-6 h-fit">
+          <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm space-y-4">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-stone-400">
+              Información de cuenta
+            </h2>
+            <div className="space-y-3 text-sm">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Correo</p>
+                <p className="text-stone-700 mt-0.5 break-all">{user.email}</p>
+              </div>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Rol</p>
+                <p className="text-stone-700 mt-0.5 capitalize">{user.role}</p>
+              </div>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Estado</p>
+                <p className={`mt-0.5 font-medium ${user.isActive ? "text-emerald-600" : "text-red-600"}`}>
+                  {user.isActive ? "● Activo" : "○ Inactivo"}
+                </p>
+              </div>
             </div>
           </div>
+
+        <section className="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm space-y-4">
+          <div>
+            <h2 className="text-xs font-bold uppercase tracking-widest text-stone-400">
+              Gestión de cuenta
+            </h2>
+            <p className="text-xs text-stone-400 mt-1">
+              {isSelf
+                ? "Es tu propia cuenta: no puedes cambiar tu rol ni darte de baja."
+                : "Cambia el rol o corta el acceso a la plataforma."}
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <label
+                htmlFor="user-role"
+                className="text-[10px] font-bold uppercase tracking-widest text-stone-400"
+              >
+                Rol
+              </label>
+              <select
+                id="user-role"
+                value={values?.role ?? user.role}
+                disabled={locked}
+                onChange={(e) =>
+                  setDraft({
+                    role: e.target.value as UserAdmin["role"],
+                    isActive: values?.isActive ?? user.isActive,
+                  })
+                }
+                className="mt-1 w-full h-9 px-2 text-sm rounded-xl border border-stone-200 bg-white text-stone-800 focus:outline-none focus:ring-1 focus:ring-stone-900 disabled:opacity-50"
+              >
+                {ROLE_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">
+                Acceso
+              </span>
+              <button
+                type="button"
+                disabled={locked}
+                onClick={() =>
+                  setDraft({
+                    role: values?.role ?? user.role,
+                    isActive: !(values?.isActive ?? user.isActive),
+                  })
+                }
+                className={`w-full h-9 text-xs font-medium rounded-xl border transition-colors disabled:opacity-50 ${
+                  (values?.isActive ?? user.isActive)
+                    ? "border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
+                    : "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                }`}
+              >
+                {(values?.isActive ?? user.isActive) ? "Desactivar cuenta" : "Activar cuenta"}
+              </button>
+            </div>
+
+            {feedback && (
+              <p
+                role="status"
+                className={`text-xs ${feedback.type === "ok" ? "text-emerald-600" : "text-red-600"}`}
+              >
+                {feedback.text}
+              </p>
+            )}
+
+            <Button
+              variant="primary"
+              className="w-full h-9 text-xs"
+              onClick={handleSave}
+              isLoading={saving}
+              disabled={!dirty}
+            >
+              {dirty ? "Guardar cambios" : "Sin cambios"}
+            </Button>
+          </div>
+        </section>
         </div>
       </div>
     </div>

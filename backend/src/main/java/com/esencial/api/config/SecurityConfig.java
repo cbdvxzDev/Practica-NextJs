@@ -125,6 +125,13 @@ public class SecurityConfig {
                         // 401 (falta autenticarse) en vez de un 403 (no tiene
                         // permiso), que es la diferencia real entre las dos
                         // situaciones.
+                        // La lectura del catalogo de gestion la comparten admin y
+                        // soporte: el panel de inventario es de solo lectura para
+                        // soporte, y sin esta regla recibia un 403 al hidratar.
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/admin/products",
+                                "/api/admin/products/*")
+                        .hasAnyRole("ADMIN", "SUPPORT")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)))

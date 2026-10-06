@@ -3,9 +3,12 @@
 // una referencia nueva aparece sola sin tocar este archivo.
 
 import type { MetadataRoute } from "next";
-import { readCollection } from "@/lib/db";
+import { getShopCategories, getShopProducts } from "@/lib/server-api";
 import { CONFIG } from "@/constants/config";
-import type { DbCategory, DbProduct } from "@/types/db";
+
+// ISR: igual que la portada, sin esto el mapa del sitio se queda con el
+// catálogo del build hasta el siguiente deploy.
+export const revalidate = 3600;
 
 /** Rutas estáticas de la tienda, con la frecuencia con que cambian. */
 const STATIC_ROUTES: { path: string; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"]; priority: number }[] = [
@@ -22,11 +25,16 @@ const STATIC_ROUTES: { path: string; changeFrequency: MetadataRoute.Sitemap[numb
   { path: "/privacy", changeFrequency: "yearly", priority: 0.2 },
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = CONFIG.site.url;
   const now = new Date();
 
-  const products = readCollection<DbProduct>("products")
+  const [allProducts, categories] = await Promise.all([
+    getShopProducts(3600),
+    getShopCategories(3600),
+  ]);
+
+  const products = allProducts
     .filter((p) => p.isActive)
     .map((p) => ({
       url: `${baseUrl}/products/${p.slug}`,
@@ -35,7 +43,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     }));
 
-  const categories = readCollection<DbCategory>("categories").map((c) => ({
+  const categoryEntries = categories.map((c) => ({
     url: `${baseUrl}/categories/${c.slug}`,
     lastModified: now,
     changeFrequency: "weekly" as const,
@@ -51,5 +59,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // /cart, /checkout, /perfil y /admin quedan fuera a propósito: son privadas
   // o no tienen sentido en un índice de búsqueda.
-  return [...statics, ...categories, ...products];
+  return [...statics, ...categoryEntries, ...products];
 }

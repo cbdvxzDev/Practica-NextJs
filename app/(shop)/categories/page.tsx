@@ -1,17 +1,21 @@
 import type { Metadata } from "next";
 import { PageTitle } from "../../components/common/PageTitle";
 import { CategoryCard } from "../../components/common/CategoryCard";
-import { readCollection } from "@/lib/db";
-import type { DbCategory, DbProduct } from "@/types/db";
+import { getShopCategories, getShopProducts } from "@/lib/server-api";
 
 export const metadata: Metadata = {
   title: "Categorías",
   description: "Todas las categorías de Esencial: ABRIGOS, denim, vestidos, camisetas y más.",
 };
 
-export default function CategoriesPage() {
-  const categories = readCollection<DbCategory>("categories");
-  const products = readCollection<DbProduct>("products");
+// ISR: el índice de categorías se sirve prerenderizado (ver app/(shop)/page.tsx).
+export const revalidate = 60;
+
+export default async function CategoriesPage() {
+  const [categories, products] = await Promise.all([
+    getShopCategories(),
+    getShopProducts(),
+  ]);
   const activeProducts = products.filter((p) => p.isActive);
 
   return (

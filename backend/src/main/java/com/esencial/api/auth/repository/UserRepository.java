@@ -11,4 +11,7 @@ public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> findByEmailIgnoreCase(String email);
 
     boolean existsByEmailIgnoreCase(String email);
+
+    /** Busca por el hash del token de recuperación, nunca por el token en claro. */
+    Optional<User> findByPasswordResetToken(String passwordResetToken);
 }

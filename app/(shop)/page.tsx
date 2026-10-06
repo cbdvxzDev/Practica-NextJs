@@ -8,8 +8,7 @@ import { EditorialSection } from "@/components/home/EditorialSection";
 import { LookbookStrip } from "@/components/home/LookbookStrip";
 import { Testimonials } from "@/components/home/Testimonials";
 import { NewsletterForm } from "@/components/home/NewsletterForm";
-import { readCollection } from "@/lib/db";
-import type { DbCategory, DbProduct } from "@/types/db";
+import { getShopCategories, getShopProducts } from "@/lib/server-api";
 
 export const metadata: Metadata = {
   // El template de app/layout.tsx antepone la marca: "Esencial - Ropa
@@ -19,9 +18,19 @@ export const metadata: Metadata = {
     "48 piezas de ropa, denim, calzado y accesorios: algodón orgánico, lana merina, lino y cuero curtido. Envíos a toda Colombia.",
 };
 
-export default function HomePage() {
-  const products = readCollection<DbProduct>("products").filter((p) => p.isActive);
-  const categories = readCollection<DbCategory>("categories");
+// ISR: sin esto la portada queda congelada con los datos del build y un
+// producto dado de alta desde el panel no aparece hasta el siguiente deploy.
+// En paralelo, las mutaciones de la API llaman a revalidateShop().
+export const revalidate = 60;
+
+export default async function HomePage() {
+  // Catálogo vía capa server-side: con backend Spring remoto hace fetch con
+  // ISR; sin él, lee la mini base local (mismo comportamiento que siempre).
+  const [allProducts, categories] = await Promise.all([
+    getShopProducts(),
+    getShopCategories(),
+  ]);
+  const products = allProducts.filter((p) => p.isActive);
 
   const newest = [...products]
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))

@@ -7,9 +7,8 @@ import { ProductPrice } from "../../../components/product/ProductPrice";
 import { ProductDetails } from "../../../components/product/ProductDetails";
 import { ProductGrid } from "../../../components/product/ProductGrid";
 import { SectionHeading } from "../../../components/common/SectionHeading";
-import { readCollection } from "@/lib/db";
+import { getShopProducts } from "@/lib/server-api";
 import { CONFIG } from "@/constants/config";
-import type { DbProduct } from "@/types/db";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -17,7 +16,7 @@ interface ProductPageProps {
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const products = readCollection<DbProduct>("products");
+  const products = await getShopProducts();
   const product = products.find((p) => p.slug === slug);
 
   if (!product) {
@@ -39,7 +38,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const products = readCollection<DbProduct>("products");
+  const products = await getShopProducts();
   const product = products.find((p) => p.slug === slug);
 
   if (!product || !product.isActive) {

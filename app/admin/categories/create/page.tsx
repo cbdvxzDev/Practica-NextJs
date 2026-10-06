@@ -5,15 +5,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PageTitle } from "@/components/common/PageTitle";
 import { CategoryForm } from "@/components/forms/CategoryForm";
-import { CategoryService } from "@/services/category.service";
+import { useCategoryStore } from "@/store/category.store";
 
 export default function AdminCreateCategoryPage() {
   const router = useRouter();
+  const createCategory = useCategoryStore((state) => state.createCategory);
   const [error, setError] = React.useState("");
 
   const handleSubmit = async (data: { name: string; slug: string; description: string; imageUrl: string }) => {
     try {
-      await CategoryService.create({
+      await createCategory({
         name: data.name,
         slug: data.slug,
         description: data.description,

@@ -2,6 +2,9 @@
 // Cliente para los endpoints de órdenes de la mini API (/api/orders).
 
 import { fetcher } from "@/lib/fetcher";
+import { apiUrl } from "@/lib/api-url";
+
+const api = <T>(path: string, options?: RequestInit) => fetcher<T>(apiUrl(path), options);
 
 export type OrderStatus = "pending" | "processing" | "shipped" | "delivered" | "cancelled";
 export type PaymentStatus = "paid" | "pending" | "failed";
@@ -40,7 +43,7 @@ export const OrderService = {
    * Obtiene las órdenes. Para clientes devuelve solo las propias.
    */
   async getAll(): Promise<Order[]> {
-    const res = await fetcher<ListResponse>("/api/orders");
+    const res = await api<ListResponse>("/api/orders");
     return res.data;
   },
 
@@ -48,7 +51,7 @@ export const OrderService = {
    * Obtiene una orden por id.
    */
   async getById(id: string): Promise<Order> {
-    const res = await fetcher<{ data: Order }>(`/api/orders/${id}`);
+    const res = await api<{ data: Order }>(`/api/orders/${id}`);
     return res.data;
   },
 
@@ -58,8 +61,10 @@ export const OrderService = {
   async create(input: {
     items: { productId: string; quantity: number; size?: string }[];
     shippingAddress: string;
+    /** `paid` para pago simulado con tarjeta, `pending` para contra entrega. */
+    paymentStatus?: PaymentStatus;
   }): Promise<Order> {
-    const res = await fetcher<{ data: Order }>("/api/orders", {
+    const res = await api<{ data: Order }>("/api/orders", {
       method: "POST",
       body: JSON.stringify(input),
     });
@@ -70,7 +75,7 @@ export const OrderService = {
    * Actualiza el estado de una orden (solo admin).
    */
   async updateStatus(id: string, status: OrderStatus): Promise<Order> {
-    const res = await fetcher<{ data: Order }>(`/api/orders/${id}/status`, {
+    const res = await api<{ data: Order }>(`/api/orders/${id}/status`, {
       method: "PATCH",
       body: JSON.stringify({ status }),
     });

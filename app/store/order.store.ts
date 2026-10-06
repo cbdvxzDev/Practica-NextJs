@@ -5,19 +5,11 @@ import { OrderService, type Order, type OrderItem, type OrderStatus, type Paymen
 
 export type { Order, OrderStatus, PaymentStatus, OrderItem };
 
-export interface NewOrder {
-  customer: string;
-  email: string;
-  total: number;
-  status: OrderStatus;
-  paymentStatus: PaymentStatus;
-  items: OrderItem[];
-  shippingAddress: string;
-}
-
 interface OrderState {
   orders: Order[];
   loading: boolean;
+  /** true cuando la primera carga (exitosa o no) ya terminó. */
+  loaded: boolean;
   error: string | null;
 
   /** Reemplaza las órdenes con datos de la mini API (clientes solo ven las propias). */
@@ -27,7 +19,12 @@ interface OrderState {
   fetchOrders: () => Promise<void>;
 
   /** Crea una orden real vía API y la agrega al store local. */
-  createOrder: (input: { items: { productId: string; quantity: number }[]; shippingAddress: string }) => Promise<Order>;
+  createOrder: (input: {
+    items: { productId: string; quantity: number; size?: string }[];
+    shippingAddress: string;
+    /** `paid` para pago simulado con tarjeta, `pending` para contra entrega. */
+    paymentStatus?: PaymentStatus;
+  }) => Promise<Order>;
 
   /** Actualiza el estado de una orden vía API. */
   updateOrderStatus: (id: string, status: OrderStatus) => Promise<void>;
@@ -36,6 +33,7 @@ interface OrderState {
 export const useOrderStore = create<OrderState>((set) => ({
   orders: [],
   loading: false,
+  loaded: false,
   error: null,
 
   setOrders: (orders) => set({ orders }),
@@ -44,11 +42,12 @@ export const useOrderStore = create<OrderState>((set) => ({
     set({ loading: true, error: null });
     try {
       const orders = await OrderService.getAll();
-      set({ orders, loading: false });
+      set({ orders, loading: false, loaded: true });
     } catch (error) {
       set({
         error: error instanceof Error ? error.message : "Error al cargar las órdenes.",
         loading: false,
+        loaded: true,
       });
     }
   },

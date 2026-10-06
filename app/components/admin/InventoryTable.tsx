@@ -15,10 +15,33 @@ export interface InventoryItem {
 export interface InventoryTableProps {
   items: InventoryItem[];
   onUpdateStock: (id: string, newStock: number) => void;
+  /** Oculta la edición de stock (rol sin permiso de escritura). */
+  readOnly?: boolean;
   className?: string;
 }
 
-export function InventoryTable({ items, onUpdateStock, className }: InventoryTableProps) {
+export function InventoryTable({ items, onUpdateStock, readOnly = false, className }: InventoryTableProps) {
+  const [editingId, setEditingId] = React.useState<string | null>(null);
+  const [draft, setDraft] = React.useState("");
+  const [stockError, setStockError] = React.useState("");
+
+  const startEditing = (item: InventoryItem) => {
+    setEditingId(item.id);
+    setDraft(String(item.stock));
+    setStockError("");
+  };
+
+  const commit = (item: InventoryItem) => {
+    const value = Number(draft);
+    if (!Number.isInteger(value) || value < 0) {
+      setStockError("Ingresa un número entero igual o mayor a 0.");
+      return;
+    }
+    if (value !== item.stock) onUpdateStock(item.id, value);
+    setEditingId(null);
+    setStockError("");
+  };
+
   return (
     <div className={cn("w-full border border-border/40 rounded-card overflow-hidden bg-white", className)}>
       <div className="overflow-x-auto">
@@ -35,6 +58,7 @@ export function InventoryTable({ items, onUpdateStock, className }: InventoryTab
           <tbody className="divide-y divide-border/30">
             {items.map((item) => {
               const isLowStock = item.stock <= item.minStockThreshold;
+              const isEditing = editingId === item.id;
 
               return (
                 <tr key={item.id} className="hover:bg-neutral-50/50 transition-colors">
@@ -60,12 +84,51 @@ export function InventoryTable({ items, onUpdateStock, className }: InventoryTab
                   </td>
                   <td className="px-6 py-4 text-brand-muted">{item.lastUpdated}</td>
                   <td className="px-6 py-4 text-right">
-                    <button 
-                      onClick={() => onUpdateStock(item.id, item.stock + 1)}
-                      className="text-brand-dark font-medium underline underline-offset-4 hover:opacity-70 transition-opacity"
-                    >
-                      Ajustar
-                    </button>
+                    {readOnly ? (
+                      <span className="text-brand-muted">—</span>
+                    ) : isEditing ? (
+                      <div className="flex items-center justify-end gap-2">
+                        <input
+                          type="number"
+                          min={0}
+                          step={1}
+                          autoFocus
+                          value={draft}
+                          onChange={(e) => {
+                            setDraft(e.target.value);
+                            setStockError("");
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") commit(item);
+                            if (e.key === "Escape") setEditingId(null);
+                          }}
+                          aria-label={`Nueva cantidad de ${item.name}`}
+                          className="h-8 w-20 px-2 text-center text-xs font-bold border border-border/60 rounded-button bg-white focus:outline-none focus:ring-1 focus:ring-brand-dark text-brand-dark"
+                        />
+                        <button
+                          onClick={() => commit(item)}
+                          className="text-emerald-700 font-semibold underline underline-offset-4 hover:opacity-70 transition-opacity"
+                        >
+                          Guardar
+                        </button>
+                        <button
+                          onClick={() => setEditingId(null)}
+                          className="text-brand-muted font-medium underline underline-offset-4 hover:opacity-70 transition-opacity"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => startEditing(item)}
+                        className="text-brand-dark font-medium underline underline-offset-4 hover:opacity-70 transition-opacity"
+                      >
+                        Ajustar
+                      </button>
+                    )}
+                    {isEditing && stockError && (
+                      <p className="mt-1 text-[10px] text-red-600 text-right">{stockError}</p>
+                    )}
                   </td>
                 </tr>
               );

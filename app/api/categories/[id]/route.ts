@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { deleteRecord, findById, updateRecord } from "@/lib/db";
 import { ForbiddenError, getTokenPayload } from "@/lib/auth";
 import { apiHandler } from "@/lib/api";
+import { revalidateShop } from "@/lib/shop-cache";
 import type { DbCategory } from "@/types/db";
 
 export async function GET(_request: NextRequest, ctx: RouteContext<"/api/categories/[id]">) {
@@ -35,6 +36,7 @@ export const PUT = apiHandler(async (request: NextRequest, ctx: RouteContext<"/a
     description: body.description !== undefined ? String(body.description) : existing.description,
     imageUrl: body.imageUrl !== undefined ? String(body.imageUrl) : existing.imageUrl,
   });
+  revalidateShop();
 
   return NextResponse.json({ data: updated });
 });
@@ -52,5 +54,6 @@ export const DELETE = apiHandler(async (request: NextRequest, ctx: RouteContext<
     return NextResponse.json({ message: "Categoría no encontrada." }, { status: 404 });
   }
 
+  revalidateShop();
   return NextResponse.json({ success: true });
 });

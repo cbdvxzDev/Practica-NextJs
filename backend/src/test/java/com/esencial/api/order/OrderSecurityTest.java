@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -223,6 +224,154 @@ class OrderSecurityTest {
                                 .authorities(CUSTOMER)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.user.email").value("carlos@example.com"));
+    }
+
+    // ---------------------------------------------------------------------
+    // Estado del pago en la creacion de pedidos
+    // ---------------------------------------------------------------------
+
+    private static final String CREATE_BODY_TPL =
+            """
+            {
+              "items": [{ "productId": "prd-1", "quantity": 1 }],
+              "shippingAddress": "Calle 100 #10-20, Bogota",
+              "paymentStatus": %s
+            }
+            """;
+
+    @Test
+    @DisplayName("el checkout puede crear un pedido contra entrega con paymentStatus pending")
+    void paymentStatusPendingLlegaAlServicio() throws Exception {
+        when(orderService.create(any(JwtUser.class), any(com.esencial.api.order.dto.CreateOrderRequest.class)))
+                .thenReturn(sampleOrder());
+
+        mvc.perform(post("/api/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(CREATE_BODY_TPL.formatted("\"pending\""))
+                        .with(jwt().jwt(token -> token.subject("usr-9").claim("role", "customer"))
+                                .authorities(CUSTOMER)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.data.id").value("ORD-2026-001"));
+
+        org.mockito.ArgumentCaptor<com.esencial.api.order.dto.CreateOrderRequest> captor =
+                org.mockito.ArgumentCaptor.forClass(com.esencial.api.order.dto.CreateOrderRequest.class);
+        org.mockito.Mockito.verify(orderService).create(any(JwtUser.class), captor.capture());
+        org.assertj.core.api.Assertions.assertThat(captor.getValue().paymentStatus()).isEqualTo("pending");
+    }
+
+    @Test
+    @DisplayName("un pedido sin paymentStatus se crea igual (por defecto, pagado)")
+    void sinPaymentStatusElPedidoSeCrea() throws Exception {
+        when(orderService.create(any(JwtUser.class), any(com.esencial.api.order.dto.CreateOrderRequest.class)))
+                .thenReturn(sampleOrder());
+
+        mvc.perform(post("/api/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "items": [{ "productId": "prd-1", "quantity": 1 }],
+                                  "shippingAddress": "Calle 100 #10-20, Bogota"
+                                }
+                                """)
+                        .with(jwt().jwt(token -> token.subject("usr-9").claim("role", "customer"))
+                                .authorities(CUSTOMER)))
+                .andExpect(status().isCreated());
+
+        org.mockito.ArgumentCaptor<com.esencial.api.order.dto.CreateOrderRequest> captor =
+                org.mockito.ArgumentCaptor.forClass(com.esencial.api.order.dto.CreateOrderRequest.class);
+        org.mockito.Mockito.verify(orderService).create(any(JwtUser.class), captor.capture());
+        org.assertj.core.api.Assertions.assertThat(captor.getValue().paymentStatus()).isNull();
+    }
+
+    @Test
+    @DisplayName("paymentStatus failed no crea pedido: es un 400 antes del servicio")
+    void paymentStatusFailedDevuelve400() throws Exception {
+        mvc.perform(post("/api/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(CREATE_BODY_TPL.formatted("\"failed\""))
+                        .with(jwt().jwt(token -> token.subject("usr-9").claim("role", "customer"))
+                                .authorities(CUSTOMER)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.details.paymentStatus").exists());
+
+        verifyNoInteractions(orderService);
+    }
+
+    // ---------------------------------------------------------------------
+    // Recuperación de contraseña (los endpoints que consume el BFF de Next)
+    // ---------------------------------------------------------------------
+
+    @Test
+    @DisplayName("forgot-password exige un correo con formato valido")
+    void forgotPasswordExigeCorreoValido() throws Exception {
+        mvc.perform(post("/api/auth/forgot-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"email\": \"no-es-un-correo\" }"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.details.email").exists());
+
+        verifyNoInteractions(authService);
+    }
+
+    @Test
+    @DisplayName("forgot-password responde siempre el mismo mensaje, exista o no la cuenta")
+    void forgotPasswordRespuestaGenerica() throws Exception {
+        // El controlador no decide nada: la no enumeracion vive en el servicio,
+        // que aqui se sustituye por su respuesta generica.
+        when(authService.forgotPassword(any(String.class), any(String.class)))
+                .thenReturn(java.util.Map.of("message", AuthService.GENERIC_RESET_MESSAGE));
+
+        mvc.perform(post("/api/auth/forgot-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"email\": \"nadie@example.com\" }"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value(AuthService.GENERIC_RESET_MESSAGE));
+    }
+
+    @Test
+    @DisplayName("reset-password rechaza tokens vacios y claves cortas con 400")
+    void resetPasswordValidaEntrada() throws Exception {
+        mvc.perform(post("/api/auth/reset-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"token\": \"\", \"password\": \"secreta-larga\" }"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.details.token").exists());
+
+        mvc.perform(post("/api/auth/reset-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"token\": \"abc\", \"password\": \"corta\" }"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.details.password").exists());
+
+        verifyNoInteractions(authService);
+    }
+
+    @Test
+    @DisplayName("un token invalido o caducado viaja como 400 con el mensaje del servicio")
+    void resetPasswordTokenInvalidoDevuelve400() throws Exception {
+        org.mockito.Mockito.doThrow(new IllegalArgumentException(AuthService.INVALID_LINK_MESSAGE))
+                .when(authService).resetPassword(any(String.class), any(String.class));
+
+        mvc.perform(post("/api/auth/reset-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"token\": \"inventado\", \"password\": \"secretalarga\" }"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(AuthService.INVALID_LINK_MESSAGE));
+    }
+
+    @Test
+    @DisplayName("reset-password correcto devuelve 200 con mensaje de exito")
+    void resetPasswordOkDevuelve200() throws Exception {
+        org.mockito.Mockito.doNothing()
+                .when(authService).resetPassword(any(String.class), any(String.class));
+
+        mvc.perform(post("/api/auth/reset-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"token\": \"token-valido\", \"password\": \"secretalarga\" }"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Contraseña actualizada. Ya puedes iniciar sesión."));
+
+        org.mockito.Mockito.verify(authService).resetPassword(eq("token-valido"), eq("secretalarga"));
     }
 
     @Test

@@ -3,8 +3,7 @@ import type { Metadata } from "next";
 import { ProductGrid } from "../../../components/product/ProductGrid";
 import { ProductSort } from "../../../components/filters/ProductSort";
 import { PageTitle } from "../../../components/common/PageTitle";
-import { readCollection } from "@/lib/db";
-import type { DbCategory, DbProduct } from "@/types/db";
+import { getShopCategories, getShopProducts } from "@/lib/server-api";
 
 interface CategoryPageProps {
   params: Promise<{
@@ -20,7 +19,7 @@ interface CategoryPageProps {
    template de un layout superior. */
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const category = readCollection<DbCategory>("categories").find((c) => c.slug === slug);
+  const category = (await getShopCategories()).find((c) => c.slug === slug);
 
   if (!category) {
     return { title: { absolute: "Esencial - Categoría no encontrada" } };
@@ -36,14 +35,17 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   const { slug } = await params;
   const { sort } = await searchParams;
 
-  const categories = readCollection<DbCategory>("categories");
+  const [categories, allProducts] = await Promise.all([
+    getShopCategories(),
+    getShopProducts(),
+  ]);
   const category = categories.find((c) => c.slug === slug);
 
   if (!category) {
     notFound();
   }
 
-  let products = readCollection<DbProduct>("products").filter(
+  let products = allProducts.filter(
     (p) => p.isActive && p.category.slug === category.slug
   );
 

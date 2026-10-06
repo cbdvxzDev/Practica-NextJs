@@ -7,8 +7,8 @@ import Image from "next/image";
 import { useParams, notFound } from "next/navigation";
 import { PageTitle } from "@/components/common/PageTitle";
 import { Button } from "@/components/ui/Button";
-import { useOrderStore } from "@/store/order.store";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { useOrderStore, type OrderStatus } from "@/store/order.store";
+import { Skeleton } from "@/components/ui/Skeletons";
 import { CONFIG } from "@/constants/config";
 
 const getOrderStatusStyles = (status: string) => {
@@ -21,6 +21,26 @@ const getOrderStatusStyles = (status: string) => {
   }
 };
 
+/**
+ * Transiciones permitidas desde cada estado, con el mismo grafo que valida el
+ * backend (`OrderStatus.allowedNext()`). Mostrar un botón para un salto que el
+ * servidor rechaza con 409 solo confunde al operador: la UI ofrece exactamente
+ * lo que el servidor acepta.
+ */
+const ORDER_ACTIONS: Record<string, { status: string; label: string; primary?: boolean }[]> = {
+  pending: [
+    { status: "processing", label: "Marcar en proceso", primary: true },
+    { status: "cancelled", label: "Cancelar pedido" },
+  ],
+  processing: [
+    { status: "shipped", label: "Marcar como enviado", primary: true },
+    { status: "cancelled", label: "Cancelar pedido" },
+  ],
+  shipped: [{ status: "delivered", label: "Marcar como entregado", primary: true }],
+  delivered: [],
+  cancelled: [],
+};
+
 export default function AdminOrderDetailPage() {
   const isMounted = useIsMounted();
   const params = useParams();
@@ -30,6 +50,22 @@ export default function AdminOrderDetailPage() {
   const order = useOrderStore((state) => state.orders.find((o) => o.id === id));
   const loading = useOrderStore((state) => state.loading);
   const updateOrderStatus = useOrderStore((state) => state.updateOrderStatus);
+  const [actionError, setActionError] = React.useState("");
+  const [updating, setUpdating] = React.useState(false);
+
+  const handleStatus = async (status: OrderStatus) => {
+    setActionError("");
+    setUpdating(true);
+    try {
+      await updateOrderStatus(id, status);
+    } catch (error) {
+      // El backend valida las transiciones: un 409 (p. ej. pending → shipped
+      // contra Spring) se muestra aquí en vez de dejar el botón mudo.
+      setActionError(error instanceof Error ? error.message : "No se pudo actualizar el estado.");
+    } finally {
+      setUpdating(false);
+    }
+  };
 
   // 🔑 Esperamos a que el store termine de hidratar antes de decidir si es 404.
   // Un simple "montado" no basta: en el primer render las órdenes siguen vacías.
@@ -138,14 +174,36 @@ export default function AdminOrderDetailPage() {
         </table>
       </section>
 
-      <div className="flex justify-end gap-3">
-        <Button variant="outline" onClick={() => updateOrderStatus(order.id, "shipped")} disabled={order.status === "shipped" || order.status === "delivered"}>
-          Marcar como enviado
-        </Button>
-        <Button variant="primary" onClick={() => updateOrderStatus(order.id, "delivered")} disabled={order.status === "delivered"}>
-          Marcar como entregado
-        </Button>
-      </div>
+      <section className="bg-white border border-border/60 rounded-card p-5 shadow-subtle space-y-3">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-brand-muted">Acciones del pedido</h3>
+
+        {actionError && (
+          <p role="alert" className="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-button px-3 py-2">
+            {actionError}
+          </p>
+        )}
+
+        {(ORDER_ACTIONS[order.status] ?? []).length === 0 ? (
+          <p className="text-sm text-brand-muted">
+            {order.status === "delivered"
+              ? "Pedido completado: no quedan acciones disponibles."
+              : "Pedido cancelado: no quedan acciones disponibles."}
+          </p>
+        ) : (
+          <div className="flex flex-wrap justify-end gap-3">
+            {(ORDER_ACTIONS[order.status] ?? []).map((action) => (
+              <Button
+                key={action.status}
+                variant={action.primary ? "primary" : "outline"}
+                disabled={updating}
+                onClick={() => handleStatus(action.status as OrderStatus)}
+              >
+                {action.label}
+              </Button>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }

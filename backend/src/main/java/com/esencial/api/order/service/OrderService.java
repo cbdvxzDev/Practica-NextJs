@@ -120,7 +120,11 @@ public class OrderService {
         order.setShipping(shipping);
         order.setTotal(subtotal + shipping);
         order.setStatus(OrderStatus.PENDING);
-        order.setPaymentStatus(PaymentStatus.PAID);
+        // "paid" (tarjeta) o "pending" (contra entrega) segun lo elegido en el
+        // checkout; sin el campo, se asume pagado como hasta ahora.
+        order.setPaymentStatus(request.paymentStatus() == null
+                ? PaymentStatus.PAID
+                : PaymentStatus.from(request.paymentStatus()));
         order.setItems(lines);
         order.setShippingAddress(request.shippingAddress().trim());
         order.setCreatedAt(now);

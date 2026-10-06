@@ -5,10 +5,15 @@ import { Package } from "lucide-react";
 import { PageTitle } from "@/components/common/PageTitle";
 import { Button } from "@/components/ui/Button";
 import { useProductStore } from "@/store/product.store";
+import { useAuthStore } from "@/store/auth.store";
+import { ROLES } from "@/constants/roles";
 
 export default function AdminProductsPage() {
   const products = useProductStore((state) => state.products);
   const deleteProduct = useProductStore((state) => state.deleteProduct);
+  const role = useAuthStore((state) => state.user?.role);
+  // Las escrituras de producto responden 403 a soporte: se queda en solo lectura.
+  const canWrite = role === ROLES.ADMIN;
 
   const handleDelete = (id: string, title: string) => {
     if (confirm(`¿Seguro que quieres eliminar "${title}"? Esta acción no se puede deshacer.`)) {
@@ -20,9 +25,11 @@ export default function AdminProductsPage() {
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-5">
         <PageTitle title="Productos" description="Administra el catálogo completo de la tienda." />
-        <Link href="/admin/products/create">
-          <Button variant="primary" className="h-10 text-sm">+ Nuevo producto</Button>
-        </Link>
+        {canWrite && (
+          <Link href="/admin/products/create">
+            <Button variant="primary" className="h-10 text-sm">+ Nuevo producto</Button>
+          </Link>
+        )}
       </div>
 
       <section className="bg-white border border-border/60 rounded-card shadow-subtle overflow-hidden">
@@ -37,9 +44,11 @@ export default function AdminProductsPage() {
                 Crea tu primer producto para empezar a construir el catálogo de la tienda.
               </p>
             </div>
-            <Link href="/admin/products/create">
-              <Button variant="primary" className="h-9 text-xs">+ Crear primer producto</Button>
-            </Link>
+            {canWrite && (
+              <Link href="/admin/products/create">
+                <Button variant="primary" className="h-9 text-xs">+ Crear primer producto</Button>
+              </Link>
+            )}
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -69,14 +78,24 @@ export default function AdminProductsPage() {
                     </td>
                     <td className="py-4 px-6 text-center">
                       <span className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full ${
-                        product.stock === 0 ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-700"
+                        !product.isActive
+                          ? "bg-stone-100 text-stone-500"
+                          : product.stock === 0
+                            ? "bg-red-50 text-red-600"
+                            : "bg-emerald-50 text-emerald-700"
                       }`}>
-                        {product.stock === 0 ? "Agotado" : "Disponible"}
+                        {!product.isActive ? "Inactivo" : product.stock === 0 ? "Agotado" : "Disponible"}
                       </span>
                     </td>
                     <td className="py-4 px-6 text-right space-x-3">
-                      <Link href={`/admin/products/edit/${product.id}`} className="text-xs font-medium text-brand-dark hover:underline">Editar</Link>
-                      <button onClick={() => handleDelete(product.id, product.title)} className="text-xs font-medium text-red-500 hover:text-red-700 hover:underline">Eliminar</button>
+                      {canWrite ? (
+                        <>
+                          <Link href={`/admin/products/edit/${product.id}`} className="text-xs font-medium text-brand-dark hover:underline">Editar</Link>
+                          <button onClick={() => handleDelete(product.id, product.title)} className="text-xs font-medium text-red-500 hover:text-red-700 hover:underline">Eliminar</button>
+                        </>
+                      ) : (
+                        <span className="text-xs text-brand-muted">Solo lectura</span>
+                      )}
                     </td>
                   </tr>
                 ))}

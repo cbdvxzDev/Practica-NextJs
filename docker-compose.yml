@@ -1,0 +1,60 @@
+# Pila completa local: MongoDB + API Spring + tienda Next.
+#   docker compose up --build
+#   -> tienda http://localhost:3000
+#   -> API    http://localhost:8080/api/health
+#
+# El front arranca apuntando a Spring (NEXT_PUBLIC_API_URL como build-arg,
+# porque NEXT_PUBLIC_* se inyecta en build). Si la quitas del servicio web,
+# la tienda entera pasa a la mini API de Next y el servicio api deja de
+# hacer falta.
+#
+# Cuentas de prueba (sembradas con APP_SEED=1): admin@esencial.test /
+# password123 y soporte@esencial.test / password123.
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+
+  api:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    environment:
+      MONGO_URI: mongodb://mongo:27017/esencial
+      # Secreto de desarrollo local; en producción genera uno con
+      # openssl rand -hex 32 y defínelo en la plataforma.
+      JWT_SECRET: esencial-clave-local-de-desarrollo-cambiala-en-produccion
+      CORS_ALLOWED_ORIGINS: http://localhost:3000
+      # Siembra el catálogo y las cuentas de prueba en el arranque.
+      APP_SEED: "1"
+    ports:
+      - "8080:8080"
+
+  web:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SITE_URL: http://localhost:3000
+        NEXT_PUBLIC_API_URL: http://localhost:8080
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      # El navegador habla con Spring en localhost:8080 (build de arriba);
+      # el servidor de Next, en cambio, llega a la API por la red interna
+      # de compose (http://api:8080) con esta variable de runtime.
+      API_URL: http://api:8080
+      # Obligatorio en producción: sin él la app se niega a arrancar.
+      AUTH_SECRET: secreto-local-de-desarrollo-cambiala-en-produccion
+    volumes:
+      # Motor de ficheros JSON de la mini API (newsletter, contacto...).
+      - web-data:/app/data
+    ports:
+      - "3000:3000"
+
+volumes:
+  mongo-data:
+  web-data:

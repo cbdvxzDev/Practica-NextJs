@@ -11,8 +11,8 @@ interface ProductState {
   /** Reemplaza el catálogo con datos frescos de la mini API. */
   setProducts: (products: Product[]) => void;
 
-  /** Carga el catálogo completo desde la mini API. */
-  fetchProducts: (params?: { category?: string; search?: string }) => Promise<void>;
+  /** Carga el catálogo completo desde la API (con `admin: true`, la lista de gestión). */
+  fetchProducts: (params?: { category?: string; search?: string; admin?: boolean }) => Promise<void>;
 
   /** Crea un producto vía API y lo agrega al catálogo local. */
   addProduct: (input: ProductInput) => Promise<Product>;
@@ -74,8 +74,5 @@ export const useProductStore = create<ProductState>((set) => ({
     return updated;
   },
 }));
-
-export const useProductBySlug = (slug: string) =>
-  useProductStore((state) => state.products.find((p) => p.slug === slug));
 
 export default useProductStore;

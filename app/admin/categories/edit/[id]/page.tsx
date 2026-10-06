@@ -6,11 +6,13 @@ import { useParams, useRouter } from "next/navigation";
 import { PageTitle } from "@/components/common/PageTitle";
 import { CategoryForm } from "@/components/forms/CategoryForm";
 import { CategoryService } from "@/services/category.service";
+import { useCategoryStore } from "@/store/category.store";
 
 export default function AdminEditCategoryPage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
+  const updateCategory = useCategoryStore((state) => state.updateCategory);
 
   const [category, setCategory] = React.useState<{ name: string; slug: string; description: string; imageUrl: string } | null>(null);
   const [error, setError] = React.useState("");
@@ -30,7 +32,7 @@ export default function AdminEditCategoryPage() {
 
   const handleSubmit = async (data: { name: string; slug: string; description: string; imageUrl: string }) => {
     try {
-      await CategoryService.update(id, {
+      await updateCategory(id, {
         name: data.name,
         slug: data.slug,
         description: data.description,

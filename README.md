@@ -223,14 +223,62 @@ configuración, y el catálogo público no expone productos dados de baja.
 
 ## 📦 Deploy
 
-**Frontend (Vercel o Netlify):** importar el repo, el framework se detecta
-solo. Definir `AUTH_SECRET` y `NEXT_PUBLIC_SITE_URL` en las variables de
-entorno.
+La web se despliega en **Netlify** y la API en **Render**, ambas contra
+**MongoDB Atlas**.
 
-**Backend (Render, Railway o Fly.io):** servicio Node o Java. Definir
-`MONGO_URI` (Atlas), `JWT_SECRET` y `CORS_ALLOWED_ORIGINS` apuntando al dominio
-del frontend. El endpoint `/api/health` devuelve `503` si MongoDB no responde, que
-es lo que usan estas plataformas para sacar de rotación una instancia caída.
+### 1. Frontend — Netlify
+
+1. **Add new site → Import an existing project** → elegir este repo. Netlify
+   detecta Next.js y usa `netlify.toml` (build `npm run build`, Node 22,
+   runtime oficial de Next) sin tocar nada más.
+2. **Site configuration → Environment variables**:
+
+   | Variable | Valor |
+   | --- | --- |
+   | `AUTH_SECRET` | `openssl rand -hex 32` (obligatoria: sin ella el build de producción se niega a arrancar) |
+   | `NEXT_PUBLIC_SITE_URL` | `https://<tu-sitio>.netlify.app`, sin barra final |
+   | `MONGODB_URI` | URI de Atlas (ver abajo); sin ella newsletter y contacto no persisten porque el filesystem de las functions es de solo lectura |
+   | `NEXT_PUBLIC_API_URL` | *(opcional)* origen del backend Spring, p. ej. `https://esencial-api.onrender.com`. Si se omite, la web entera corre con la mini API de Next incluida en el repo |
+   | `API_URL` | *(opcional)* lo mismo, pero solo para el servidor (route handlers y server components) |
+
+   Las `NEXT_PUBLIC_*` se inyectan **en build**: define las variables antes del
+   primer deploy y vuelve a desplegar (`Clear cache and deploy site`) si cambias.
+3. Push a `main`: Netlify redespliega solo. Los tests E2E y el build ya
+   corren en los workflows de GitHub Actions (`.github/workflows/`).
+
+### 2. Backend — Render
+
+1. **New → Blueprint** → elegir este repo: `render.yaml` crea el servicio
+   `esencial-api` (Java 21, build Maven, arranque del JAR).
+2. Define los secrets: `MONGO_URI` (Atlas), `CORS_ALLOWED_ORIGINS` con el
+   dominio del front (`https://<tu-sitio>.netlify.app`) y `JWT_SECRET`
+   (Render lo genera solo con `generateValue: true`).
+3. El health check es `/api/health`, que devuelve `503` si MongoDB no
+   responde: es lo que Render usa para sacar de rotación una instancia caída.
+4. El seeder (`APP_SEED=1`, ya fijado en el blueprint) carga el catálogo y
+   las cuentas de prueba (`admin@esencial.test` / `password123`) en el primer
+   arranque.
+
+### 3. MongoDB Atlas
+
+1. [Atlas](https://www.mongodb.com/atlas) → crear cluster **M0** (gratis).
+2. **Database Access** → usuario y contraseña.
+3. **Network Access** → `0.0.0.0/0` (o las IPs de Render/Netlify).
+4. **Connect → Drivers** → copiar la URI y definirla como `MONGODB_URI` en
+   Netlify y `MONGO_URI` en Render (ambas con `<db_password>` resuelto).
+
+### Alternativa: solo Netlify (sin backend Java)
+
+Con `MONGODB_URI` definida y **sin** `NEXT_PUBLIC_API_URL`, la web es
+autosuficiente: los route handlers de Next persisten en Atlas y no hace
+falta desplegar Spring ni Render. El modo integrado añade encima el catálogo
+y los pedidos reales de la API Java.
+
+### Docker (pila completa local)
+
+```bash
+docker compose up --build   # tienda :3000 · API :8080 · MongoDB
+```
 
 ---
 
@@ -243,14 +291,18 @@ es lo que usan estas plataformas para sacar de rotación una instancia caída.
 - Panel de administración con productos, categorías, inventario, pedidos y
   usuarios.
 - Autenticación con sesiones firmadas y panel protegido en el servidor.
-- API REST en Spring Boot con 27 endpoints, JWT, Swagger y 54 tests.
+- API REST en Spring Boot con 27 endpoints, JWT, Swagger y 70 tests.
+- **Integración front ↔ Spring completada**: servicios de productos,
+  categorías, pedidos y usuarios hablan con Spring vía `NEXT_PUBLIC_API_URL`
+  (y vuelven a la mini API de Next si no se define), BFF de auth dual en
+  `/api/auth/*` (JWT de Spring + cookie HMAC de Next), `GET /api/admin/products`
+  para el panel, contratos de `category`/`paymentStatus` alineados y
+  recuperación de contraseña también en Spring.
+- Server components (portada, categorías, ficha de producto, sitemap) leídos
+  desde la capa de servicios con ISR de 60 s / 1 h.
 - CI que corre tipos, lint, tests y build de las dos partes.
-
-**Pendiente:**
-
-- Conectar el frontend con la API de Spring Boot (`NEXT_PUBLIC_API_URL` ya está
-  preparada; los servicios de `app/services/` aún apuntan a `/api`).
-- Desplegar la API y conectar MongoDB Atlas.
+- Artefactos de despliegue: `netlify.toml`, `Dockerfile` (front),
+  `backend/Dockerfile`, `docker-compose.yml`, `render.yaml` y guía de Atlas.
 
 ---
 

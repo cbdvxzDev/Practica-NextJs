@@ -1,0 +1,13 @@
+node_modules
+.next
+.next-test
+.git
+.github
+.idea
+.vercel
+coverage
+cache
+backend
+*.log
+.env*
+!.env.example

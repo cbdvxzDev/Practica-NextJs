@@ -5,7 +5,7 @@ import Link from "next/link";
 import { notFound, useParams, useRouter } from "next/navigation";
 import { PageTitle } from "@/components/common/PageTitle";
 import { ProductForm, type ProductFormData } from "@/components/forms/ProductForm";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { Skeleton } from "@/components/ui/Skeletons";
 import { useProductStore } from "@/store/product.store";
 import { useCategoryStore } from "@/store/category.store";
 import { CONFIG } from "@/constants/config";
@@ -46,6 +46,7 @@ export default function AdminEditProductPage() {
         },
         sizes: data.sizes,
         stock: Number(data.stock),
+        isActive: data.isActive,
       });
       router.push("/admin/products");
     } catch (err) {
@@ -93,6 +94,7 @@ export default function AdminEditProductPage() {
             stock: product.stock,
             images: product.images,
             sizes: product.sizes,
+            isActive: product.isActive,
           }}
           categories={categoryOptions}
           onSubmit={handleSubmit}

@@ -52,17 +52,16 @@ export function AdminDataProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // `support` es un rol de solo lectura: según el README solo gestiona
-      // pedidos, por eso no hidrata el catálogo (además la API lo rechaza).
-      const requests = [useOrderStore.getState().fetchOrders()];
-      if (user.role === ROLES.ADMIN) {
-        requests.push(
-          useProductStore.getState().fetchProducts(),
-          useCategoryStore.getState().fetchCategories()
-        );
-      }
-
-      await Promise.allSettled(requests);
+      // Todo el staff (admin y support) ve catálogo e inventario: las lecturas
+      // de productos y categorías son públicas en la API. Lo que no ve support
+      // es /admin/users (solo admin), y ahí el guard está en la propia página.
+      // La lista de productos usa la ruta de gestión: es la única que devuelve
+      // los dados de baja cuando el backend es Spring.
+      await Promise.allSettled([
+        useOrderStore.getState().fetchOrders(),
+        useProductStore.getState().fetchProducts({ admin: true }),
+        useCategoryStore.getState().fetchCategories(),
+      ]);
 
       if (!cancelled) setStatus("granted");
     };

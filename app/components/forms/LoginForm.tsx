@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { CONFIG } from "@/constants/config";
 import { Button } from "../ui/Button";
 
 export interface LoginFormProps {
@@ -69,12 +69,12 @@ export function LoginForm({ onSubmit, className }: LoginFormProps) {
           <label htmlFor="password" className="font-medium text-brand-dark">
             Contraseña
           </label>
-          <a
-            href={`mailto:${CONFIG.site.contactEmail}?subject=${encodeURIComponent("Restablecer contraseña")}`}
+          <Link
+            href="/forgot-password"
             className="text-brand-muted hover:text-brand-dark transition-colors underline underline-offset-4 text-[11px]"
           >
             ¿La olvidaste?
-          </a>
+          </Link>
         </div>
         <div className="relative flex items-center">
           <input

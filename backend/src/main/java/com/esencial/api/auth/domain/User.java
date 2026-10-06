@@ -27,6 +27,16 @@ public class User {
 
     private String avatarUrl;
 
+    /**
+     * Hash SHA-256 del token de recuperación de contraseña. Nunca se guarda el
+     * token en claro: si la base se filtrara, los enlaces no servirían para
+     * cambiar contraseñas ajenas.
+     */
+    private String passwordResetToken;
+
+    /** Caducidad del token de recuperación (15 minutos desde su emisión). */
+    private Instant passwordResetExpiresAt;
+
     @CreatedDate
     private Instant createdAt;
 
@@ -87,6 +97,22 @@ public class User {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    public String getPasswordResetToken() {
+        return passwordResetToken;
+    }
+
+    public void setPasswordResetToken(String passwordResetToken) {
+        this.passwordResetToken = passwordResetToken;
+    }
+
+    public Instant getPasswordResetExpiresAt() {
+        return passwordResetExpiresAt;
+    }
+
+    public void setPasswordResetExpiresAt(Instant passwordResetExpiresAt) {
+        this.passwordResetExpiresAt = passwordResetExpiresAt;
     }
 
     public Instant getCreatedAt() {

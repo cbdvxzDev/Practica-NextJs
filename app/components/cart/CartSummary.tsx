@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/Button";
 
@@ -19,8 +18,6 @@ export function CartSummary({
   onCheckout,
   className,
 }: CartSummaryProps) {
-  const [isProcessing, setIsProcessing] = React.useState(false);
-
   const isFreeShipping = subtotal >= freeShippingThreshold;
   const activeShippingCost = isFreeShipping ? 0 : shippingCost;
   const total = subtotal + activeShippingCost;
@@ -28,13 +25,10 @@ export function CartSummary({
   const progressToFreeShipping = Math.min((subtotal / freeShippingThreshold) * 100, 100);
   const amountNeededForFreeShipping = freeShippingThreshold - subtotal;
 
+  // Sin temporizadores: la navegación la dispara el padre en cuanto se pulsa,
+  // y un setTimeout solo hacía que el botón mintiera sobre su estado real.
   const handleCheckout = () => {
-    if (!onCheckout) return;
-    setIsProcessing(true);
-    setTimeout(() => {
-      onCheckout();
-      setIsProcessing(false);
-    }, 800);
+    onCheckout?.();
   };
 
   return (
@@ -88,10 +82,10 @@ export function CartSummary({
       <div className="pt-2">
         <Button
           onClick={handleCheckout}
-          disabled={isProcessing || subtotal === 0}
+          disabled={!onCheckout || subtotal === 0}
           className="w-full h-11 text-xs font-semibold uppercase tracking-wider"
         >
-          {isProcessing ? "Procesando..." : "Proceder al pago"}
+          Proceder al pago
         </Button>
       </div>
 
